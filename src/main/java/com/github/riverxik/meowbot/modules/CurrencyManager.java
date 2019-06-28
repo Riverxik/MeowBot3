@@ -5,6 +5,7 @@ import com.github.riverxik.meowbot.database.ChannelDb;
 import com.github.riverxik.meowbot.database.ChannelUsers;
 import com.github.riverxik.meowbot.database.Database;
 import com.github.twitch4j.tmi.domain.Chatters;
+import com.netflix.hystrix.HystrixCommandProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,8 +19,8 @@ import java.sql.Statement;
  */
 public class CurrencyManager {
 
-    private final int DELAY_BETWEEN_QUERY = 30000;
-    private final int DELAY_BETWEEN_CHANNELS = 5000;
+    private final int DELAY_BETWEEN_QUERY = 300000; // Every 5 minutes check new users
+    private final boolean TIMEOUT_ENABLED = false; // For getChatters() because of poor internet. Default: true
 
     private static final Logger log = LoggerFactory.getLogger(CurrencyManager.class);
 
@@ -106,6 +107,7 @@ public class CurrencyManager {
     private void loadUsers() {
         for(ChannelDb channel : Configuration.loadingChannels) {
             if(channel.isCurrencyEnabled()) {
+                HystrixCommandProperties.Setter().withExecutionTimeoutEnabled(TIMEOUT_ENABLED);
                 Chatters chatters = TwitchBot.twitchClient.getMessagingInterface().getChatters(channel.getChannelName()).execute();
                 ChannelUsers channelUsers = new ChannelUsers();
 
@@ -122,7 +124,7 @@ public class CurrencyManager {
 
                 // Delay between executing next channel
                 try {
-                    Thread.sleep(DELAY_BETWEEN_CHANNELS);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
