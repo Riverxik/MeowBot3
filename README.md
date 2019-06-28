@@ -1,5 +1,5 @@
 # MeowBot 3
-  New version of my java bot for Twitch (supports api v.5 and later). 
+  New version of my java bot for Twitch (supports new twitch api). 
   My last version of this bot was support only api v.3 which is deprecated on twitch and woudn't work soon.
   So, i had to change the api of the new version of bot and here it is.
   Now i can add more some features which wasn't available on latest api.
