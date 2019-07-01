@@ -47,6 +47,17 @@ public class CurrencyManager {
         for(ChannelDb channel : Configuration.loadingChannels) {
             String channelName = channel.getChannelName();
             log.info(String.format("Loading currency settings for [%s]...", channelName));
+            Database database = new Database();
+            database.connect();
+            try {
+                Statement statement = database.getConnection().createStatement();
+                String query = "INSERT INTO `currency` (`channelName`) " +
+                        "SELECT '"+channelName+"' " +
+                        "WHERE NOT EXISTS(SELECT 1 FROM `currency` WHERE `channelName` = '"+channelName+"')";
+                statement.execute(query);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -56,7 +67,7 @@ public class CurrencyManager {
             Database database = new Database();
             database.connect();
             Statement statement = database.getConnection().createStatement();
-            String query = "CREATE TABLE `currency` (\n" +
+            String query = "CREATE TABLE IF NOT EXISTS `currency` (\n" +
                     "\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
                     "\t`channelName`\tTEXT NOT NULL DEFAULT 'channel' UNIQUE,\n" +
                     "\t`currencyName`\tTEXT NOT NULL DEFAULT 'points',\n" +
@@ -71,7 +82,7 @@ public class CurrencyManager {
             statement.close();
             database.disconnect();
         } catch (SQLException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
         }
     }
 

@@ -56,20 +56,23 @@ public final class ChannelDb extends Database {
             Database database = new Database();
             database.connect();
             Statement statement = database.getConnection().createStatement();
-            String query = "replace into `channels` " +
-                    "(`channelName`, `accessToken`, `moderationEnabled`, " +
-                    "`currencyEnabled`, `customCommandsEnabled`, `betsEnabled`)\n" +
-                    "values ('"+this.channelName+"', " +
-                    "'"+this.accessToken+"', " +
-                    "'"+this.isModerationEnabled+"', " +
-                    "'"+this.isCurrencyEnabled+"', " +
-                    "'"+this.isCustomCommandEnabled+"', " +
-                    "'"+this.isBetsEnabled+"');";
+            String query = "REPLACE INTO `channels` (`channelName`, `accessToken`,\n" +
+                    "`moderationEnabled`, `currencyEnabled`, `customCommandsEnabled`,\n" +
+                    "`betsEnabled`)\n" +
+                    "SELECT '"+channelName+"', '"+accessToken+"', " +
+                    "'"+isModerationEnabled+"', '"+isCurrencyEnabled+"', " +
+                    "'"+isCustomCommandEnabled+"', '"+isBetsEnabled+"'\n" +
+                    "WHERE NOT EXISTS(SELECT 1 FROM `channels`\n" +
+                    "WHERE `channelName` = '"+channelName+"' AND `accessToken` = '"+accessToken+"'\n" +
+                    "AND `moderationEnabled` = '"+isModerationEnabled+"' " +
+                    "AND `currencyEnabled` = '"+isCurrencyEnabled+"'\n" +
+                    "AND `customCommandsEnabled` = '"+isCurrencyEnabled+"' " +
+                    "AND `betsEnabled` = '"+isBetsEnabled+"')";
             statement.execute(query);
             statement.close();
             database.disconnect();
         } catch (SQLException e) {
-            // if channel already exists do nothing
+            e.printStackTrace();
         }
     }
 }
