@@ -19,7 +19,7 @@ import java.sql.Statement;
  */
 public class CurrencyManager {
 
-    private final int DELAY_BETWEEN_QUERY = 300000; // Every 5 minutes check new users
+    private final int DELAY_BETWEEN_QUERY = 30000; // Every 5 minutes check new users
     private final boolean TIMEOUT_ENABLED = false; // For getChatters() because of poor internet. Default: true
 
     private static final Logger log = LoggerFactory.getLogger(CurrencyManager.class);
@@ -60,7 +60,7 @@ public class CurrencyManager {
                     "\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
                     "\t`channelName`\tTEXT NOT NULL DEFAULT 'channel' UNIQUE,\n" +
                     "\t`currencyName`\tTEXT NOT NULL DEFAULT 'points',\n" +
-                    "\t`currencyInc`\tREAL NOT NULL DEFAULT 1,\n" +
+                    "\t`currencyInc`\tINTEGER NOT NULL DEFAULT 1,\n" +
                     "\t`moneyName`\tTEXT NOT NULL DEFAULT 'money',\n" +
                     "\t`moneyInc`\tINTEGER NOT NULL DEFAULT 10,\n" +
                     "\t`subEnable`\tTEXT NOT NULL DEFAULT 'false',\n" +
@@ -71,7 +71,7 @@ public class CurrencyManager {
             statement.close();
             database.disconnect();
         } catch (SQLException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -85,7 +85,6 @@ public class CurrencyManager {
                     {
                         // Every 5 minutes.
                         loadUsers();
-                        increaseCurrency();
                         Thread.sleep(DELAY_BETWEEN_QUERY);
                     } catch (InterruptedException e) {
                         log.error("Error with loading chat users", e.getMessage());
@@ -98,37 +97,30 @@ public class CurrencyManager {
         run.start();
     }
 
-    private void increaseCurrency() {
-        for(ChannelDb channel : Configuration.loadingChannels) {
-            // TODO: Write code to increase user currency
-        }
-    }
-
     private void loadUsers() {
         for(ChannelDb channel : Configuration.loadingChannels) {
-            if(channel.isCurrencyEnabled()) {
-                HystrixCommandProperties.Setter().withExecutionTimeoutEnabled(TIMEOUT_ENABLED);
-                Chatters chatters = TwitchBot.twitchClient.getMessagingInterface().getChatters(channel.getChannelName()).execute();
-                ChannelUsers channelUsers = new ChannelUsers();
+             HystrixCommandProperties.Setter().withExecutionTimeoutEnabled(TIMEOUT_ENABLED);
+             Chatters chatters = TwitchBot.twitchClient.getMessagingInterface().getChatters(channel.getChannelName()).execute();
+             ChannelUsers channelUsers = new ChannelUsers();
 
-                channelUsers.channelName = channel.getChannelName();
-                channelUsers.allViewers = chatters.getAllViewers();
-                channelUsers.moderators =  chatters.getModerators();
-                channelUsers.vips = chatters.getVips();
+             channelUsers.channelName = channel.getChannelName();
+             channelUsers.allViewers = chatters.getAllViewers();
+             channelUsers.moderators =  chatters.getModerators();
+             channelUsers.vips = chatters.getVips();
 
-                channelUsers.update();
+             channelUsers.update(channel.isCurrencyEnabled());
 
-                Configuration.channelUsersList.put(channel.getChannelName(),channelUsers);
+             Configuration.channelUsersList.put(channel.getChannelName(),channelUsers);
 
-                log.info(String.format("[%s] loaded users [%d]", channel.getChannelName(), chatters.getAllViewers().size()));
+             log.info(String.format("[%s] loaded users [%d]", channel.getChannelName(), chatters.getAllViewers().size()));
 
-                // Delay between executing next channel
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+             // Delay between executing next channel
+             try {
+                 Thread.sleep(1000);
+             } catch (InterruptedException e) {
+                 e.printStackTrace();
+             }
+
         }
     }
 }

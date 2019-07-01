@@ -1,5 +1,6 @@
 package com.github.riverxik.meowbot.database;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -20,6 +21,10 @@ public class ChannelUsers {
     public List<String> moderators = new ArrayList<>();
     /** List of all vip's nicknames of current channel */
     public List<String> vips = new ArrayList<>();
+    /** List of all subscriber nicknames of current channel */
+    public List<String> subscribers = new ArrayList<>();
+
+    private Statement statement = null;
 
     /** Creates a table for new channel in database */
     public void createTable() {
@@ -32,23 +37,59 @@ public class ChannelUsers {
     }
 
     /** Updates all user information of current channel */
-    public void update() {
+    public void update(boolean isCurrencyEnabled) {
+        Database database = new Database();
+        database.connect();
+        String query = "";
         try {
-            Database database = new Database();
-            database.connect();
-            Statement statement = database.getConnection().createStatement();
-            String query = "";
+            statement = database.getConnection().createStatement();
             for(String user : allViewers) {
-                query = "replace into `murochka_ua` (`userName`, `currency`, `money`)\n" +
-                        "values ('username', 'currency', 'money');";
+                query = "SELECT `userName`, `currency` FROM `"+channelName+"` WHERE `userName` = '"+user+"' ";
+                ResultSet resultSet = statement.executeQuery(query);
+                if(resultSet.next()) { // Пользователь нашёлся
+                    if(isCurrencyEnabled) { // Валюта включена
+                        calculateCurrency(user, resultSet.getInt(2));
+                    }
+                } else {
+                    query = "replace into `"+channelName+"` (`userName`, `currency`, `money`)\n" +
+                            "values ('"+user+"', '0', '0');";
+                    statement.executeUpdate(query);
+                }
             }
-            // TODO: Finish the update users script.
-
             statement.close();
             database.disconnect();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private void calculateCurrency(String user, int oldCurrency) throws SQLException {
+        if(isSub(user) || isVip(user)) {
+            String query = "SELECT `subEnable`, `subMultiplier` " +
+                    "FROM `currency` WHERE `channelName` = '"+channelName+"'";
+            ResultSet channelResSet = statement.executeQuery(query);
+            if(channelResSet.next()) {
+                String isEnable = channelResSet.getString(1);
+                int multiplier = channelResSet.getInt(2);
+                if("true".equals(isEnable)) {
+                    oldCurrency += multiplier;
+                }
+            }
+        } else { oldCurrency++; }
+        increaseCurrency(user, oldCurrency);
+    }
+
+    private void increaseCurrency(String user, int currency) throws SQLException {
+        String query = "UPDATE `"+channelName+"` SET `currency` = "+currency+" WHERE `userName` = '"+user+"' ";
+        statement.executeUpdate(query);
+    }
+
+    private boolean isVip(String userName) {
+        return vips.contains(userName);
+    }
+
+    private boolean isSub(String userName) {
+        return subscribers.contains(userName);
     }
 
     private void executeQuery(String query) {

@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 public class TwitchBot {
 
     private static final Logger log = LoggerFactory.getLogger(TwitchBot.class);
-    static TwitchClient twitchClient;
+    public static TwitchClient twitchClient;
 
     /** Constructs twitch bot instance */
     public TwitchBot() {
