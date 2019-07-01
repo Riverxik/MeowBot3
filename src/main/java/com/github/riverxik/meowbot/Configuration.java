@@ -48,7 +48,7 @@ public class Configuration {
      * */
     public static HashMap<String, ChannelUsers> channelUsersList = new HashMap<>();
 
-    private static boolean moderationEnable = false;
+    private static boolean moderationEnable = false; // TODO: use this for enabling/disabling features for all channels
     private static boolean cusomCommandsEnable = false;
     private static boolean currencyEnable = false;
     private static boolean betsEbable = false;

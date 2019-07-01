@@ -18,9 +18,10 @@ public class CheckChannelGoesLive {
     private void OnChannelGoLive(ChannelGoLiveEvent event) {
         String channelName = event.getChannel().getName();
         String title = event.getTitle();
+        long game = event.getGameId();
         if(Configuration.isStreamLiveEnable())
-            TwitchBot.sendMessageToChat(channelName, String.format("[%s] starts: %s", channelName, title));
+            TwitchBot.sendMessageToChat(channelName, String.format("[%s] starts: %s on game: %s", channelName, title, game));
         else
-            System.out.println(String.format("[%s] starts: %s", channelName, title));
+            System.out.println(String.format("[%s] starts: %s on game: %s", channelName, title, game));
     }
 }

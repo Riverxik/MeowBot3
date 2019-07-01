@@ -42,11 +42,12 @@ public class TwitchBot {
     /** Registers all features */
     public void registerFeatures() {
         log.info("Component registration...");
-        CheckPublicMessages checkPublicMessages = new CheckPublicMessages(twitchClient.getEventManager());
-        CheckPrivateMessages checkPrivateMessages = new CheckPrivateMessages(twitchClient.getEventManager());
-        CheckChannelGoesLive checkChannelGoesLive = new CheckChannelGoesLive(twitchClient.getEventManager());
-        CheckChannelGoesOffline checkChannelGoesOffline = new CheckChannelGoesOffline(twitchClient.getEventManager());
-        CheckChannelGainFollower checkChannelGainFollower = new CheckChannelGainFollower(twitchClient.getEventManager());
+        CheckPublicMessages publicMessages = new CheckPublicMessages(twitchClient.getEventManager());
+        CheckPrivateMessages privateMessages = new CheckPrivateMessages(twitchClient.getEventManager());
+        CheckChannelGoesLive channelGoesLive = new CheckChannelGoesLive(twitchClient.getEventManager());
+        CheckChannelGoesOffline channelGoesOffline = new CheckChannelGoesOffline(twitchClient.getEventManager());
+        CheckChannelGainFollower channelGainFollower = new CheckChannelGainFollower(twitchClient.getEventManager());
+        CheckSubscribersOnly subscribersOnly = new CheckSubscribersOnly(twitchClient.getEventManager());
         // add features
     }
 
