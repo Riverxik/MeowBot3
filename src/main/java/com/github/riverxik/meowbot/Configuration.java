@@ -3,6 +3,7 @@ package com.github.riverxik.meowbot;
 import com.github.riverxik.meowbot.database.ChannelDb;
 import com.github.riverxik.meowbot.database.ChannelUsers;
 import com.github.riverxik.meowbot.database.Database;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -47,10 +48,17 @@ public class Configuration {
      * */
     public static HashMap<String, ChannelUsers> channelUsersList = new HashMap<>();
 
-    private static boolean isModerationEnable = false;
-    private static boolean isCusomCommandsEnable = false;
-    private static boolean isCurrencyEnable = false;
-    private static boolean isBetsEbable = false;
+    private static boolean moderationEnable = false;
+    private static boolean cusomCommandsEnable = false;
+    private static boolean currencyEnable = false;
+    private static boolean betsEbable = false;
+    private static boolean streamLiveEnable = false;
+    private static boolean streamOfflineEnable = false;
+    private static boolean streamFollower = false;
+
+    public static boolean isStreamLiveEnable() { return streamLiveEnable; }
+    public static boolean isStreamOfflineEnable() { return streamOfflineEnable; }
+    public static boolean isStreamFollower() { return streamFollower; }
 
     /**
      * Loads configurations settings from config.json, if config file doesn't exist creates it.
@@ -81,6 +89,15 @@ public class Configuration {
             clientAppSecret = String.valueOf(tokens.get("clientAppSecret"));
             chatToken = String.valueOf(tokens.get("chatToken"));
             log.info("Tokens has been successfully read!");
+
+            JSONObject modules = (JSONObject) config.get("modules");
+            moderationEnable = Boolean.valueOf("moderation");
+            cusomCommandsEnable = Boolean.valueOf("customCommands");
+            currencyEnable = Boolean.valueOf("currency");
+            betsEbable = Boolean.valueOf("bets");
+            streamLiveEnable = Boolean.valueOf("streamLive");
+            streamOfflineEnable = Boolean.valueOf("streamOffline");
+            streamFollower = Boolean.valueOf("streamFollower");
 
             admin = String.valueOf(config.get("admin"));
             log.info("Admin's nickname has been successfully read!");

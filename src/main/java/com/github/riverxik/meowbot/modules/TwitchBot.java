@@ -2,8 +2,7 @@ package com.github.riverxik.meowbot.modules;
 
 import com.github.riverxik.meowbot.Configuration;
 import com.github.riverxik.meowbot.database.ChannelDb;
-import com.github.riverxik.meowbot.features.CheckPrivateMessages;
-import com.github.riverxik.meowbot.features.CheckPublicMessages;
+import com.github.riverxik.meowbot.features.*;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
@@ -45,6 +44,9 @@ public class TwitchBot {
         log.info("Component registration...");
         CheckPublicMessages checkPublicMessages = new CheckPublicMessages(twitchClient.getEventManager());
         CheckPrivateMessages checkPrivateMessages = new CheckPrivateMessages(twitchClient.getEventManager());
+        CheckChannelGoesLive checkChannelGoesLive = new CheckChannelGoesLive(twitchClient.getEventManager());
+        CheckChannelGoesOffline checkChannelGoesOffline = new CheckChannelGoesOffline(twitchClient.getEventManager());
+        CheckChannelGainFollower checkChannelGainFollower = new CheckChannelGainFollower(twitchClient.getEventManager());
         // add features
     }
 
@@ -52,7 +54,10 @@ public class TwitchBot {
     public void start() {
         log.info("Connecting to channels...");
         for(ChannelDb channel : Configuration.loadingChannels) {
-            twitchClient.getChat().joinChannel(channel.getChannelName());
+            String channelName = channel.getChannelName();
+            twitchClient.getChat().joinChannel(channelName);
+            twitchClient.getClientHelper().enableStreamEventListener(channelName);
+            twitchClient.getClientHelper().enableFollowEventListener(channelName);
         }
         log.info("Successfully connected to all the channels!");
     }

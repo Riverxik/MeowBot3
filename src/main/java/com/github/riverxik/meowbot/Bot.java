@@ -92,13 +92,16 @@ public class Bot {
         channels.add(channel);
         obj.put("channels", channels);
 
-        // For disabling modules for all channel. TODO: Implement reads this values and use it for
+        // For disabling modules for all channel.
         // Not implemented right now.
         JSONObject modules = new JSONObject();
         modules.put("currency", false);
         modules.put("moderation", false);
         modules.put("bets", false);
         modules.put("customCommands", false);
+        modules.put("streamLive", false);
+        modules.put("streamOffline", false);
+        modules.put("streamFollower", false);
         obj.put("modules", modules);
 
         obj.put("admin", "putYourNicknameHere");
