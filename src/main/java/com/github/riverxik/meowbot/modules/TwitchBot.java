@@ -3,7 +3,7 @@ package com.github.riverxik.meowbot.modules;
 import com.github.riverxik.meowbot.Configuration;
 import com.github.riverxik.meowbot.database.ChannelDb;
 import com.github.riverxik.meowbot.features.CheckPrivateMessages;
-import com.github.riverxik.meowbot.features.WriteChannelChatToConsole;
+import com.github.riverxik.meowbot.features.CheckPublicMessages;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
@@ -43,7 +43,7 @@ public class TwitchBot {
     /** Registers all features */
     public void registerFeatures() {
         log.info("Component registration...");
-        WriteChannelChatToConsole channelChatToConsole = new WriteChannelChatToConsole(twitchClient.getEventManager());
+        CheckPublicMessages checkPublicMessages = new CheckPublicMessages(twitchClient.getEventManager());
         CheckPrivateMessages checkPrivateMessages = new CheckPrivateMessages(twitchClient.getEventManager());
         // add features
     }
