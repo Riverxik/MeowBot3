@@ -48,6 +48,8 @@ public class TwitchBot {
         CheckChannelGoesOffline channelGoesOffline = new CheckChannelGoesOffline(twitchClient.getEventManager());
         CheckChannelGainFollower channelGainFollower = new CheckChannelGainFollower(twitchClient.getEventManager());
         CheckSubscribersOnly subscribersOnly = new CheckSubscribersOnly(twitchClient.getEventManager());
+        ChangeGameOrTitle changeGameOrTitle = new ChangeGameOrTitle(twitchClient.getEventManager());
+        // TODO: Maybe i should put all this events together to one class.
         // add features
     }
 
