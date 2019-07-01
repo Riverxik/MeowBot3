@@ -135,10 +135,10 @@ public class Configuration {
                     "\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
                     "\t`channelName`\tTEXT NOT NULL UNIQUE,\n" +
                     "\t`accessToken`\tTEXT NOT NULL,\n" +
-                    "\t`moderationEnabled`\tINTEGER NOT NULL DEFAULT 0,\n" +
-                    "\t`currencyEnabled`\tINTEGER NOT NULL DEFAULT 0,\n" +
-                    "\t`customCommandsEnabled`\tINTEGER NOT NULL DEFAULT 0,\n" +
-                    "\t`betsEnabled`\tINTEGER NOT NULL DEFAULT 0\n" +
+                    "\t`moderationEnabled`\tBOOLEAN NOT NULL DEFAULT false,\n" +
+                    "\t`currencyEnabled`\tBOOLEAN NOT NULL DEFAULT false,\n" +
+                    "\t`customCommandsEnabled`\tBOOLEAN NOT NULL DEFAULT false,\n" +
+                    "\t`betsEnabled`\tBOOLEAN NOT NULL DEFAULT false\n" +
                     ");";
             Statement statement = database.getConnection().createStatement();
             statement.execute(query);
