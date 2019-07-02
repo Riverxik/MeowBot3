@@ -1,6 +1,8 @@
 package com.github.riverxik.meowbot.modules;
 
 import com.github.riverxik.meowbot.Configuration;
+import com.github.riverxik.meowbot.commands.Lexer;
+import com.github.riverxik.meowbot.commands.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +35,13 @@ public class PublicMessageManager {
     }
 
     private static String processUserCommand(String message) {
-        return "You are lovely user :3";
+        // Temporary
+        Lexer lexer = new Lexer(message.substring(1));
+        lexer.tokenize();
+        Parser parser = new Parser(lexer.getTokenList());
+        parser.start(false);
+        return parser.stackValues.get(0).toString();
+        //return "You are lovely user :3";
         // TODO: Code that precess user chat commands
     }
 }

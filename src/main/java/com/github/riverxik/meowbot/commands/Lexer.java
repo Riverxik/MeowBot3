@@ -35,6 +35,7 @@ public class Lexer {
             if(current == '\0')
                 break;
         }
+        tokenList.add(new Token(";"));
     }
 
     private Token tokenizeSymbol(char symbol) {
@@ -74,7 +75,7 @@ public class Lexer {
     }
 
     private Token tokenizeCommandSymbol() {
-        Token symbolToken = new Token("Symbol");
+        Token symbolToken = new Token("SYMBOL");
         symbolToken.setStringValue("!");
         return symbolToken;
     }

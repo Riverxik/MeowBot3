@@ -110,6 +110,7 @@ public class Parser {
                 case "(":
                 case ")":
                 case "~":
+                case "SYMBOL": // !
                 {
                     nextToken();
                     popStack();

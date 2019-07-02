@@ -44,9 +44,9 @@ public class TwitchBot {
         log.info("Component registration...");
         CheckPublicMessages publicMessages = new CheckPublicMessages(twitchClient.getEventManager());
         CheckPrivateMessages privateMessages = new CheckPrivateMessages(twitchClient.getEventManager());
-        CheckChannelGoesLive channelGoesLive = new CheckChannelGoesLive(twitchClient.getEventManager());
-        CheckChannelGoesOffline channelGoesOffline = new CheckChannelGoesOffline(twitchClient.getEventManager());
-        CheckChannelGainFollower channelGainFollower = new CheckChannelGainFollower(twitchClient.getEventManager());
+        //CheckChannelGoesLive channelGoesLive = new CheckChannelGoesLive(twitchClient.getEventManager());
+        //CheckChannelGoesOffline channelGoesOffline = new CheckChannelGoesOffline(twitchClient.getEventManager());
+        //CheckChannelGainFollower channelGainFollower = new CheckChannelGainFollower(twitchClient.getEventManager());
         CheckSubscribersOnly subscribersOnly = new CheckSubscribersOnly(twitchClient.getEventManager());
         ChangeGameOrTitle changeGameOrTitle = new ChangeGameOrTitle(twitchClient.getEventManager());
         // TODO: Maybe i should put all this events together to one class.

@@ -20,12 +20,14 @@ public class CheckPublicMessages {
     }
 
     private void onChannelMessage(ChannelMessageEvent event) {
-//        String channel = event.getChannel().getName();
-//        String sender = event.getUser().getName();
-//        String message = event.getMessage();
+        String channel = event.getChannel().getName();
+        String sender = event.getUser().getName();
+        String message = event.getMessage();
 
-//        String botAnswer = PublicMessageManager.processNewMessage(channel, sender, message);
-//        event.getTwitchChat().sendMessage(channel, sender + " " + botAnswer); // Don't answers yet
+        if(message.startsWith("!")) {
+            String botAnswer = PublicMessageManager.processNewMessage(channel, sender, message);
+            event.getTwitchChat().sendMessage(channel, sender + " " + botAnswer); // Don't answers yet
+        }
         System.out.printf(
                 "Channel [%s] - User[%s] - Message [%s]%n",
                 event.getChannel().getName(),
