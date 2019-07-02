@@ -1,0 +1,22 @@
+PROGRAM @ {EXPRESSION} | {+} {-} {(} {INTEGERNUM} {IDENTIFIER} {FLOATNUM} {STRING} {KEYWORD}
+EXPRESSION @ {PART}{SUMMIN}{LOGICAL} | {+} {-} {(} {INTEGERNUM} {IDENTIFIER} {FLOATNUM} {STRING}
+LOGICAL @ {>} {PART}{SUMMIN}{more} | {>}
+LOGICAL @ {<} {PART}{SUMMIN}{less} | {<}
+LOGICAL @ {==} {PART}{SUMMIN}{equal} | {==}
+LOGICAL @ {e} | {,} {;} {)}
+SUMMIN @ {+}{PART}{op+}{SUMMIN} | {+}
+SUMMIN @ {-}{PART}{op-}{SUMMIN} | {-}
+SUMMIN @ {e} | {;} {)} {^} {,} {<} {>} {THEN} {==}
+PART @ {UNAR} | {+} {-} {INTEGERNUM} {IDENTIFIER} {FLOATNUM} {STRING} {(}
+STARSLASH @ {*}{ARG}{op*}{STARSLASH} | {*}
+STARSLASH @ {/}{ARG}{op/}{STARSLASH} | {/}
+STARSLASH @ {POWER} {STARSLASH} | {^}
+STARSLASH @ {e} | {+} {-} {)} {,} {;} {<} {>} {THEN} {==}
+POWER @ {^}{ARG} {op^} | {^}
+POWER @ {e} | {;}
+UNAR @ {+}{ARG}{STARSLASH}{++} | {+} 
+UNAR @ {-}{ARG}{STARSLASH}{--} | {-}
+UNAR @ {ARG} {STARSLASH} | {INTEGERNUM} {IDENTIFIER} {FLOATNUM} {STRING} {(}
+ARG @ {eval} | {IDENTIFIER}
+ARG @ {eval} | {STRING} {INTEGERNUM} {FLOATNUM}
+ARG @ {(}{EXPRESSION}{)} | {(}
