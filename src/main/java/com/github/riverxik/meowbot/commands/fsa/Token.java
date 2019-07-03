@@ -1,4 +1,4 @@
-package com.github.riverxik.meowbot.commands;
+package com.github.riverxik.meowbot.commands.fsa;
 
 public class Token {
 

@@ -1,13 +1,13 @@
-package com.github.riverxik.meowbot.features;
+package com.github.riverxik.meowbot.events;
 
 import com.github.philippheuer.events4j.EventManager;
 import com.github.riverxik.meowbot.Configuration;
 import com.github.riverxik.meowbot.modules.TwitchBot;
 import com.github.twitch4j.common.events.channel.ChannelGoOfflineEvent;
 
-public class CheckChannelGoesOffline {
+public class ChannelGoesOffline {
 
-    public CheckChannelGoesOffline(EventManager eventManager) {
+    public ChannelGoesOffline(EventManager eventManager) {
         eventManager.onEvent(ChannelGoOfflineEvent.class).subscribe(event -> OnChannelOffline(event));
     }
 

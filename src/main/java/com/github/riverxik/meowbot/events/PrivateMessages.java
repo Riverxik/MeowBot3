@@ -1,4 +1,4 @@
-package com.github.riverxik.meowbot.features;
+package com.github.riverxik.meowbot.events;
 
 import com.github.riverxik.meowbot.modules.PrivateMessageManager;
 import com.github.riverxik.meowbot.modules.TwitchBot;
@@ -12,15 +12,15 @@ import org.slf4j.LoggerFactory;
  * @author RiVeRx
  * @version 1.0
  */
-public class CheckPrivateMessages {
+public class PrivateMessages {
 
-    private static final Logger log = LoggerFactory.getLogger(CheckPrivateMessages.class);
+    private static final Logger log = LoggerFactory.getLogger(PrivateMessages.class);
 
     /**
      * Handles the private message event
      * @param eventManager - event manager from TwitchClient {@link TwitchBot#twitchClient}
      */
-    public CheckPrivateMessages(EventManager eventManager) {
+    public PrivateMessages(EventManager eventManager) {
         eventManager.onEvent(PrivateMessageEvent.class).subscribe(event -> OnPrivateMessage(event));
     }
 

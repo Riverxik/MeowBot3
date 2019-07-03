@@ -1,11 +1,11 @@
-package com.github.riverxik.meowbot.features;
+package com.github.riverxik.meowbot.events;
 
 import com.github.philippheuer.events4j.EventManager;
 import com.github.twitch4j.chat.events.roomstate.SubscribersOnlyEvent;
 
-public class CheckSubscribersOnly {
+public class SubscribersOnly {
 
-    public CheckSubscribersOnly(EventManager eventManager) {
+    public SubscribersOnly(EventManager eventManager) {
         eventManager.onEvent(SubscribersOnlyEvent.class).subscribe(event -> OnSubscribersOnly(event));
     }
 

@@ -1,4 +1,4 @@
-package com.github.riverxik.meowbot.commands;
+package com.github.riverxik.meowbot.commands.fsa;
 
 import java.io.IOException;
 import java.nio.file.Files;

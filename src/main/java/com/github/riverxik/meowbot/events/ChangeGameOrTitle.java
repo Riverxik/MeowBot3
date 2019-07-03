@@ -1,4 +1,4 @@
-package com.github.riverxik.meowbot.features;
+package com.github.riverxik.meowbot.events;
 
 import com.github.philippheuer.events4j.EventManager;
 import com.github.riverxik.meowbot.modules.TwitchBot;

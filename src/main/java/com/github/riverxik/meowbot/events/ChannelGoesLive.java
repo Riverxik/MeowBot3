@@ -1,4 +1,4 @@
-package com.github.riverxik.meowbot.features;
+package com.github.riverxik.meowbot.events;
 
 import com.github.philippheuer.events4j.EventManager;
 import com.github.riverxik.meowbot.Configuration;
@@ -7,11 +7,11 @@ import com.github.twitch4j.common.events.channel.ChannelGoLiveEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CheckChannelGoesLive {
+public class ChannelGoesLive {
 
-    private static final Logger log = LoggerFactory.getLogger(CheckChannelGoesLive.class);
+    private static final Logger log = LoggerFactory.getLogger(ChannelGoesLive.class);
 
-    public CheckChannelGoesLive(EventManager eventManager) {
+    public ChannelGoesLive(EventManager eventManager) {
         eventManager.onEvent(ChannelGoLiveEvent.class).subscribe(event -> OnChannelGoLive(event));
     }
 

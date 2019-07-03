@@ -2,7 +2,7 @@ package com.github.riverxik.meowbot.modules;
 
 import com.github.riverxik.meowbot.Configuration;
 import com.github.riverxik.meowbot.database.ChannelDb;
-import com.github.riverxik.meowbot.features.*;
+import com.github.riverxik.meowbot.events.*;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
@@ -39,18 +39,24 @@ public class TwitchBot {
                 .build();
     }
 
-    /** Registers all features */
+    /** Registers all events */
     public void registerFeatures() {
         log.info("Component registration...");
-        CheckPublicMessages publicMessages = new CheckPublicMessages(twitchClient.getEventManager());
-        CheckPrivateMessages privateMessages = new CheckPrivateMessages(twitchClient.getEventManager());
-        //CheckChannelGoesLive channelGoesLive = new CheckChannelGoesLive(twitchClient.getEventManager());
-        //CheckChannelGoesOffline channelGoesOffline = new CheckChannelGoesOffline(twitchClient.getEventManager());
-        //CheckChannelGainFollower channelGainFollower = new CheckChannelGainFollower(twitchClient.getEventManager());
-        CheckSubscribersOnly subscribersOnly = new CheckSubscribersOnly(twitchClient.getEventManager());
+        PublicMessages publicMessages = new PublicMessages(twitchClient.getEventManager());
+        PrivateMessages privateMessages = new PrivateMessages(twitchClient.getEventManager());
+        SubscribersOnly subscribersOnly = new SubscribersOnly(twitchClient.getEventManager());
         ChangeGameOrTitle changeGameOrTitle = new ChangeGameOrTitle(twitchClient.getEventManager());
+        if (Configuration.isStreamLiveEnable()) {
+            ChannelGoesLive channelGoesLive = new ChannelGoesLive(twitchClient.getEventManager());
+        }
+        if (Configuration.isStreamOfflineEnable()) {
+            ChannelGoesOffline channelGoesOffline = new ChannelGoesOffline(twitchClient.getEventManager());
+        }
+        if (Configuration.isStreamFollower()) {
+            ChannelGainFollower channelGainFollower = new ChannelGainFollower(twitchClient.getEventManager());
+        }
         // TODO: Maybe i should put all this events together to one class.
-        // add features
+        // add events
     }
 
     /** Connects to all twitch channels */

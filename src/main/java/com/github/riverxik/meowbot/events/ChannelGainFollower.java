@@ -1,12 +1,12 @@
-package com.github.riverxik.meowbot.features;
+package com.github.riverxik.meowbot.events;
 
 import com.github.philippheuer.events4j.EventManager;
 import com.github.riverxik.meowbot.Configuration;
 import com.github.twitch4j.chat.events.channel.FollowEvent;
 
-public class CheckChannelGainFollower {
+public class ChannelGainFollower {
 
-    public CheckChannelGainFollower(EventManager eventManager) {
+    public ChannelGainFollower(EventManager eventManager) {
         eventManager.onEvent(FollowEvent.class).subscribe(event -> OnFollowEvent(event));
     }
 

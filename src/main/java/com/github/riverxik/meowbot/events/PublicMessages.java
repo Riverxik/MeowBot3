@@ -1,4 +1,4 @@
-package com.github.riverxik.meowbot.features;
+package com.github.riverxik.meowbot.events;
 
 import com.github.riverxik.meowbot.modules.PublicMessageManager;
 import com.github.riverxik.meowbot.modules.TwitchBot;
@@ -10,12 +10,12 @@ import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
  * @author RiVeRx
  * @version 1.0
  */
-public class CheckPublicMessages {
+public class PublicMessages {
     /**
      * Handles new channel messages.
      * @param eventManager - event manager from TwitchClient {@link TwitchBot#twitchClient}
      */
-    public CheckPublicMessages(EventManager eventManager) {
+    public PublicMessages(EventManager eventManager) {
         eventManager.onEvent(ChannelMessageEvent.class).subscribe(event -> onChannelMessage(event));
     }
 
