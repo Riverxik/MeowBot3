@@ -4,6 +4,9 @@ import com.github.philippheuer.events4j.EventManager;
 import com.github.riverxik.meowbot.modules.TwitchBot;
 import com.github.twitch4j.common.events.channel.ChannelChangeGameEvent;
 import com.github.twitch4j.common.events.channel.ChannelChangeTitleEvent;
+import com.github.twitch4j.helix.domain.GameList;
+
+import java.util.Arrays;
 
 public class ChangeGameOrTitle {
 
@@ -14,7 +17,7 @@ public class ChangeGameOrTitle {
 
     private void OnChangeGame(ChannelChangeGameEvent event) {
         String channelName = event.getChannel().getName();
-        long game = event.getGameId();
+        String game = getGameNameById(String.valueOf(event.getGameId()));
         TwitchBot.sendMessageToChat(channelName, String.format("[%s] now playing: %s", channelName, game));
     }
 
@@ -22,5 +25,10 @@ public class ChangeGameOrTitle {
         String channelName = event.getChannel().getName();
         String title = event.getTitle();
         TwitchBot.sendMessageToChat(channelName, String.format("[%s] change title to: %s", channelName, title));
+    }
+
+    private String getGameNameById(String gameId) {
+        GameList gameList = new TwitchBot().twitchClient.getHelix().getGames(Arrays.asList(gameId), null).execute();
+        return gameList.getGames().get(0).getName();
     }
 }
