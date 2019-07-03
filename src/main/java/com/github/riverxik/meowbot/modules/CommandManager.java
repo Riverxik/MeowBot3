@@ -70,6 +70,46 @@ public class CommandManager {
             return String.format("Can't recognize command with %d parameters", paramLength);
     }
 
+    public static String subEnable(String channelName, Command command) {
+        int paramLength = command.getParameters().length - 1;
+        if (paramLength == 0) {
+            return getSubEnable(channelName);
+        }
+        if (paramLength == 1) {
+            Object[] objParam = command.getParameters();
+            String param = String.valueOf(objParam[0]);
+            if("on".equals(param.toLowerCase())) {
+                return changeSubEnableForChannel(channelName, true);
+            }
+            if("off".equals(param.toLowerCase())) {
+                return changeSubEnableForChannel(channelName, false);
+            }
+            if("help".equals(param.toLowerCase())) {
+                return "Shows subscriber multiplier status. Use !subEnable [on/off]";
+            }
+            return String.format("Unknown parameter %s", param);
+        } else
+            return String.format("Can't recognize command with %d parameters", paramLength);
+    }
+
+    private static String getSubEnable(String channelName) {
+        if(CurrencyManager.getChannelSubEnable(channelName))
+            return String.format("Subscribers multiplier for %s is [enable]", channelName);
+        else
+            return String.format("Subscribers multiplier for %s is [disable]", channelName);
+    }
+
+    private static String changeSubEnableForChannel(String channelName, boolean isEnable) {
+        if(CurrencyManager.setChannelSubEnable(channelName, isEnable)) {
+            if(isEnable)
+                return String.format("Now subscribers multiplier for %s is [enable]", channelName);
+            else
+                return String.format("Now subscribers multiplier for %s is [disable]", channelName);
+        } else {
+            return String.format("Subscribers multiplier for %s couldn't updated", channelName);
+        }
+    }
+
     private static boolean isValidInteger(Object integer) {
         try {
             int value = (int) integer;
