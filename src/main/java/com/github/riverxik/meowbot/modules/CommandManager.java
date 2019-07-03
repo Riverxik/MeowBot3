@@ -28,6 +28,31 @@ public class CommandManager {
             return String.format("Can't recognize command with %d parameters", paramLength);
     }
 
+    public static String currencyName(String channelName, Command command) {
+        int paramLength = command.getParameters().length - 1;
+        if (paramLength == 0) {
+            return getCurrencyName(channelName);
+        }
+        if (paramLength == 1) {
+            Object[] objParam = command.getParameters();
+            String newName = String.valueOf(objParam[0]);
+            if("help".equals(newName.toLowerCase())) {
+                return String.format("Shows currency name. Use !currencyName [newValue]");
+            }
+            return changeCurrencyNameForChannel(channelName, newName);
+        } else
+            return String.format("Can't recognize command with %d parameters", paramLength);
+    }
+
+    private static String getCurrencyName(String channelName) {
+        return String.format("Current currency name for %s is [%s]",
+                channelName, CurrencyManager.getChannelCurrencyName(channelName));
+    }
+
+    private static String changeCurrencyNameForChannel(String channelName, String newCurrencyName) {
+        return CurrencyManager.setChannelCurrencyName(channelName, newCurrencyName);
+    }
+
     private static String changeCurrencyStatusForChannel(String channelName, boolean isEnable) {
         for (ChannelDb channel : Configuration.loadingChannels) {
             if(channelName.equals(channel.getChannelName())) {

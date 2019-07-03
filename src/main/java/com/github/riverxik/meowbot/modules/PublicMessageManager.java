@@ -35,6 +35,7 @@ public class PublicMessageManager {
     private static String processAdminCommand(String channel, Command command) {
         switch (command.getName()) {
             case "currency": return CommandManager.currency(channel, command);
+            case "currencyName": return CommandManager.currencyName(channel, command);
         }
         return processUserCommand(channel, command);
         // TODO: Code that precess admin chat commands
