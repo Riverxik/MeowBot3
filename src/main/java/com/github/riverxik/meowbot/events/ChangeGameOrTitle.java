@@ -28,7 +28,7 @@ public class ChangeGameOrTitle {
     }
 
     private String getGameNameById(String gameId) {
-        GameList gameList = new TwitchBot().twitchClient.getHelix().getGames(Arrays.asList(gameId), null).execute();
+        GameList gameList = TwitchBot.twitchClient.getHelix().getGames(Arrays.asList(gameId), null).execute();
         return gameList.getGames().get(0).getName();
     }
 }
