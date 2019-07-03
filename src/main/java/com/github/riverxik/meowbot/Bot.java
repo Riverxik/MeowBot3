@@ -51,7 +51,9 @@ public class Bot {
     }
 
     private void loadModules() {
-        CurrencyManager currencyManager = new CurrencyManager();
+        if (Configuration.isCurrencyEnable()) {
+            CurrencyManager currencyManager = new CurrencyManager();
+        }
     }
 
     private boolean isConfigExists() {

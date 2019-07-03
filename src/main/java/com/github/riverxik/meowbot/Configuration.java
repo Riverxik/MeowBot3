@@ -48,7 +48,7 @@ public class Configuration {
      * */
     public static HashMap<String, ChannelUsers> channelUsersList = new HashMap<>();
 
-    private static boolean moderationEnable = false; // TODO: use this for enabling/disabling features for all channels
+    private static boolean moderationEnable = false; // TODO: use this for enabling/disabling events for all channels
     private static boolean cusomCommandsEnable = false;
     private static boolean currencyEnable = false;
     private static boolean betsEbable = false;
@@ -59,6 +59,7 @@ public class Configuration {
     public static boolean isStreamLiveEnable() { return streamLiveEnable; }
     public static boolean isStreamOfflineEnable() { return streamOfflineEnable; }
     public static boolean isStreamFollower() { return streamFollower; }
+    public static boolean isCurrencyEnable() { return currencyEnable; }
 
     /**
      * Loads configurations settings from config.json, if config file doesn't exist creates it.
