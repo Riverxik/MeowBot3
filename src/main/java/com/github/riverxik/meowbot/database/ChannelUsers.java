@@ -1,5 +1,7 @@
 package com.github.riverxik.meowbot.database;
 
+import com.github.riverxik.meowbot.modules.CurrencyManager;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -65,17 +67,14 @@ public class ChannelUsers {
 
     private void calculateCurrency(String user, int oldCurrency) throws SQLException {
         if(isSub(user) || isVip(user)) {
-            String query = "SELECT `subEnable`, `subMultiplier` " +
-                    "FROM `currency` WHERE `channelName` = '"+channelName+"'";
-            ResultSet channelResSet = statement.executeQuery(query);
-            if(channelResSet.next()) {
-                String isEnable = channelResSet.getString(1);
-                int multiplier = channelResSet.getInt(2);
-                if("true".equals(isEnable)) {
-                    oldCurrency += multiplier;
-                }
+            if(CurrencyManager.getChannelSubEnable(channelName)) {
+                int multiplier = CurrencyManager.getChannelSubMultiplier(channelName);
+                oldCurrency += multiplier;
             }
-        } else { oldCurrency++; }
+        } else {
+            int increment = CurrencyManager.getChannelCurrencyInc(channelName);
+            oldCurrency += increment;
+        }
         increaseCurrency(user, oldCurrency);
     }
 
