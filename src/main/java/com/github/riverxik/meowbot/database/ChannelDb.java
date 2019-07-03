@@ -26,6 +26,12 @@ public final class ChannelDb extends Database {
      */
     public boolean isCurrencyEnabled() { return isCurrencyEnabled; }
 
+    /**
+     * Sets currency enabled
+     * @param value true, if currency has to be enabled
+     */
+    public void setCurrencyEnabled(boolean value) { this.isCurrencyEnabled = value; }
+
     private boolean isCustomCommandEnabled;
 
     private boolean isBetsEnabled;

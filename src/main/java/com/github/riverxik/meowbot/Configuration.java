@@ -3,7 +3,6 @@ package com.github.riverxik.meowbot;
 import com.github.riverxik.meowbot.database.ChannelDb;
 import com.github.riverxik.meowbot.database.ChannelUsers;
 import com.github.riverxik.meowbot.database.Database;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -49,7 +48,7 @@ public class Configuration {
     public static HashMap<String, ChannelUsers> channelUsersList = new HashMap<>();
 
     private static boolean moderationEnable = false; // TODO: use this for enabling/disabling events for all channels
-    private static boolean cusomCommandsEnable = false;
+    private static boolean customCommandsEnable = false;
     private static boolean currencyEnable = false;
     private static boolean betsEbable = false;
     private static boolean streamLiveEnable = false;
@@ -92,13 +91,13 @@ public class Configuration {
             log.info("Tokens has been successfully read!");
 
             JSONObject modules = (JSONObject) config.get("modules");
-            moderationEnable = Boolean.valueOf("moderation");
-            cusomCommandsEnable = Boolean.valueOf("customCommands");
-            currencyEnable = Boolean.valueOf("currency");
-            betsEbable = Boolean.valueOf("bets");
-            streamLiveEnable = Boolean.valueOf("streamLive");
-            streamOfflineEnable = Boolean.valueOf("streamOffline");
-            streamFollower = Boolean.valueOf("streamFollower");
+            moderationEnable = (boolean) modules.get("moderation");
+            customCommandsEnable = (boolean) modules.get("customCommands");
+            currencyEnable = (boolean) modules.get("currency");
+            betsEbable = (boolean) modules.get("bets");
+            streamLiveEnable = (boolean) modules.get("streamLive");
+            streamOfflineEnable = (boolean) modules.get("streamOffline");
+            streamFollower = (boolean) modules.get("streamFollower");
 
             admin = String.valueOf(config.get("admin"));
             log.info("Admin's nickname has been successfully read!");

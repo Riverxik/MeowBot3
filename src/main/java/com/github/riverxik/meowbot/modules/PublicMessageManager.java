@@ -1,10 +1,14 @@
 package com.github.riverxik.meowbot.modules;
 
 import com.github.riverxik.meowbot.Configuration;
+import com.github.riverxik.meowbot.commands.Command;
 import com.github.riverxik.meowbot.commands.fsa.Lexer;
 import com.github.riverxik.meowbot.commands.fsa.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PublicMessageManager {
     private static final Logger log = LoggerFactory.getLogger(PrivateMessageManager.class);
@@ -21,30 +25,43 @@ public class PublicMessageManager {
          * Если сообщение от админа передаём в обработчик для админа.
          * иначе отдаем в обработчик для пользователей.
          * */
-
+        Command userCommand = parseCommand(message);
         if(sender.equals(Configuration.admin))
-            return processAdminCommand(message);
+            return processAdminCommand(channel, userCommand);
         else
-            return processUserCommand(message);
+            return processUserCommand(channel, userCommand);
     }
 
-    private static String processAdminCommand(String message) {
-        return processUserCommand(message);
-        //return "You are admin :>";
+    private static String processAdminCommand(String channel, Command command) {
+        switch (command.getName()) {
+            case "currency": return CommandManager.currency(channel, command);
+        }
+        return processUserCommand(channel, command);
         // TODO: Code that precess admin chat commands
     }
 
-    private static String processUserCommand(String message) {
+    private static String processUserCommand(String channel, Command command) {
+        return "You are lovely user :3";
+        // TODO: Code that precess user chat commands
+    }
+
+    private static Command parseCommand(String message) {
         try {
-            Lexer lexer = new Lexer(message.substring(1));
+            Lexer lexer = new Lexer(message);
             lexer.tokenize();
             Parser parser = new Parser(lexer.getTokenList());
             parser.start(false);
-            return parser.stackValues.get(0).toString();
+
+            int sizeOfStackValues = parser.stackValues.size();
+            String commandName = parser.stackValues.get(0).toString();
+
+            Object[] params = new Object[sizeOfStackValues];
+            for (int i = 1; i < sizeOfStackValues; i++) {
+                params[i-1] = parser.stackValues.get(i);
+            }
+            return new Command(commandName, params);
         } catch (RuntimeException e) {
-            return e.getMessage();
+            return new Command(e.getMessage(), null);
         }
-        //return "You are lovely user :3";
-        // TODO: Code that precess user chat commands
     }
 }

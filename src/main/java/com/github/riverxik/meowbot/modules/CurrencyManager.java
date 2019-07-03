@@ -19,7 +19,7 @@ import java.sql.Statement;
  */
 public class CurrencyManager {
 
-    private final int DELAY_BETWEEN_QUERY = 300000; // Every 5 minutes check new users
+    private final int DELAY_BETWEEN_QUERY = 30000; // Every 5 minutes check new users
     private final boolean TIMEOUT_ENABLED = false; // For getChatters() because of poor internet. Default: true
 
     private static final Logger log = LoggerFactory.getLogger(CurrencyManager.class);

@@ -111,7 +111,7 @@ public class Parser {
                 case "(":
                 case ")":
                 case "~":
-                case "SYMBOL": // !
+                case "COMMAND": // !
                 {
                     nextToken();
                     popStack();

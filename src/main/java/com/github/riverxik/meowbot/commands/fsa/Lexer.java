@@ -11,7 +11,7 @@ public class Lexer {
     private int position = 0;
     private final char COMMAND_SYMBOL = '!';
     private final String AVAILABLE_SYMBOLS = "+-*/^'(),?~><;=";
-    private final String AVAILABLE_SYMBOLS_IN_WORDS = "'";
+    private final String AVAILABLE_SYMBOLS_IN_WORDS = "'%";
     private List<Token> tokenList = new ArrayList<>();
 
     public Lexer(String inputString) {
@@ -73,7 +73,7 @@ public class Lexer {
     }
 
     private Token tokenizeCommandSymbol() {
-        Token symbolToken = new Token("SYMBOL");
+        Token symbolToken = new Token("COMMAND");
         symbolToken.setStringValue("!");
         return symbolToken;
     }
