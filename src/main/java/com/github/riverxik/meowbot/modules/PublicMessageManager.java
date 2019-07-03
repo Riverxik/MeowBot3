@@ -38,6 +38,7 @@ public class PublicMessageManager {
             case "currencyName": return CommandManager.currencyName(channel, command);
             case "currencyInc": return CommandManager.currencyInc(channel, command);
             case "subEnable": return CommandManager.subEnable(channel, command);
+            case "subMultiplier": return CommandManager.subMultiplier(channel, command);
         }
         return processUserCommand(channel, command);
         // TODO: Code that precess admin chat commands

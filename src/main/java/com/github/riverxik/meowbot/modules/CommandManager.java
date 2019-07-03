@@ -92,6 +92,41 @@ public class CommandManager {
             return String.format("Can't recognize command with %d parameters", paramLength);
     }
 
+    public static String subMultiplier(String channelName, Command command) {
+        int paramLength = command.getParameters().length - 1;
+        if (paramLength == 0) {
+            return getSubMultiplier(channelName);
+        }
+        if (paramLength == 1) {
+            Object[] objParam = command.getParameters();
+            if(objParam[0] instanceof String) {
+                String param = String.valueOf(objParam[0]);
+                if("help".equals(param.toLowerCase())) {
+                    return "Shows multiplier applied to subscribers and vips. Use !subMultiplier [newIntValue]";
+                }
+            }
+            if(objParam[0] instanceof Integer) {
+                if(isValidInteger(objParam[0])) {
+                    int inc = (int) objParam[0];
+                    if(CurrencyManager.setChannelSubMultiplier(channelName, inc) == 1) {
+                        return String.format("Subscriber multiplier for %s is [%d]", channelName, inc);
+                    } else {
+                        return String.format("Subscriber multiplier couldn't updated!");
+                    }
+                } else {
+                    return "Illegal integer number";
+                }
+            }
+            return "Please use integer as parameter!";
+        } else
+            return String.format("Can't recognize command with %d parameters", paramLength);
+    }
+
+    private static String getSubMultiplier(String channelName) {
+        return String.format("Subscribers multiplier for %s is [%d]",channelName,
+                CurrencyManager.getChannelSubMultiplier(channelName));
+    }
+
     private static String getSubEnable(String channelName) {
         if(CurrencyManager.getChannelSubEnable(channelName))
             return String.format("Subscribers multiplier for %s is [enable]", channelName);
