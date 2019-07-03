@@ -4,6 +4,8 @@ import com.github.riverxik.meowbot.modules.PublicMessageManager;
 import com.github.riverxik.meowbot.modules.TwitchBot;
 import com.github.philippheuer.events4j.EventManager;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Writes chat messages from channels.
@@ -11,6 +13,8 @@ import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
  * @version 1.0
  */
 public class PublicMessages {
+
+    private static final Logger log = LoggerFactory.getLogger(PublicMessages.class);
     /**
      * Handles new channel messages.
      * @param eventManager - event manager from TwitchClient {@link TwitchBot#twitchClient}
@@ -24,16 +28,14 @@ public class PublicMessages {
         String sender = event.getUser().getName();
         String message = event.getMessage();
 
+        log.info(String.format("[%s][%s] - [%s]", channel, sender, message));
+
         if(message.startsWith("!")) {
             String botAnswer = PublicMessageManager.processNewMessage(channel, sender, message);
-            event.getTwitchChat().sendMessage(channel, sender + " " + botAnswer); // Don't answers yet
+            event.getTwitchChat().sendMessage(channel, sender + " " + botAnswer);
+            log.info(String.format("[%s][%s] - [%s]", channel, "Bot", botAnswer));
         }
-        System.out.printf(
-                "Channel [%s] - User[%s] - Message [%s]%n",
-                event.getChannel().getName(),
-                event.getUser().getName(),
-                event.getMessage()
-        );
+
         if(event.getMessage().equals("meow"))
             event.getTwitchChat().sendMessage(event.getChannel().getName(), event.getUser().getName() + " meow <3");
     }

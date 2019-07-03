@@ -1,8 +1,8 @@
 package com.github.riverxik.meowbot.modules;
 
 import com.github.riverxik.meowbot.Configuration;
-import com.github.riverxik.meowbot.commands.Lexer;
-import com.github.riverxik.meowbot.commands.Parser;
+import com.github.riverxik.meowbot.commands.fsa.Lexer;
+import com.github.riverxik.meowbot.commands.fsa.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +21,6 @@ public class PublicMessageManager {
          * Если сообщение от админа передаём в обработчик для админа.
          * иначе отдаем в обработчик для пользователей.
          * */
-        log.info(String.format("[%s][%s] - [%s]", channel, sender, message));
 
         if(sender.equals(Configuration.admin))
             return processAdminCommand(message);
@@ -30,17 +29,21 @@ public class PublicMessageManager {
     }
 
     private static String processAdminCommand(String message) {
-        return "You are admin :>";
+        return processUserCommand(message);
+        //return "You are admin :>";
         // TODO: Code that precess admin chat commands
     }
 
     private static String processUserCommand(String message) {
-        // Temporary
-        Lexer lexer = new Lexer(message.substring(1));
-        lexer.tokenize();
-        Parser parser = new Parser(lexer.getTokenList());
-        parser.start(false);
-        return parser.stackValues.get(0).toString();
+        try {
+            Lexer lexer = new Lexer(message.substring(1));
+            lexer.tokenize();
+            Parser parser = new Parser(lexer.getTokenList());
+            parser.start(false);
+            return parser.stackValues.get(0).toString();
+        } catch (RuntimeException e) {
+            return e.getMessage();
+        }
         //return "You are lovely user :3";
         // TODO: Code that precess user chat commands
     }

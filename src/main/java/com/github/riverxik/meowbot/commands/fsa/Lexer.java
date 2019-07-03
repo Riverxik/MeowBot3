@@ -21,7 +21,6 @@ public class Lexer {
     public void tokenize() {
         while(true) {
             char current = getCurrent();
-//            System.out.print(current);
             if(COMMAND_SYMBOL == current)
                 tokenList.add(tokenizeCommandSymbol());
             if('\"' == current)
@@ -63,7 +62,6 @@ public class Lexer {
         }
         Token longStringToken = new Token("STRING");
         longStringToken.setStringValue(value);
-        //position++;
         return longStringToken;
     }
 
@@ -84,7 +82,6 @@ public class Lexer {
         String value = "" + first;
         while (true) {
             char current = getCurrent();
-//            System.out.print(current);
             if(Character.isLetterOrDigit(current) || AVAILABLE_SYMBOLS_IN_WORDS.indexOf(current) != -1)
                 value += current;
             else {
@@ -101,7 +98,6 @@ public class Lexer {
         boolean isDouble = false;
         while (true) {
             char current = getCurrent();
-//            System.out.print(current);
             if (Character.isDigit(current) || '.' == current) {
                 if (!isDouble && '.' == current) {
                     isDouble = true;
@@ -118,7 +114,13 @@ public class Lexer {
                     return floatToken;
                 } else {
                     Token intToken = new Token("INTEGERNUM");
-                    intToken.setIntValue(Integer.valueOf(value));
+                    int tmp = 0;
+                    try {
+                        tmp = Integer.valueOf(value);
+                    } catch (NumberFormatException e) {
+                        throw new RuntimeException("Integer number is not in integer range");
+                    }
+                    intToken.setIntValue(tmp);
                     return intToken;
                 }
             }

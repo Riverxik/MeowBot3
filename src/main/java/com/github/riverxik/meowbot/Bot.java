@@ -60,13 +60,13 @@ public class Bot {
         JSONParser parser = new JSONParser();
         try {
             parser.parse(new FileReader("config.json"));
-            log.info("Конфигурация найдена!");
+            log.info("Configuration has been found!");
             return true;
 
         } catch (ParseException | IOException e){
             if(e.getMessage().equals("config.json (Не удается найти указанный файл)")) {
                 say(e.getMessage());
-                log.error("Не удалось найти файл конфигурации!");
+                log.error("Configuration file couldn't found!!");
                 createConfigurationFile();
             }
         }
@@ -111,14 +111,14 @@ public class Bot {
         // Write to file
         try (FileWriter file = new FileWriter("config.json")) {
             file.write(obj.toJSONString());
-            log.info("Файл конфигурации 'config.json' сгенерирован.");
-            say("Файл конфигурации 'config.json' сгенерирован. Пожалуйста заполните его ;)");
+            log.info("Configuration file 'config.json' has been generated.");
+            say("Configuration file 'config.json' has been generated. Please fill it out ;)");
             file.flush();
             file.close();
             java.lang.System.exit(0);
         } catch (IOException e) {
-            say("Что-то пошло не так, нет возможности создать файл конфигурации.");
-            log.error("Не удалось создать файл конфигурации.", e.toString());
+            say("Something wrong. Couldn't create configuration file.");
+            log.error("Couldn't create configuration file.", e.toString());
             e.printStackTrace();
             java.lang.System.exit(0);
         }

@@ -56,13 +56,14 @@ public class Parser {
         if(isDebug) {
             System.out.println("\nRules:");
             showAllRules();
+            System.out.println("******************");
         }
         while (true)
         {
-            if(!parse())
+            if(!parse()) {
                 break;
+            }
         }
-        System.out.println("******************");
         if(topStack().equals("BOTTOM"))
             if(isDebug)
                 System.out.println("Code is valid");
@@ -247,7 +248,7 @@ public class Parser {
                 //tmpRule.getChoiceUnity().forEach(notFoundTokens::append);
             }
         }
-        throw new RuntimeException("Unexpected token " + currentToken + " expected " + notFoundTokens);
+        throw new RuntimeException("Unexpected token [" + currentToken + "] expected [" + notFoundTokens + "]");
     }
 
     private List<Integer> foundIndexOfToken(String name)
