@@ -36,6 +36,7 @@ public class PublicMessageManager {
         switch (command.getName()) {
             case "currency": return CommandManager.currency(channel, command);
             case "currencyName": return CommandManager.currencyName(channel, command);
+            case "currencyInc": return CommandManager.currencyInc(channel, command);
         }
         return processUserCommand(channel, command);
         // TODO: Code that precess admin chat commands

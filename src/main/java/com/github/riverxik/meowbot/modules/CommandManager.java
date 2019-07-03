@@ -37,11 +37,58 @@ public class CommandManager {
             Object[] objParam = command.getParameters();
             String newName = String.valueOf(objParam[0]);
             if("help".equals(newName.toLowerCase())) {
-                return String.format("Shows currency name. Use !currencyName [newValue]");
+                return "Shows currency name. Use !currencyName [newValue]";
             }
             return changeCurrencyNameForChannel(channelName, newName);
         } else
             return String.format("Can't recognize command with %d parameters", paramLength);
+    }
+
+    public static String currencyInc(String channelName, Command command) {
+        int paramLength = command.getParameters().length - 1;
+        if (paramLength == 0) {
+            return getCurrencyInc(channelName);
+        }
+        if (paramLength == 1) {
+            Object[] objParam = command.getParameters();
+            if(objParam[0] instanceof String) {
+                String param = String.valueOf(objParam[0]);
+                if("help".equals(param.toLowerCase())) {
+                    return "Shows currency increment. Use !currencyInc [newIntValue]";
+                }
+            }
+            if(objParam[0] instanceof Integer) {
+                if(isValidInteger(objParam[0])) {
+                    int inc = (int) objParam[0];
+                    return changeCurrencyIncForChannel(channelName, inc);
+                } else {
+                    return "Illegal integer number";
+                }
+            }
+            return "Please use integer as parameter!";
+        } else
+            return String.format("Can't recognize command with %d parameters", paramLength);
+    }
+
+    private static boolean isValidInteger(Object integer) {
+        try {
+            int value = (int) integer;
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private static String changeCurrencyIncForChannel(String channelName, int newInc) {
+        if(CurrencyManager.setChannelCurrencyInc(channelName, newInc) == 1)
+            return getCurrencyInc(channelName);
+        else
+            return String.format("Currency increment wasn't updated");
+    }
+
+    private static String getCurrencyInc(String channelName) {
+        return String.format("Current currency increment for %s is [%s]",
+                channelName, CurrencyManager.getChannelCurrencyInc(channelName));
     }
 
     private static String getCurrencyName(String channelName) {
