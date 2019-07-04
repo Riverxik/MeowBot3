@@ -27,12 +27,12 @@ public class PublicMessageManager {
          * */
         Command userCommand = parseCommand(message);
         if(sender.equals(Configuration.admin))
-            return processAdminCommand(channel, userCommand);
+            return processAdminCommand(channel, sender, userCommand);
         else
-            return processUserCommand(channel, userCommand);
+            return processUserCommand(channel, sender, userCommand);
     }
 
-    private static String processAdminCommand(String channel, Command command) {
+    private static String processAdminCommand(String channel, String sender, Command command) {
         switch (command.getName()) {
             case "currency": return CommandManager.currency(channel, command);
             case "currencyName": return CommandManager.currencyName(channel, command);
@@ -40,11 +40,14 @@ public class PublicMessageManager {
             case "subEnable": return CommandManager.subEnable(channel, command);
             case "subMultiplier": return CommandManager.subMultiplier(channel, command);
         }
-        return processUserCommand(channel, command);
+        return processUserCommand(channel, sender, command);
         // TODO: Code that precess admin chat commands
     }
 
-    private static String processUserCommand(String channel, Command command) {
+    private static String processUserCommand(String channel, String sender, Command command) {
+        switch (command.getName()) {
+            case "myCurrency": return CommandManager.myCurrency(channel, sender, command);
+        }
         return "You are lovely user :3";
         // TODO: Code that precess user chat commands
     }
