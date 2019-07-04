@@ -5,6 +5,7 @@
   My last version of this bot was support only api v.3 which is deprecated on twitch and wouldn't work soon.
   So, i had to change the api of the new version of bot and here it is.
   Now i can add more some features which wasn't available on latest api.
+  
 |Master|Develop|
 |---|---|
 | [![Build Status](https://travis-ci.org/Riverxik/MeowBot3.svg?branch=master)](https://travis-ci.org/Riverxik/MeowBot3)  | [![Build Status](https://travis-ci.org/Riverxik/MeowBot3.svg?branch=develop)](https://travis-ci.org/Riverxik/MeowBot3) |
