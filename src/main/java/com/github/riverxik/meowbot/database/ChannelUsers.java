@@ -26,7 +26,7 @@ public class ChannelUsers {
     /** List of all subscriber nicknames of current channel */
     public List<String> subscribers = new ArrayList<>();
 
-    private Statement statement = null;
+    private static Statement statement = null;
 
     /** Creates a table for new channel in database */
     public void createTable() {
@@ -63,6 +63,26 @@ public class ChannelUsers {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public static int getUserCurrency(String channelName, String userName) {
+        Database database = new Database();
+        database.connect();
+        int count = 0;
+        try {
+            statement = database.getConnection().createStatement();
+            String query = "SELECT `currency` FROM `"+channelName+"` " +
+                    "WHERE `userName` = '"+userName.toLowerCase()+"'";
+            ResultSet resultSet = statement.executeQuery(query);
+            if(resultSet.next()) {
+                count = resultSet.getInt("currency");
+            }
+            statement.close();
+            database.disconnect();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
     }
 
     private void calculateCurrency(String user, int oldCurrency) throws SQLException {

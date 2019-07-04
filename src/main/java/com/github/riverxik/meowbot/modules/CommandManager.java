@@ -3,6 +3,7 @@ package com.github.riverxik.meowbot.modules;
 import com.github.riverxik.meowbot.Configuration;
 import com.github.riverxik.meowbot.commands.Command;
 import com.github.riverxik.meowbot.database.ChannelDb;
+import com.github.riverxik.meowbot.database.ChannelUsers;
 
 public class CommandManager {
 
@@ -120,6 +121,32 @@ public class CommandManager {
             return "Please use integer as parameter!";
         } else
             return String.format("Can't recognize command with %d parameters", paramLength);
+    }
+
+    public static String myCurrency(String channelName, String sender, Command command) {
+        int paramLength = command.getParameters().length - 1;
+        if (paramLength == 0) {
+            return getUserCurrency(channelName, sender);
+        }
+        if (paramLength == 1) {
+            Object[] objParam = command.getParameters();
+            if(objParam[0] instanceof String) {
+                String param = String.valueOf(objParam[0]);
+                if("help".equals(param.toLowerCase())) {
+                    return "Shows user currency. Use !myCurrency or !myCurrency [userName]";
+                }
+                return getUserCurrency(channelName, param);
+            } else return "Please use string as a parameter!";
+        } else return String.format("Can't recognize command with %d parameters", paramLength);
+    }
+
+    private static String getUserCurrency(String channelName, String userName) {
+        int amount = ChannelUsers.getUserCurrency(channelName, userName);
+        String currency = CurrencyManager.getChannelCurrencyName(channelName);
+        if (amount != 0)
+            return String.format("%s %s = %d", currency, userName, amount);
+        else
+            return String.format("Can't find amount of currency %s", userName);
     }
 
     private static String getSubMultiplier(String channelName) {
