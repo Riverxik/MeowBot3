@@ -1,16 +1,13 @@
 package com.github.riverxik.meowbot;
 
-import com.github.riverxik.meowbot.modules.CurrencyManager;
+import com.github.riverxik.meowbot.modules.currency.CurrencyManager;
 import com.github.riverxik.meowbot.modules.TwitchBot;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -67,61 +64,10 @@ public class Bot {
             if(e.getMessage().equals("config.json (Не удается найти указанный файл)")) {
                 say(e.getMessage());
                 log.error("Configuration file couldn't found!!");
-                createConfigurationFile();
+                Configuration.createConfigurationFile(this);
             }
         }
         return false;
-    }
-
-    @SuppressWarnings("unchecked")
-    private void createConfigurationFile() {
-        JSONObject obj = new JSONObject();
-
-        JSONObject tokens = new JSONObject();
-        tokens.put("clientAppId", "EnterYourApplicationIdHere");
-        tokens.put("clientAppSecret", "EnterYourApplicationSecretHere");
-        tokens.put("chatToken", "EnterYourChatTokenHere");
-        obj.put("tokens", tokens);
-
-        JSONArray channels = new JSONArray();
-        JSONObject channel = new JSONObject();
-        channel.put("channelName", "murameowbot");
-        channel.put("accessToken", "");
-        channel.put("moderationEnabled", false);
-        channel.put("currencyEnabled", false);
-        channel.put("customCommandsEnabled", false);
-        channel.put("betsEnabled", false);
-        channels.add(channel);
-        obj.put("channels", channels);
-
-        // For disabling modules for all channel.
-        // Not implemented right now.
-        JSONObject modules = new JSONObject();
-        modules.put("currency", false);
-        modules.put("moderation", false);
-        modules.put("bets", false);
-        modules.put("customCommands", false);
-        modules.put("streamLive", false);
-        modules.put("streamOffline", false);
-        modules.put("streamFollower", false);
-        obj.put("modules", modules);
-
-        obj.put("admin", "putYourNicknameHere");
-
-        // Write to file
-        try (FileWriter file = new FileWriter("config.json")) {
-            file.write(obj.toJSONString());
-            log.info("Configuration file 'config.json' has been generated.");
-            say("Configuration file 'config.json' has been generated. Please fill it out ;)");
-            file.flush();
-            file.close();
-            java.lang.System.exit(0);
-        } catch (IOException e) {
-            say("Something wrong. Couldn't create configuration file.");
-            log.error("Couldn't create configuration file.", e.toString());
-            e.printStackTrace();
-            java.lang.System.exit(0);
-        }
     }
 
     /**

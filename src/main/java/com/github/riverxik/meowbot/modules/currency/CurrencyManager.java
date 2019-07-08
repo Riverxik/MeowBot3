@@ -1,10 +1,10 @@
-package com.github.riverxik.meowbot.modules;
+package com.github.riverxik.meowbot.modules.currency;
 
 import com.github.riverxik.meowbot.Configuration;
-import com.github.riverxik.meowbot.database.ChannelCurrency;
-import com.github.riverxik.meowbot.database.ChannelDb;
-import com.github.riverxik.meowbot.database.ChannelUsers;
 import com.github.riverxik.meowbot.database.Database;
+import com.github.riverxik.meowbot.modules.TwitchBot;
+import com.github.riverxik.meowbot.modules.chat.Channel;
+import com.github.riverxik.meowbot.modules.chat.ChannelUser;
 import com.github.twitch4j.tmi.domain.Chatters;
 import com.netflix.hystrix.HystrixCommandProperties;
 import org.slf4j.Logger;
@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,7 +25,6 @@ public class CurrencyManager {
 
     private final int DELAY_BETWEEN_QUERY = 30000; // Every 5 minutes check new users
     private final boolean TIMEOUT_ENABLED = false; // For getChatters() because of poor internet. Default: true
-    private static List<ChannelCurrency> channelCurrencyList = new ArrayList<>();
 
     private static final Logger log = LoggerFactory.getLogger(CurrencyManager.class);
 
@@ -42,12 +40,11 @@ public class CurrencyManager {
      * @return String, Currency name for specific channel.
      */
     public static String getChannelCurrencyName(String channelName) {
-        for (ChannelCurrency channel : channelCurrencyList) {
-            if(channelName.equals(channel.getChannelName())) {
-                return channel.getCurrencyName();
-            }
+        try {
+            return Configuration.getChannelByName(channelName).getSettings().getCurrency().getCurrencyName();
+        } catch (NullPointerException e) {
+            return String.format("Couldn't found currency name for %s", channelName);
         }
-        return String.format("Couldn't found currency name for %s", channelName);
     }
 
     /**
@@ -57,14 +54,13 @@ public class CurrencyManager {
      * @return String with message about any changes
      */
     public static String setChannelCurrencyName(String channelName, String currencyName) {
-        for (ChannelCurrency channel : channelCurrencyList) {
-            if(channelName.equals(channel.getChannelName())) {
-                channel.setCurrencyName(currencyName);
-                updateCurrencySettings();
-                return String.format("Currency name for %s has been updated to [%s]", channelName, currencyName);
-            }
+        try {
+            Configuration.getChannelByName(channelName).getSettings().getCurrency().setCurrencyName(currencyName);
+            updateCurrencySettings();
+            return String.format("Currency name for %s has been updated to [%s]", channelName, currencyName);
+        } catch (NullPointerException e) {
+            return String.format("Couldn't found currency name for %s", channelName);
         }
-        return String.format("Couldn't found currency name for %s", channelName);
     }
 
     /**
@@ -73,12 +69,11 @@ public class CurrencyManager {
      * @return new currency increment or 0 if there was no change
      */
     public static int getChannelCurrencyInc(String channelName) {
-        for (ChannelCurrency channel : channelCurrencyList) {
-            if(channelName.equals(channel.getChannelName())) {
-                return channel.getCurrencyInc();
-            }
+        try {
+            return Configuration.getChannelByName(channelName).getSettings().getCurrency().getCurrencyInc();
+        } catch (NullPointerException e) {
+            return -1;
         }
-        return 0;
     }
 
     /**
@@ -88,14 +83,13 @@ public class CurrencyManager {
      * @return 1 if currency increment has been updated, else 0
      */
     public static int setChannelCurrencyInc(String channelName, int currencyInc) {
-        for (ChannelCurrency channel : channelCurrencyList) {
-            if(channelName.equals(channel.getChannelName())) {
-                channel.setCurrencyInc(currencyInc);
-                updateCurrencySettings();
-                return 1;
-            }
+        try {
+            Configuration.getChannelByName(channelName).getSettings().getCurrency().setCurrencyInc(currencyInc);
+            updateCurrencySettings();
+            return 1;
+        } catch (NullPointerException e) {
+            return -1;
         }
-        return 0;
     }
 
     /**
@@ -104,12 +98,11 @@ public class CurrencyManager {
      * @return is a subscriber multiplier enable
      */
     public static boolean getChannelSubEnable(String channelName) {
-        for (ChannelCurrency channel : channelCurrencyList) {
-            if(channelName.equals(channel.getChannelName())) {
-                return channel.isSubEnable();
-            }
+        try {
+            return Configuration.getChannelByName(channelName).getSettings().getCurrency().isSubEnable();
+        } catch (NullPointerException e) {
+            return false;
         }
-        return false;
     }
 
     /**
@@ -119,14 +112,13 @@ public class CurrencyManager {
      * @return true if value was updated else false
      */
     public static boolean setChannelSubEnable(String channelName, boolean isSubEnable) {
-        for (ChannelCurrency channel : channelCurrencyList) {
-            if(channelName.equals(channel.getChannelName())) {
-                channel.setSubEnable(isSubEnable);
-                updateCurrencySettings();
-                return true;
-            }
+        try {
+            Configuration.getChannelByName(channelName).getSettings().getCurrency().setSubEnable(isSubEnable);
+            updateCurrencySettings();
+            return true;
+        } catch (NullPointerException e) {
+            return false;
         }
-        return false;
     }
 
     /**
@@ -135,12 +127,11 @@ public class CurrencyManager {
      * @return value of subscriber multiplier
      */
     public static int getChannelSubMultiplier(String channelName) {
-        for (ChannelCurrency channel : channelCurrencyList) {
-            if(channelName.equals(channel.getChannelName())) {
-                return channel.getSubMultiplier();
-            }
+        try {
+            return Configuration.getChannelByName(channelName).getSettings().getCurrency().getSubMultiplier();
+        } catch (NullPointerException e) {
+            return 1;
         }
-        return 1;
     }
 
     /**
@@ -150,14 +141,33 @@ public class CurrencyManager {
      * @return 1 if value was updated else 0
      */
     public static int setChannelSubMultiplier(String channelName, int subMultiplier) {
-        for (ChannelCurrency channel : channelCurrencyList) {
-            if(channelName.equals(channel.getChannelName())) {
-                channel.setSubMultiplier(subMultiplier);
-                updateCurrencySettings();
-                return 1;
-            }
+        try {
+            Configuration.getChannelByName(channelName).getSettings().getCurrency().setSubMultiplier(subMultiplier);
+            updateCurrencySettings();
+            return 1;
+        } catch (NullPointerException e) {
+            return 0;
         }
-        return 0;
+    }
+
+    public static int getUserCurrency(String channelName, String userName) {
+        Database database = new Database();
+        database.connect();
+        int count = 0;
+        try {
+            Statement statement = database.getConnection().createStatement();
+            String query = "SELECT `currency` FROM `"+channelName+"` " +
+                    "WHERE `userName` = '"+userName.toLowerCase()+"'";
+            ResultSet resultSet = statement.executeQuery(query);
+            if(resultSet.next()) {
+                count = resultSet.getInt("currency");
+            }
+            statement.close();
+            database.disconnect();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
     }
 
     private void init() {
@@ -170,8 +180,8 @@ public class CurrencyManager {
     }
 
     private void loadChannelCurrency() {
-        for (ChannelDb channel : Configuration.loadingChannels) {
-            String channelName = channel.getChannelName();
+        for (Channel channel : Configuration.loadingChannels) {
+            String channelName = channel.getName();
             String currencyName = "Points";
             int currencyInc = 1;
             boolean subEnable = false;
@@ -197,14 +207,13 @@ public class CurrencyManager {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            channelCurrencyList.add(
-                    new ChannelCurrency(channelName, currencyName, currencyInc, subEnable, subMultiplier));
+            channel.getSettings().setCurrency(new ChannelCurrency(currencyName, currencyInc, subEnable, subMultiplier));
         }
     }
 
     private void setupChannelCurrency() {
-        for(ChannelDb channel : Configuration.loadingChannels) {
-            String channelName = channel.getChannelName();
+        for(Channel channel : Configuration.loadingChannels) {
+            String channelName = channel.getName();
             log.info(String.format("Setup currency settings for [%s]...", channelName));
             Database database = new Database();
             database.connect();
@@ -248,21 +257,18 @@ public class CurrencyManager {
     }
 
     private void start() {
-        Thread run = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(true)
+        Thread run = new Thread(() -> {
+            while(true)
+            {
+                try
                 {
-                    try
-                    {
-                        // Every 5 minutes.
-                        loadUsers();
-                        Thread.sleep(DELAY_BETWEEN_QUERY);
-                    } catch (InterruptedException e) {
-                        log.error("Error with loading chat users", e.getMessage());
-                        e.printStackTrace();
-                        break;
-                    }
+                    // Every 5 minutes.
+                    loadUsers();
+                    Thread.sleep(DELAY_BETWEEN_QUERY);
+                } catch (InterruptedException e) {
+                    log.error("Error with loading chat users", e.getMessage());
+                    e.printStackTrace();
+                    break;
                 }
             }
         });
@@ -270,21 +276,28 @@ public class CurrencyManager {
     }
 
     private void loadUsers() {
-        for(ChannelDb channel : Configuration.loadingChannels) {
+        for(Channel channel : Configuration.loadingChannels) {
             HystrixCommandProperties.Setter().withExecutionTimeoutEnabled(TIMEOUT_ENABLED);
-            Chatters chatters = TwitchBot.twitchClient.getMessagingInterface().getChatters(channel.getChannelName()).execute();
-            ChannelUsers channelUsers = new ChannelUsers();
+            Chatters chatters = TwitchBot.twitchClient.getMessagingInterface().getChatters(channel.getName()).execute();
 
-            channelUsers.channelName = channel.getChannelName();
-            channelUsers.allViewers = chatters.getAllViewers();
-            channelUsers.moderators =  chatters.getModerators();
-            channelUsers.vips = chatters.getVips();
+            List<String> userNameAllViewers = chatters.getAllViewers();
+            List<String> userNameMods = chatters.getModerators();
+            List<String> userNameVips = chatters.getVips();
 
-            channelUsers.update(channel.isCurrencyEnabled());
+            for (int i = 0; i < userNameAllViewers.size(); i++) {
+                String userName = userNameAllViewers.get(i);
+                boolean isMod = userNameMods.contains(userName);
+                boolean isVip = userNameVips.contains(userName);
+                ChannelUser user = new ChannelUser(userName, isMod, false, isVip);
 
-            Configuration.channelUsersList.put(channel.getChannelName(),channelUsers);
+                if(!channel.isContainUser(user.getName())) {
+                    channel.addUserToChannel(user);
+                }
+            }
 
-            log.info(String.format("[%s] loaded users [%d]", channel.getChannelName(), chatters.getAllViewers().size()));
+            int userCount = channel.getUsersCount();
+            log.info(String.format("[%s] loaded users [%d]", channel.getName(), userCount));
+            channel.updateAllUsersInDatabase();
 
             // Delay between executing next channel
             try {
@@ -297,12 +310,12 @@ public class CurrencyManager {
     }
 
     private static void updateCurrencySettings() {
-        for(ChannelDb channel : Configuration.loadingChannels) {
+        for(Channel channel : Configuration.loadingChannels) {
             Database database = new Database();
             database.connect();
             try {
                 Statement statement = database.getConnection().createStatement();
-                String channelName = channel.getChannelName();
+                String channelName = channel.getName();
                 String currencyName = CurrencyManager.getChannelCurrencyName(channelName);
                 int currencyInc = CurrencyManager.getChannelCurrencyInc(channelName);
                 boolean subEnable = CurrencyManager.getChannelSubEnable(channelName);
