@@ -2,8 +2,8 @@ package com.github.riverxik.meowbot.modules;
 
 import com.github.riverxik.meowbot.Configuration;
 import com.github.riverxik.meowbot.commands.Command;
-import com.github.riverxik.meowbot.database.ChannelDb;
-import com.github.riverxik.meowbot.database.ChannelUsers;
+import com.github.riverxik.meowbot.modules.chat.Channel;
+import com.github.riverxik.meowbot.modules.currency.CurrencyManager;
 
 public class CommandManager {
 
@@ -13,135 +13,153 @@ public class CommandManager {
             return currencyStatusForChannel(channelName);
         }
         if (paramLength == 1) {
-            Object[] objParam = command.getParameters();
-            String param = String.valueOf(objParam[0]);
-            if("on".equals(param.toLowerCase())) {
-                return changeCurrencyStatusForChannel(channelName, true);
-            }
-            if("off".equals(param.toLowerCase())) {
-                return changeCurrencyStatusForChannel(channelName, false);
-            }
-            if("help".equals(param.toLowerCase())) {
-                return "Shows currency status. Use !currency [on/off]";
-            }
-            return String.format("Unknown parameter %s", param);
+            if(Configuration.isCurrencyEnable()) {
+                Object[] objParam = command.getParameters();
+                String param = String.valueOf(objParam[0]);
+                if("on".equals(param.toLowerCase())) {
+                    return changeCurrencyStatusForChannel(channelName, true);
+                }
+                if("off".equals(param.toLowerCase())) {
+                    return changeCurrencyStatusForChannel(channelName, false);
+                }
+                if("help".equals(param.toLowerCase())) {
+                    return "Shows currency status. Use !currency [on/off]";
+                }
+                return String.format("Unknown parameter %s", param);
+            } else return ErrorCodes.DISABLED_CURRENCY.getInfo();
         } else
-            return String.format("Can't recognize command with %d parameters", paramLength);
+            return ErrorCodes.ILLEGAL_CURRENCY_PARAMETERS.getInfo();
     }
 
     public static String currencyName(String channelName, Command command) {
-        int paramLength = command.getParameters().length - 1;
-        if (paramLength == 0) {
-            return getCurrencyName(channelName);
-        }
-        if (paramLength == 1) {
-            Object[] objParam = command.getParameters();
-            String newName = String.valueOf(objParam[0]);
-            if("help".equals(newName.toLowerCase())) {
-                return "Shows currency name. Use !currencyName [newValue]";
+        if (Configuration.isCurrencyEnable()) {
+            int paramLength = command.getParameters().length - 1;
+            if (paramLength == 0) {
+                return getCurrencyName(channelName);
             }
-            return changeCurrencyNameForChannel(channelName, newName);
-        } else
-            return String.format("Can't recognize command with %d parameters", paramLength);
+            if (paramLength == 1) {
+                Object[] objParam = command.getParameters();
+                String newName = String.valueOf(objParam[0]);
+                if("help".equals(newName.toLowerCase())) {
+                    return "Shows currency name. Use !currencyName [newValue]";
+                }
+                return changeCurrencyNameForChannel(channelName, newName);
+
+            } else return ErrorCodes.ILLEGAL_CURRENCY_PARAMETERS.getInfo();
+
+        } else return ErrorCodes.DISABLED_CURRENCY.getInfo();
     }
 
     public static String currencyInc(String channelName, Command command) {
-        int paramLength = command.getParameters().length - 1;
-        if (paramLength == 0) {
-            return getCurrencyInc(channelName);
-        }
-        if (paramLength == 1) {
-            Object[] objParam = command.getParameters();
-            if(objParam[0] instanceof String) {
-                String param = String.valueOf(objParam[0]);
-                if("help".equals(param.toLowerCase())) {
-                    return "Shows currency increment. Use !currencyInc [newIntValue]";
-                }
+        if (Configuration.isCurrencyEnable()) {
+            int paramLength = command.getParameters().length - 1;
+            if (paramLength == 0) {
+                return getCurrencyInc(channelName);
             }
-            if(objParam[0] instanceof Integer) {
-                if(isValidInteger(objParam[0])) {
-                    int inc = (int) objParam[0];
-                    return changeCurrencyIncForChannel(channelName, inc);
-                } else {
-                    return "Illegal integer number";
+            if (paramLength == 1) {
+                Object[] objParam = command.getParameters();
+                if (objParam[0] instanceof String) {
+                    String param = String.valueOf(objParam[0]);
+                    if ("help".equals(param.toLowerCase())) {
+                        return "Shows currency increment. Use !currencyInc [newIntValue]";
+                    }
                 }
-            }
-            return "Please use integer as parameter!";
-        } else
-            return String.format("Can't recognize command with %d parameters", paramLength);
+                if (objParam[0] instanceof Integer) {
+                    if (isValidInteger(objParam[0])) {
+                        int inc = (int) objParam[0];
+                        return changeCurrencyIncForChannel(channelName, inc);
+                    } else {
+                        return "Illegal integer number";
+                    }
+                }
+                return "Please use integer as parameter!";
+
+            } else return ErrorCodes.ILLEGAL_CURRENCY_PARAMETERS.getInfo();
+
+        } else return ErrorCodes.DISABLED_CURRENCY.getInfo();
     }
 
     public static String subEnable(String channelName, Command command) {
-        int paramLength = command.getParameters().length - 1;
-        if (paramLength == 0) {
-            return getSubEnable(channelName);
-        }
-        if (paramLength == 1) {
-            Object[] objParam = command.getParameters();
-            String param = String.valueOf(objParam[0]);
-            if("on".equals(param.toLowerCase())) {
-                return changeSubEnableForChannel(channelName, true);
+        if (Configuration.isCurrencyEnable()) {
+            int paramLength = command.getParameters().length - 1;
+            if (paramLength == 0) {
+                return getSubEnable(channelName);
             }
-            if("off".equals(param.toLowerCase())) {
-                return changeSubEnableForChannel(channelName, false);
-            }
-            if("help".equals(param.toLowerCase())) {
-                return "Shows subscriber multiplier status. Use !subEnable [on/off]";
-            }
-            return String.format("Unknown parameter %s", param);
-        } else
-            return String.format("Can't recognize command with %d parameters", paramLength);
+            if (paramLength == 1) {
+                Object[] objParam = command.getParameters();
+                String param = String.valueOf(objParam[0]);
+                if ("on".equals(param.toLowerCase())) {
+                    return changeSubEnableForChannel(channelName, true);
+                }
+                if ("off".equals(param.toLowerCase())) {
+                    return changeSubEnableForChannel(channelName, false);
+                }
+                if ("help".equals(param.toLowerCase())) {
+                    return "Shows subscriber multiplier status. Use !subEnable [on/off]";
+                }
+                return String.format("Unknown parameter %s", param);
+
+            } else return ErrorCodes.ILLEGAL_CURRENCY_PARAMETERS.getInfo();
+
+        } else return ErrorCodes.DISABLED_CURRENCY.getInfo();
     }
 
     public static String subMultiplier(String channelName, Command command) {
-        int paramLength = command.getParameters().length - 1;
-        if (paramLength == 0) {
-            return getSubMultiplier(channelName);
-        }
-        if (paramLength == 1) {
-            Object[] objParam = command.getParameters();
-            if(objParam[0] instanceof String) {
-                String param = String.valueOf(objParam[0]);
-                if("help".equals(param.toLowerCase())) {
-                    return "Shows multiplier applied to subscribers and vips. Use !subMultiplier [newIntValue]";
-                }
+        if (Configuration.isCurrencyEnable()) {
+            int paramLength = command.getParameters().length - 1;
+            if (paramLength == 0) {
+                return getSubMultiplier(channelName);
             }
-            if(objParam[0] instanceof Integer) {
-                if(isValidInteger(objParam[0])) {
-                    int inc = (int) objParam[0];
-                    if(CurrencyManager.setChannelSubMultiplier(channelName, inc) == 1) {
-                        return String.format("Subscriber multiplier for %s is [%d]", channelName, inc);
-                    } else {
-                        return String.format("Subscriber multiplier couldn't updated!");
+            if (paramLength == 1) {
+                Object[] objParam = command.getParameters();
+                if (objParam[0] instanceof String) {
+                    String param = String.valueOf(objParam[0]);
+                    if ("help".equals(param.toLowerCase())) {
+                        return "Shows multiplier applied to subscribers and vips. Use !subMultiplier [newIntValue]";
                     }
-                } else {
-                    return "Illegal integer number";
                 }
-            }
-            return "Please use integer as parameter!";
-        } else
-            return String.format("Can't recognize command with %d parameters", paramLength);
+                if (objParam[0] instanceof Integer) {
+                    if (isValidInteger(objParam[0])) {
+                        int inc = (int) objParam[0];
+                        if (CurrencyManager.setChannelSubMultiplier(channelName, inc) == 1) {
+                            return String.format("Subscriber multiplier for %s is [%d]", channelName, inc);
+                        } else {
+                            return "Subscriber multiplier couldn't updated!";
+                        }
+                    } else {
+                        return "Illegal integer number";
+                    }
+                }
+                return "Please use integer as parameter!";
+
+            } else return ErrorCodes.ILLEGAL_CURRENCY_PARAMETERS.getInfo();
+
+        } else return ErrorCodes.DISABLED_CURRENCY.getInfo();
     }
 
     public static String myCurrency(String channelName, String sender, Command command) {
-        int paramLength = command.getParameters().length - 1;
-        if (paramLength == 0) {
-            return getUserCurrency(channelName, sender);
-        }
-        if (paramLength == 1) {
-            Object[] objParam = command.getParameters();
-            if(objParam[0] instanceof String) {
-                String param = String.valueOf(objParam[0]);
-                if("help".equals(param.toLowerCase())) {
-                    return "Shows user currency. Use !myCurrency or !myCurrency [userName]";
-                }
-                return getUserCurrency(channelName, param);
-            } else return "Please use string as a parameter!";
-        } else return String.format("Can't recognize command with %d parameters", paramLength);
+        if (Configuration.isCurrencyEnable()) {
+            int paramLength = command.getParameters().length - 1;
+            if (paramLength == 0) {
+                return getUserCurrency(channelName, sender);
+            }
+            if (paramLength == 1) {
+                Object[] objParam = command.getParameters();
+                if (objParam[0] instanceof String) {
+                    String param = String.valueOf(objParam[0]);
+                    if ("help".equals(param.toLowerCase())) {
+                        return "Shows user currency. Use !myCurrency or !myCurrency [userName]";
+                    }
+                    return getUserCurrency(channelName, param);
+                } else return "Please use string as a parameter!";
+
+            } else return ErrorCodes.ILLEGAL_CURRENCY_PARAMETERS.getInfo();
+
+        } else return ErrorCodes.DISABLED_CURRENCY.getInfo();
     }
 
     private static String getUserCurrency(String channelName, String userName) {
-        int amount = ChannelUsers.getUserCurrency(channelName, userName);
+        int amount = CurrencyManager.getUserCurrency(channelName, userName);
         String currency = CurrencyManager.getChannelCurrencyName(channelName);
         if (amount != 0)
             return String.format("%s %s = %d", currency, userName, amount);
@@ -203,9 +221,9 @@ public class CommandManager {
     }
 
     private static String changeCurrencyStatusForChannel(String channelName, boolean isEnable) {
-        for (ChannelDb channel : Configuration.loadingChannels) {
-            if(channelName.equals(channel.getChannelName())) {
-                channel.setCurrencyEnabled(isEnable);
+        for (Channel channel : Configuration.loadingChannels) {
+            if(channelName.equals(channel.getName())) {
+                channel.getSettings().setCurrencyEnabled(isEnable);
             }
         }
         if(isEnable)
@@ -215,11 +233,14 @@ public class CommandManager {
     }
 
     private static String currencyStatusForChannel(String channelName) {
-        for (ChannelDb channel : Configuration.loadingChannels) {
-            if(channelName.equals(channel.getChannelName())) {
-                return String.format("Currency for %s is %s", channelName, channel.isCurrencyEnabled());
+        if(Configuration.isCurrencyEnable()) {
+            for (Channel channel : Configuration.loadingChannels) {
+                if(channelName.equals(channel.getName())) {
+                    return String.format("Currency for %s is %s", channelName, channel.getSettings().isCurrencyEnabled());
+                }
             }
+            return String.format("Couldn't find currency status for %s", channelName);
         }
-        return String.format("Couldn't find currency status for %s", channelName);
+        return "Currency is disabled for all channels!";
     }
 }

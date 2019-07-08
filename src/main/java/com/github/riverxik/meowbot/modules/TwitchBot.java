@@ -1,9 +1,9 @@
 package com.github.riverxik.meowbot.modules;
 
 import com.github.riverxik.meowbot.Configuration;
-import com.github.riverxik.meowbot.database.ChannelDb;
 import com.github.riverxik.meowbot.events.*;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
+import com.github.riverxik.meowbot.modules.chat.Channel;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
 import org.slf4j.Logger;
@@ -46,15 +46,6 @@ public class TwitchBot {
         PrivateMessages privateMessages = new PrivateMessages(twitchClient.getEventManager());
         SubscribersOnly subscribersOnly = new SubscribersOnly(twitchClient.getEventManager());
         ChangeGameOrTitle changeGameOrTitle = new ChangeGameOrTitle(twitchClient.getEventManager());
-        if (Configuration.isStreamLiveEnable()) {
-            ChannelGoesLive channelGoesLive = new ChannelGoesLive(twitchClient.getEventManager());
-        }
-        if (Configuration.isStreamOfflineEnable()) {
-            ChannelGoesOffline channelGoesOffline = new ChannelGoesOffline(twitchClient.getEventManager());
-        }
-        if (Configuration.isStreamFollower()) {
-            ChannelGainFollower channelGainFollower = new ChannelGainFollower(twitchClient.getEventManager());
-        }
         // TODO: Maybe i should put all this events together to one class.
         // add events
     }
@@ -62,11 +53,9 @@ public class TwitchBot {
     /** Connects to all twitch channels */
     public void start() {
         log.info("Connecting to channels...");
-        for(ChannelDb channel : Configuration.loadingChannels) {
-            String channelName = channel.getChannelName();
+        for(Channel channel : Configuration.loadingChannels) {
+            String channelName = channel.getName();
             twitchClient.getChat().joinChannel(channelName);
-            twitchClient.getClientHelper().enableStreamEventListener(channelName);
-            twitchClient.getClientHelper().enableFollowEventListener(channelName);
         }
         log.info("Successfully connected to all the channels!");
     }
