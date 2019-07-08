@@ -38,7 +38,7 @@
 	<logger name="com.github.riverxik.meowbot.events.PublicMessages" level="INFO" />
 	<logger name="com.github.riverxik.meowbot.modules.currency.CurrencyManager" level="INFO" />
 
-	<root level="INFO">
+	<root level="OFF">
 		<appender-ref ref="FILE-AUDIT" />
 		<appender-ref ref="STDOUT" />
 	</root>

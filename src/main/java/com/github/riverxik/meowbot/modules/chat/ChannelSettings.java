@@ -1,6 +1,10 @@
 package com.github.riverxik.meowbot.modules.chat;
 
+import com.github.riverxik.meowbot.modules.TwitchBot;
 import com.github.riverxik.meowbot.modules.currency.ChannelCurrency;
+import com.github.twitch4j.helix.domain.UserList;
+
+import java.util.Collections;
 
 public class ChannelSettings {
     private ChannelCurrency currency;

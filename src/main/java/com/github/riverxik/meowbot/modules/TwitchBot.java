@@ -32,6 +32,7 @@ public class TwitchBot {
         twitchClient = clientBuilder
                 .withClientId(Configuration.clientAppId)
                 .withClientSecret(Configuration.clientAppSecret)
+                .withEnableKraken(true)
                 .withEnableHelix(true)
                 .withEnableChat(true)
                 .withChatAccount(credential)

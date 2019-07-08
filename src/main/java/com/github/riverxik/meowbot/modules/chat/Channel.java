@@ -1,12 +1,17 @@
 package com.github.riverxik.meowbot.modules.chat;
 
 import com.github.riverxik.meowbot.database.Database;
+import com.github.riverxik.meowbot.modules.TwitchBot;
 import com.github.riverxik.meowbot.modules.currency.CurrencyManager;
+import com.github.twitch4j.helix.domain.UserList;
+import com.github.twitch4j.kraken.domain.KrakenSubscription;
+import com.github.twitch4j.kraken.domain.KrakenSubscriptionList;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Channel {
@@ -95,6 +100,32 @@ public class Channel {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public long getChannelId() {
+        try {
+            UserList resultList = TwitchBot.twitchClient.getHelix().getUsers(null, null, Collections.singletonList(name)).execute();
+            return resultList.getUsers().get(0).getId();
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+
+    public void updateSubscribers() {
+        long channelId = getChannelId();
+        KrakenSubscriptionList subList = TwitchBot.twitchClient.getKraken().getChannelSubscribers(
+                settings.getAccessToken(),
+                channelId,
+                null,
+                null,
+                null
+        ).execute();
+        for (KrakenSubscription sub : subList.getSubscriptions()) {
+            String name = sub.getUser().getDisplayName();
+            ChannelUser user = getChannelUserByName(name);
+            user.setSub(true);
         }
     }
 

@@ -158,6 +158,25 @@ public class CommandManager {
         } else return ErrorCodes.DISABLED_CURRENCY.getInfo();
     }
 
+    public static String isUserSub(String channelName, String sender, Command command) {
+        int paramLength = command.getParameters().length - 1;
+        if (paramLength == 0) {
+            boolean isSub = Configuration.getChannelByName(channelName).getChannelUserByName(sender).isSub();
+            return isSub ? String.format("%s is subscriber!", sender) : String.format("%s isn't subscriber!");
+        }
+        if (paramLength == 1) {
+            Object[] objParam = command.getParameters();
+            if (objParam[0] instanceof String) {
+                String param = String.valueOf(objParam[0]);
+                if("help".equals(param.toLowerCase())) {
+                    return "Use !isSub [userName]";
+                }
+                boolean isSub = Configuration.getChannelByName(channelName).getChannelUserByName(param).isSub();
+                return isSub ? String.format("%s is subscriber!", param) : String.format("%s isn't subscriber!", param);
+            } else return "Please use string as parameter!";
+        } else return ErrorCodes.ILLEGAL_CURRENCY_PARAMETERS.getInfo();
+    }
+
     private static String getUserCurrency(String channelName, String userName) {
         int amount = CurrencyManager.getUserCurrency(channelName, userName);
         String currency = CurrencyManager.getChannelCurrencyName(channelName);
