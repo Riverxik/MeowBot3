@@ -38,9 +38,9 @@
 	<logger name="com.github.riverxik.meowbot.events.PublicMessages" level="INFO" />
 	<logger name="com.github.riverxik.meowbot.modules.CurrencyManager" level="INFO" />
 
-	<root level="ERROR">
+	<root level="INFO">
 		<appender-ref ref="FILE-AUDIT" />
-		<!--<appender-ref ref="STDOUT" />-->
+		<appender-ref ref="STDOUT" />
 	</root>
 
 </configuration>

@@ -66,6 +66,7 @@ public class TwitchBot {
             String channelName = channel.getChannelName();
             twitchClient.getChat().joinChannel(channelName);
             twitchClient.getClientHelper().enableStreamEventListener(channelName);
+            twitchClient.getClientHelper().enableFollowEventListener(channelName);
         }
         log.info("Successfully connected to all the channels!");
     }

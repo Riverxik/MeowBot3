@@ -62,7 +62,7 @@
         <dependency>
             <groupId>com.github.twitch4j</groupId>
             <artifactId>twitch4j</artifactId>
-            <version>1.0.0-alpha.8</version>
+            <version>1.0.0-alpha.11</version>
         </dependency>
 
         <dependency>
