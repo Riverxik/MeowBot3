@@ -29,19 +29,6 @@ public class Database {
         return false;
     }
 
-    /**
-     * Returns status of connection.
-     * @return - true if connection live.
-     */
-    public boolean isConnected() {
-        try {
-            return connection != null && !connection.isClosed();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     /** Disconnects current connection */
     public void disconnect() {
         try {

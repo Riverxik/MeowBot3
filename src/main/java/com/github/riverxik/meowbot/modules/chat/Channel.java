@@ -109,26 +109,6 @@ public class Channel {
         return oldCurrency;
     }
 
-    public static int getUserCurrency(String channelName, String userName) {
-        Database database = new Database();
-        database.connect();
-        int count = 0;
-        try {
-            Statement statement = database.getConnection().createStatement();
-            String query = "SELECT `currency` FROM `"+channelName+"` " +
-                    "WHERE `userName` = '"+userName.toLowerCase()+"'";
-            ResultSet resultSet = statement.executeQuery(query);
-            if(resultSet.next()) {
-                count = resultSet.getInt("currency");
-            }
-            statement.close();
-            database.disconnect();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return count;
-    }
-
     private void executeQuery(String query) {
         try {
             Database database = new Database();
@@ -148,10 +128,6 @@ public class Channel {
 
     public ChannelSettings getSettings() {
         return settings;
-    }
-
-    public List<ChannelUser> getChannelUsers() {
-        return channelUsers;
     }
 
     public void addUserToChannel(ChannelUser user) {
