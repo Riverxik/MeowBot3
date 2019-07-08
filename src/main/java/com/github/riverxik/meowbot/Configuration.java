@@ -1,8 +1,8 @@
 package com.github.riverxik.meowbot;
 
-import com.github.riverxik.meowbot.database.ChannelDb;
-import com.github.riverxik.meowbot.database.ChannelUsers;
 import com.github.riverxik.meowbot.database.Database;
+import com.github.riverxik.meowbot.modules.chat.Channel;
+import com.github.riverxik.meowbot.modules.chat.ChannelSettings;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -12,11 +12,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -40,12 +40,7 @@ public class Configuration {
     public static String chatToken;
 
     /** List of channels to connect */
-    public static List<ChannelDb> loadingChannels = new ArrayList<>();
-
-    /** Contains users for all channels.
-     * @see ChannelUsers
-     * */
-    public static HashMap<String, ChannelUsers> channelUsersList = new HashMap<>();
+    public static List<Channel> loadingChannels = new ArrayList<>();
 
     private static boolean moderationEnable = false; // TODO: use this for enabling/disabling events for all channels
     private static boolean customCommandsEnable = false;
@@ -70,16 +65,18 @@ public class Configuration {
             JSONArray channels = (JSONArray) config.get("channels");
             for(Object channel : channels) {
                 if(channel instanceof JSONObject) {
-                    loadingChannels.add(
-                            new ChannelDb(
-                            String.valueOf(((JSONObject) channel).get("channelName")),
-                            String.valueOf(((JSONObject) channel).get("accessToken")),
+                    ChannelSettings tmpSettings = new ChannelSettings(
                             (boolean) ((JSONObject) channel).get("moderationEnabled"),
                             (boolean) ((JSONObject) channel).get("currencyEnabled"),
+                            (boolean) ((JSONObject) channel).get("betsEnabled"),
                             (boolean) ((JSONObject) channel).get("customCommandsEnabled"),
-                            (boolean) ((JSONObject) channel).get("betsEnabled")
-                            )
+                            String.valueOf(((JSONObject) channel).get("accessToken"))
                     );
+                    Channel tmpChannel = new Channel(
+                            String.valueOf(((JSONObject) channel).get("channelName")),
+                            tmpSettings
+                    );
+                    loadingChannels.add(tmpChannel);
                 }
             }
             log.info("All channels has been successfully read!");
@@ -170,17 +167,74 @@ public class Configuration {
         return false;
     }
 
+    @SuppressWarnings("unchecked")
+    public static void createConfigurationFile(Bot bot) {
+        JSONObject obj = new JSONObject();
+
+        JSONObject tokens = new JSONObject();
+        tokens.put("clientAppId", "EnterYourApplicationIdHere");
+        tokens.put("clientAppSecret", "EnterYourApplicationSecretHere");
+        tokens.put("chatToken", "EnterYourChatTokenHere");
+        obj.put("tokens", tokens);
+
+        JSONArray channels = new JSONArray();
+        JSONObject channel = new JSONObject();
+        channel.put("channelName", "murameowbot");
+        channel.put("accessToken", "");
+        channel.put("moderationEnabled", false);
+        channel.put("currencyEnabled", false);
+        channel.put("customCommandsEnabled", false);
+        channel.put("betsEnabled", false);
+        channels.add(channel);
+        obj.put("channels", channels);
+
+        // For disabling modules for all channel.
+        // Not implemented right now.
+        JSONObject modules = new JSONObject();
+        modules.put("currency", false);
+        modules.put("moderation", false);
+        modules.put("bets", false);
+        modules.put("customCommands", false);
+        modules.put("streamLive", false);
+        modules.put("streamOffline", false);
+        modules.put("streamFollower", false);
+        obj.put("modules", modules);
+
+        obj.put("admin", "putYourNicknameHere");
+
+        // Write to file
+        try (FileWriter file = new FileWriter("config.json")) {
+            file.write(obj.toJSONString());
+            log.info("Configuration file 'config.json' has been generated.");
+            bot.say("Configuration file 'config.json' has been generated. Please fill it out ;)");
+            file.flush();
+            file.close();
+            java.lang.System.exit(0);
+        } catch (IOException e) {
+            bot.say("Something wrong. Couldn't create configuration file.");
+            log.error("Couldn't create configuration file.", e.toString());
+            e.printStackTrace();
+            java.lang.System.exit(0);
+        }
+    }
+
     /**
      * Loads all channels in database from configuration file and creates table for users.
-     * @see ChannelDb
+     * @see Channel
      */
     public static void loadChannels() {
-        for(ChannelDb channel : loadingChannels) {
+        for(Channel channel : loadingChannels) {
             channel.addChannel();
-            ChannelUsers users = new ChannelUsers();
-            users.channelName = channel.getChannelName();
-            users.createTable();
+            channel.createUsersTable();
         }
         log.info("Channels has been loaded!");
+    }
+
+    public static Channel getChannelByName(String channelName) {
+        for (Channel channel : loadingChannels) {
+            if(channelName.equals(channel.getName()))
+                return channel;
+        }
+        return new Channel("Channel not found", null);
     }
 }

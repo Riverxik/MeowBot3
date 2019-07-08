@@ -7,9 +7,6 @@ import com.github.riverxik.meowbot.commands.fsa.Parser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class PublicMessageManager {
     private static final Logger log = LoggerFactory.getLogger(PrivateMessageManager.class);
 
@@ -39,6 +36,7 @@ public class PublicMessageManager {
             case "currencyInc": return CommandManager.currencyInc(channel, command);
             case "subEnable": return CommandManager.subEnable(channel, command);
             case "subMultiplier": return CommandManager.subMultiplier(channel, command);
+            case "isSub": return CommandManager.isUserSub(channel, sender, command);
         }
         return processUserCommand(channel, sender, command);
         // TODO: Code that precess admin chat commands

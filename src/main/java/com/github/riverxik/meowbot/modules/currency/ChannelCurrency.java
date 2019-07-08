@@ -1,15 +1,13 @@
-package com.github.riverxik.meowbot.database;
+package com.github.riverxik.meowbot.modules.currency;
 //TODO: Class documentation
 public class ChannelCurrency {
 
-    private String channelName = null;
     private String currencyName = null;
     private int currencyInc = 0;
     private boolean subEnable = false;
     private int subMultiplier = 2;
 
-    public ChannelCurrency(String channelName, String currencyName, int currencyInc, boolean subEnable, int subMultiplier) {
-        this.channelName = channelName;
+    public ChannelCurrency(String currencyName, int currencyInc, boolean subEnable, int subMultiplier) {
         this.currencyName = currencyName;
         this.currencyInc = currencyInc;
         this.subEnable = subEnable;
@@ -30,10 +28,6 @@ public class ChannelCurrency {
 
     public void setSubMultiplier(int subMultiplier) {
         this.subMultiplier = subMultiplier;
-    }
-
-    public String getChannelName() {
-        return channelName;
     }
 
     public String getCurrencyName() {
