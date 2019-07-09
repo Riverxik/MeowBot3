@@ -3,7 +3,9 @@ package com.github.riverxik.meowbot.modules;
 import com.github.riverxik.meowbot.Configuration;
 import com.github.riverxik.meowbot.commands.Command;
 import com.github.riverxik.meowbot.modules.chat.Channel;
+import com.github.riverxik.meowbot.modules.chat.ChannelUser;
 import com.github.riverxik.meowbot.modules.currency.CurrencyManager;
+import com.github.riverxik.meowbot.modules.quotes.QuotesManager;
 
 public class CommandManager {
 
@@ -28,7 +30,7 @@ public class CommandManager {
                 return String.format("Unknown parameter %s", param);
             } else return ErrorCodes.DISABLED_CURRENCY.getInfo();
         } else
-            return ErrorCodes.ILLEGAL_CURRENCY_PARAMETERS.getInfo();
+            return ErrorCodes.ILLEGAL_NUMBER_OF_PARAMETERS.getInfo();
     }
 
     public static String currencyName(String channelName, Command command) {
@@ -45,7 +47,7 @@ public class CommandManager {
                 }
                 return changeCurrencyNameForChannel(channelName, newName);
 
-            } else return ErrorCodes.ILLEGAL_CURRENCY_PARAMETERS.getInfo();
+            } else return ErrorCodes.ILLEGAL_NUMBER_OF_PARAMETERS.getInfo();
 
         } else return ErrorCodes.DISABLED_CURRENCY.getInfo();
     }
@@ -72,9 +74,9 @@ public class CommandManager {
                         return "Illegal integer number";
                     }
                 }
-                return "Please use integer as parameter!";
+                return ErrorCodes.ILLEGAL_PARAMETER_MUST_BE_INT.getInfo();
 
-            } else return ErrorCodes.ILLEGAL_CURRENCY_PARAMETERS.getInfo();
+            } else return ErrorCodes.ILLEGAL_NUMBER_OF_PARAMETERS.getInfo();
 
         } else return ErrorCodes.DISABLED_CURRENCY.getInfo();
     }
@@ -99,7 +101,7 @@ public class CommandManager {
                 }
                 return String.format("Unknown parameter %s", param);
 
-            } else return ErrorCodes.ILLEGAL_CURRENCY_PARAMETERS.getInfo();
+            } else return ErrorCodes.ILLEGAL_NUMBER_OF_PARAMETERS.getInfo();
 
         } else return ErrorCodes.DISABLED_CURRENCY.getInfo();
     }
@@ -130,9 +132,9 @@ public class CommandManager {
                         return "Illegal integer number";
                     }
                 }
-                return "Please use integer as parameter!";
+                return ErrorCodes.ILLEGAL_PARAMETER_MUST_BE_INT.getInfo();
 
-            } else return ErrorCodes.ILLEGAL_CURRENCY_PARAMETERS.getInfo();
+            } else return ErrorCodes.ILLEGAL_NUMBER_OF_PARAMETERS.getInfo();
 
         } else return ErrorCodes.DISABLED_CURRENCY.getInfo();
     }
@@ -151,9 +153,9 @@ public class CommandManager {
                         return "Shows user currency. Use !myCurrency or !myCurrency [userName]";
                     }
                     return getUserCurrency(channelName, param);
-                } else return "Please use string as a parameter!";
+                } else return ErrorCodes.ILLEGAL_PARAMETER_MUST_BE_STRING.getInfo();
 
-            } else return ErrorCodes.ILLEGAL_CURRENCY_PARAMETERS.getInfo();
+            } else return ErrorCodes.ILLEGAL_NUMBER_OF_PARAMETERS.getInfo();
 
         } else return ErrorCodes.DISABLED_CURRENCY.getInfo();
     }
@@ -173,8 +175,76 @@ public class CommandManager {
                 }
                 boolean isSub = Configuration.getChannelByName(channelName).getChannelUserByName(param).isSub();
                 return isSub ? String.format("%s is subscriber!", param) : String.format("%s isn't subscriber!", param);
-            } else return "Please use string as parameter!";
-        } else return ErrorCodes.ILLEGAL_CURRENCY_PARAMETERS.getInfo();
+            } else return ErrorCodes.ILLEGAL_PARAMETER_MUST_BE_STRING.getInfo();
+        } else return ErrorCodes.ILLEGAL_NUMBER_OF_PARAMETERS.getInfo();
+    }
+
+    public static String addQuote(String channelName, String sender, Command command) {
+        ChannelUser user = Configuration.getChannelByName(channelName).getChannelUserByName(sender);
+        if (user.isMod() || user.isVip() || user.isSub() || channelName.equals(sender)) {
+            int paramLength = command.getParameters().length - 1;
+            if (paramLength == 1) {
+                Object[] objParam = command.getParameters();
+                if (objParam[0] instanceof String) {
+                    String param = String.valueOf(objParam[0]);
+                    int quoteId = Configuration.getChannelByName(channelName).getSettings().getQuotes().addQuote(param);
+                    if (quoteId != -1) {
+                        return String.format("New quote #%d has been added!", quoteId);
+                    } else {
+                        return ErrorCodes.QUOTE_NOT_ADDED.getInfo();
+                    }
+
+                } else return ErrorCodes.ILLEGAL_PARAMETER_MUST_BE_STRING.getInfo();
+
+            } else return ErrorCodes.ILLEGAL_NUMBER_OF_PARAMETERS.getInfo();
+
+        } else return ErrorCodes.ACCESS_DENIED.getInfo();
+    }
+
+    public static String showQuote(String channelName, Command command) {
+        int paramLength = command.getParameters().length - 1;
+        if (paramLength == 0) {
+            // TODO: Maybe i should add showing random quote.
+            return "Use !quote [id]. For example: !quote 2";
+        }
+        if (paramLength == 1) {
+            Object[] objParam = command.getParameters();
+            if (objParam[0] instanceof Integer) {
+                if (isValidInteger(objParam[0])) {
+                    int param = (int) objParam[0];
+                    return QuotesManager.showQuote(channelName, param);
+
+                } else ErrorCodes.ILLEGAL_NUMBER.getInfo();
+
+            } else ErrorCodes.ILLEGAL_PARAMETER_MUST_BE_STRING.getInfo();
+        }
+        return ErrorCodes.ILLEGAL_NUMBER_OF_PARAMETERS.getInfo();
+    }
+
+    public static String removeQuote(String channelName, String sender, Command command) {
+        // This command available only for channel owner / bot's admin
+        if(channelName.equals(sender) || Configuration.admin.equals(sender)) {
+            int paramLength = command.getParameters().length - 1;
+            if (paramLength == 0) {
+                return "Use !removeQuote [quoteId]. For example: !removeQuote 2";
+            }
+            if (paramLength == 1) {
+                Object[] objParam = command.getParameters();
+                if (objParam[0] instanceof Integer) {
+                    if(isValidInteger(objParam[0])) {
+                        int param = (int) objParam[0];
+                        if(QuotesManager.removeQuote(channelName, param))
+                            return String.format("Quote with id = [%d] has been removed!", param);
+
+                        else return ErrorCodes.QUOTE_NOT_REMOVED.getInfo();
+
+                    } else return ErrorCodes.ILLEGAL_NUMBER.getInfo();
+
+                } else return ErrorCodes.ILLEGAL_PARAMETER_MUST_BE_INT.getInfo();
+            }
+            return ErrorCodes.ILLEGAL_NUMBER_OF_PARAMETERS.getInfo();
+
+        } else return ErrorCodes.ACCESS_DENIED.getInfo();
     }
 
     private static String getUserCurrency(String channelName, String userName) {
@@ -222,7 +292,7 @@ public class CommandManager {
         if(CurrencyManager.setChannelCurrencyInc(channelName, newInc) == 1)
             return getCurrencyInc(channelName);
         else
-            return String.format("Currency increment wasn't updated");
+            return "Currency increment wasn't updated";
     }
 
     private static String getCurrencyInc(String channelName) {
@@ -240,11 +310,7 @@ public class CommandManager {
     }
 
     private static String changeCurrencyStatusForChannel(String channelName, boolean isEnable) {
-        for (Channel channel : Configuration.loadingChannels) {
-            if(channelName.equals(channel.getName())) {
-                channel.getSettings().setCurrencyEnabled(isEnable);
-            }
-        }
+        Configuration.getChannelByName(channelName).getSettings().setCurrencyEnabled(isEnable);
         if(isEnable)
             return "Channel currency now enabled!";
         else
@@ -253,12 +319,8 @@ public class CommandManager {
 
     private static String currencyStatusForChannel(String channelName) {
         if(Configuration.isCurrencyEnable()) {
-            for (Channel channel : Configuration.loadingChannels) {
-                if(channelName.equals(channel.getName())) {
-                    return String.format("Currency for %s is %s", channelName, channel.getSettings().isCurrencyEnabled());
-                }
-            }
-            return String.format("Couldn't find currency status for %s", channelName);
+            boolean status = Configuration.getChannelByName(channelName).getSettings().isCurrencyEnabled();
+            return String.format("Currency status for [%s] is %s", channelName, status);
         }
         return "Currency is disabled for all channels!";
     }
