@@ -162,7 +162,7 @@ public class CommandManager {
         int paramLength = command.getParameters().length - 1;
         if (paramLength == 0) {
             boolean isSub = Configuration.getChannelByName(channelName).getChannelUserByName(sender).isSub();
-            return isSub ? String.format("%s is subscriber!", sender) : String.format("%s isn't subscriber!");
+            return isSub ? String.format("%s is subscriber!", sender) : String.format("%s isn't subscriber!", sender);
         }
         if (paramLength == 1) {
             Object[] objParam = command.getParameters();
