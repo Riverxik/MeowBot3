@@ -253,6 +253,7 @@ public class CurrencyManager {
             database.disconnect();
         } catch (SQLException e) {
             e.printStackTrace();
+            log.error("SQL: " + e.getMessage());
         }
     }
 
@@ -277,6 +278,8 @@ public class CurrencyManager {
 
     private void loadUsers() {
         for(Channel channel : Configuration.loadingChannels) {
+            channel.removeAllUsersFromChannel();
+
             HystrixCommandProperties.Setter().withExecutionTimeoutEnabled(TIMEOUT_ENABLED);
             Chatters chatters = TwitchBot.twitchClient.getMessagingInterface().getChatters(channel.getName()).execute();
 
@@ -295,7 +298,8 @@ public class CurrencyManager {
                 }
             }
 
-            channel.updateSubscribers();
+            if(!"".equals(channel.getSettings().getAccessToken()))
+                channel.updateSubscribers();
 
             int userCount = channel.getUsersCount();
             log.info(String.format("[%s] loaded users [%d]", channel.getName(), userCount));
