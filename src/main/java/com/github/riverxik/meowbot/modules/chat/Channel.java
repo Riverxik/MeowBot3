@@ -165,7 +165,13 @@ public class Channel {
         this.channelUsers.add(user);
     }
 
+    public void removeAllUsersFromChannel() {
+        this.channelUsers.clear();
+    }
+
     public ChannelUser getChannelUserByName(String userName) {
+        if(name.equals(userName))
+            return new ChannelUser("Channel owner", true, true, true);
         for (ChannelUser user : channelUsers) {
             if (userName.equals(user.getName()))
                 return user;

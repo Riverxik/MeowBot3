@@ -1,13 +1,11 @@
 package com.github.riverxik.meowbot.modules.chat;
 
-import com.github.riverxik.meowbot.modules.TwitchBot;
 import com.github.riverxik.meowbot.modules.currency.ChannelCurrency;
-import com.github.twitch4j.helix.domain.UserList;
-
-import java.util.Collections;
+import com.github.riverxik.meowbot.modules.quotes.ChannelQuotes;
 
 public class ChannelSettings {
     private ChannelCurrency currency;
+    private ChannelQuotes quotes;
     private final String accessToken;
     private boolean moderationEnabled = false;
     private boolean currencyEnabled = false;
@@ -33,6 +31,10 @@ public class ChannelSettings {
     public ChannelCurrency getCurrency() {
         return currency;
     }
+
+    public void setQuotes(ChannelQuotes quotes) { this.quotes = quotes; }
+
+    public ChannelQuotes getQuotes() { return quotes; }
 
     public boolean isModerationEnabled() {
         return moderationEnabled;
