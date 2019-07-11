@@ -49,6 +49,7 @@ public class PublicMessageManager {
             case "quote": return CommandManager.showQuote(channel, command);
             case "removequote": return CommandManager.removeQuote(channel, sender, command);
             case "help": return "Все команды: https://github.com/Riverxik/MeowBot3/blob/develop/commands.md";
+            case "calc": return command.getParameters()[0].toString();
         }
         return "You are lovely user :3";
         // TODO: Code that precess user chat commands
