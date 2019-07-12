@@ -1,5 +1,6 @@
 package com.github.riverxik.meowbot;
 
+import com.github.riverxik.meowbot.modules.bets.BetsManager;
 import com.github.riverxik.meowbot.modules.currency.CurrencyManager;
 import com.github.riverxik.meowbot.modules.TwitchBot;
 import com.github.riverxik.meowbot.modules.quotes.QuotesManager;
@@ -52,6 +53,7 @@ public class Bot {
         if (Configuration.isCurrencyEnable()) {
             CurrencyManager currencyManager = new CurrencyManager();
             QuotesManager quotesManager = new QuotesManager();
+            BetsManager betsManager = new BetsManager();
         }
     }
 

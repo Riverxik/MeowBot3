@@ -81,12 +81,14 @@ public class Channel {
             try {
                 Statement statement = database.getConnection().createStatement();
                 for(ChannelUser user : channelUsers) {
-                    query = "SELECT `userName`, `currency` FROM `"+name+"` WHERE `userName` = '"+user.getName()+"' ";
+                    query = "SELECT `userName`, `currency`, `money` FROM `"+name+"` WHERE `userName` = '"+user.getName()+"' ";
                     ResultSet resultSet = statement.executeQuery(query);
                     if(resultSet.next()) { // Пользователь нашёлся
                         if(settings.isCurrencyEnabled()) { // Валюта включена
-                            int newCurrency = calculateNewCurrency(user, resultSet.getInt(2));
-                            query = "UPDATE `"+name+"` SET `currency` = "+newCurrency+" WHERE `userName` = '"+user.getName()+"' ";
+                            int newCurrency = calculateNewCurrency(user, resultSet.getInt("currency"));
+                            int newMoney = calculateNewCurrency(user, resultSet.getInt("money"));
+                            query = "UPDATE `"+name+"` SET `currency` = "+newCurrency+", " +
+                                    "`money` = '"+newMoney+"' WHERE `userName` = '"+user.getName()+"' ";
                             statement.executeUpdate(query);
                         }
                     } else {

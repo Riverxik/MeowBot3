@@ -2,6 +2,7 @@ package com.github.riverxik.meowbot.modules;
 
 import com.github.riverxik.meowbot.Configuration;
 import com.github.riverxik.meowbot.commands.Command;
+import com.github.riverxik.meowbot.modules.bets.BetsManager;
 import com.github.riverxik.meowbot.modules.chat.Channel;
 import com.github.riverxik.meowbot.modules.chat.ChannelUser;
 import com.github.riverxik.meowbot.modules.currency.CurrencyManager;
@@ -247,6 +248,15 @@ public class CommandManager {
         } else return ErrorCodes.ACCESS_DENIED.getInfo();
     }
 
+    public static boolean isValidInteger(Object integer) {
+        try {
+            int value = (int) integer;
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
     private static String getUserCurrency(String channelName, String userName) {
         int amount = CurrencyManager.getUserCurrency(channelName, userName);
         String currency = CurrencyManager.getChannelCurrencyName(channelName);
@@ -276,15 +286,6 @@ public class CommandManager {
                 return String.format("Now subscribers multiplier for %s is [disable]", channelName);
         } else {
             return String.format("Subscribers multiplier for %s couldn't updated", channelName);
-        }
-    }
-
-    private static boolean isValidInteger(Object integer) {
-        try {
-            int value = (int) integer;
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
         }
     }
 

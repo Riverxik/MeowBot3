@@ -2,6 +2,7 @@ package com.github.riverxik.meowbot.modules;
 
 public enum ErrorCodes {
     DISABLED_CURRENCY("Currency is disabled for all channels!"),
+    DISABLED_BETS("Bets system is disabled"),
     QUOTE_NOT_ADDED("Can't add new quote!"),
     QUOTE_NOT_REMOVED("Can't remove quote!"),
     ILLEGAL_NUMBER_OF_PARAMETERS("Can't recognize command with this parameters!"),

@@ -4,6 +4,7 @@ import com.github.riverxik.meowbot.Configuration;
 import com.github.riverxik.meowbot.commands.Command;
 import com.github.riverxik.meowbot.commands.fsa.Lexer;
 import com.github.riverxik.meowbot.commands.fsa.Parser;
+import com.github.riverxik.meowbot.modules.bets.BetsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +51,9 @@ public class PublicMessageManager {
             case "removequote": return CommandManager.removeQuote(channel, sender, command);
             case "help": return "Все команды: https://github.com/Riverxik/MeowBot3/blob/develop/commands.md";
             case "calc": return command.getParameters()[0].toString();
+            case "lot": return BetsManager.processLotCommand(channel, sender, command);
+            case "bet": return BetsManager.processBetCommand(channel, sender, command);
+            case "money": return BetsManager.processMoneyCommand(channel, sender, command);
         }
         return "You are lovely user :3";
         // TODO: Code that precess user chat commands
