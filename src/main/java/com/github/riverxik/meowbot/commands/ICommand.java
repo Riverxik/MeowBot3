@@ -1,7 +1,8 @@
 package com.github.riverxik.meowbot.commands;
 
-/**
- * Created by user609 on 15.07.2019.
- */
+import com.github.twitch4j.chat.TwitchChat;
+
 public interface ICommand {
+    boolean hasRight(String channel, String sender, CommandRights level);
+    void execute(String channel, String sender, Object[] args, TwitchChat chat);
 }

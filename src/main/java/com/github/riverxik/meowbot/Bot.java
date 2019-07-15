@@ -41,6 +41,9 @@ public class Bot {
             log.info("Loading channels...");
             Configuration.loadChannels();
 
+            log.info("Loading commands...");
+            Configuration.loadCommands();
+
             log.info("Starting twitch-bot...");
             TwitchBot twitchBot = new TwitchBot();
             twitchBot.registerFeatures();
@@ -50,8 +53,8 @@ public class Bot {
 
     private void loadModules() {
         if (Configuration.isCurrencyEnable()) {
-            CurrencyManager currencyManager = new CurrencyManager();
-            QuotesManager quotesManager = new QuotesManager();
+            new CurrencyManager();
+            new QuotesManager();
         }
     }
 

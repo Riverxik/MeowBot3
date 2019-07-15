@@ -3,6 +3,7 @@ package com.github.riverxik.meowbot.modules.currency.commands;
 import com.github.riverxik.meowbot.Configuration;
 import com.github.riverxik.meowbot.commands.AbstractCommand;
 import com.github.riverxik.meowbot.commands.CommandRights;
+import com.github.riverxik.meowbot.modules.currency.CurrencyManager;
 import com.github.twitch4j.chat.TwitchChat;
 
 public class CurrencyIncHandler extends AbstractCommand{
@@ -16,11 +17,10 @@ public class CurrencyIncHandler extends AbstractCommand{
             }
             else if (args.length == 1 && args[0] instanceof Integer) {
                 int newCurrencyInc = (int) args[0];
-                Configuration.getChannelByName(channel)
-                        .getSettings().getCurrency().setCurrencyInc(newCurrencyInc);
+                CurrencyManager.setChannelCurrencyInc(channel, newCurrencyInc);
                 chat.sendMessage(channel, String.format("%s, new currency increment: %d", sender, newCurrencyInc));
             } else {
-                chat.sendMessage(channel, String.format("%s, Use: !currencyInc [newInt]", sender));
+                chat.sendMessage(channel, String.format("%s, Use: !currency inc [newInt]", sender));
             }
         } else {
             chat.sendMessage(channel, String.format("%s, you haven't enough rights!", sender));
