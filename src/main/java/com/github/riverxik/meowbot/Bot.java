@@ -2,6 +2,7 @@ package com.github.riverxik.meowbot;
 
 import com.github.riverxik.meowbot.modules.currency.CurrencyManager;
 import com.github.riverxik.meowbot.modules.TwitchBot;
+import com.github.riverxik.meowbot.modules.quotes.QuotesManager;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
@@ -40,6 +41,9 @@ public class Bot {
             log.info("Loading channels...");
             Configuration.loadChannels();
 
+            log.info("Loading commands...");
+            Configuration.loadCommands();
+
             log.info("Starting twitch-bot...");
             TwitchBot twitchBot = new TwitchBot();
             twitchBot.registerFeatures();
@@ -49,7 +53,8 @@ public class Bot {
 
     private void loadModules() {
         if (Configuration.isCurrencyEnable()) {
-            CurrencyManager currencyManager = new CurrencyManager();
+            new CurrencyManager();
+            new QuotesManager();
         }
     }
 

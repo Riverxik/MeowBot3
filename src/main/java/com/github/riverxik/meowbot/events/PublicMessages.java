@@ -1,11 +1,16 @@
 package com.github.riverxik.meowbot.events;
 
-import com.github.riverxik.meowbot.modules.PublicMessageManager;
+import com.github.riverxik.meowbot.Configuration;
+import com.github.riverxik.meowbot.commands.fsa.Lexer;
+import com.github.riverxik.meowbot.commands.fsa.Parser;
 import com.github.riverxik.meowbot.modules.TwitchBot;
 import com.github.philippheuer.events4j.EventManager;
+import com.github.twitch4j.chat.TwitchChat;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
 
 /**
  * Writes chat messages from channels.
@@ -20,23 +25,60 @@ public class PublicMessages {
      * @param eventManager - event manager from TwitchClient {@link TwitchBot#twitchClient}
      */
     public PublicMessages(EventManager eventManager) {
-        eventManager.onEvent(ChannelMessageEvent.class).subscribe(event -> onChannelMessage(event));
+        eventManager.onEvent(ChannelMessageEvent.class).subscribe(this::onChannelMessage);
     }
 
     private void onChannelMessage(ChannelMessageEvent event) {
         String channel = event.getChannel().getName();
         String sender = event.getUser().getName();
         String message = event.getMessage();
+        TwitchChat chat = event.getTwitchChat();
 
         log.info(String.format("[%s][%s] - [%s]", channel, sender, message));
 
         if(message.startsWith("!")) {
-            String botAnswer = PublicMessageManager.processNewMessage(channel, sender, message);
-            event.getTwitchChat().sendMessage(channel, sender + " " + botAnswer);
-            log.info(String.format("[%s][%s] - [%s]", channel, "Bot", botAnswer));
+//            String[] commandParts = message.substring(1).split(" ");
+//            String baseCommand = commandParts[0];
+//            int argsLength = commandParts.length - 1;
+//            String[] args = new String[argsLength];
+
+            Object[] commandParts = parseCommand(message);
+            String baseCommand = String.valueOf(commandParts[0]).toLowerCase();
+            Object[] args = Arrays.copyOfRange(commandParts, 1, commandParts.length);
+
+            // Проверки
+            // Выполнение
+            processCommand(channel, sender, baseCommand, args, chat);
         }
 
         if(event.getMessage().equals("meow"))
             event.getTwitchChat().sendMessage(event.getChannel().getName(), event.getUser().getName() + " meow <3");
+    }
+
+    private void processCommand(String channel, String sender, String baseCommand, Object[] args, TwitchChat chat) {
+        if (Configuration.commandRegistry.containsKey(baseCommand)) {
+            Configuration.commandRegistry.get(baseCommand).execute(channel, sender, args, chat);
+        } else {
+            log.info("Unknown command: " + baseCommand);
+        }
+    }
+
+    private static Object[] parseCommand(String message) {
+        try {
+            Lexer lexer = new Lexer(message);
+            lexer.tokenize();
+            Parser parser = new Parser(lexer.getTokenList());
+            parser.start(false);
+
+            int sizeOfStackValues = parser.stackValues.size();
+
+            Object[] params = new Object[sizeOfStackValues];
+            for (int i = 0; i < sizeOfStackValues; i++) {
+                params[i] = parser.stackValues.get(i);
+            }
+            return params;
+        } catch (RuntimeException e) {
+            return new Object[] {"error", e.getMessage()};
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.github.riverxik.meowbot.modules.chat;
 
+import com.github.riverxik.meowbot.Configuration;
 import com.github.riverxik.meowbot.database.Database;
 import com.github.riverxik.meowbot.modules.TwitchBot;
 import com.github.riverxik.meowbot.modules.currency.CurrencyManager;
@@ -165,11 +166,18 @@ public class Channel {
         this.channelUsers.add(user);
     }
 
+    public void removeAllUsersFromChannel() {
+        this.channelUsers.clear();
+    }
+
     public ChannelUser getChannelUserByName(String userName) {
         for (ChannelUser user : channelUsers) {
             if (userName.equals(user.getName()))
                 return user;
         }
-        return new ChannelUser("User not found", false, false, false);
+        if (Configuration.admin.equals(userName))
+            return new ChannelUser(userName, true, true, true, true);
+        else
+            return new ChannelUser("User not found", false, false, false, false);
     }
 }
