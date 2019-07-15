@@ -291,7 +291,7 @@ public class CurrencyManager {
                 String userName = userNameAllViewers.get(i);
                 boolean isMod = userNameMods.contains(userName);
                 boolean isVip = userNameVips.contains(userName);
-                ChannelUser user = new ChannelUser(userName, isMod, false, isVip);
+                ChannelUser user = new ChannelUser(userName, userName.equals(channel.getName()), isMod, false, isVip);
 
                 if(!channel.isContainUser(user.getName())) {
                     channel.addUserToChannel(user);

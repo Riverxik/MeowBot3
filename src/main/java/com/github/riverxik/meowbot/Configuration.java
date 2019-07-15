@@ -1,8 +1,14 @@
 package com.github.riverxik.meowbot;
 
+import com.github.riverxik.meowbot.commands.*;
 import com.github.riverxik.meowbot.database.Database;
 import com.github.riverxik.meowbot.modules.chat.Channel;
 import com.github.riverxik.meowbot.modules.chat.ChannelSettings;
+import com.github.riverxik.meowbot.modules.currency.commands.CurrencyIncHandler;
+import com.github.riverxik.meowbot.modules.currency.commands.CurrencyNameHandler;
+import com.github.riverxik.meowbot.modules.currency.commands.CurrencyStatusHandler;
+import com.github.riverxik.meowbot.modules.currency.commands.CurrencySubEnableHandler;
+import com.github.riverxik.meowbot.modules.quotes.commands.QuoteHandle;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -17,6 +23,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -26,6 +33,9 @@ import java.util.List;
  */
 public class Configuration {
     private static final Logger log = LoggerFactory.getLogger(Configuration.class);
+
+    /** Debug mode */
+    public static boolean debug = false;
 
     /** Admin's nickname */
     public static String admin;
@@ -41,6 +51,8 @@ public class Configuration {
 
     /** List of channels to connect */
     public static List<Channel> loadingChannels = new ArrayList<>();
+
+    public static HashMap<String, AbstractCommand> commandRegistry = new HashMap<>();
 
     private static boolean moderationEnable = false; // TODO: use this for enabling/disabling events for all channels
     private static boolean customCommandsEnable = false;
@@ -228,6 +240,15 @@ public class Configuration {
             channel.createUsersTable();
         }
         log.info("Channels has been loaded!");
+    }
+
+    public static void loadCommands() {
+        commandRegistry.put("error", new CommandErrorHandler());
+        commandRegistry.put("test", new TestAbstractCommandHandler());
+        commandRegistry.put("right", new ShowUserRightsHandle());
+        commandRegistry.put("help", new HelpCommandHandle());
+        commandRegistry.put("currency", new CurrencyStatusHandler());
+        commandRegistry.put("quote", new QuoteHandle());
     }
 
     public static Channel getChannelByName(String channelName) {
