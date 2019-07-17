@@ -366,7 +366,7 @@ public class Parser {
     private void castString(Object first, Object second, char c) {
         String tmp1 = first.toString();
         String tmp2 = second.toString();
-        String tmp3 = "";
+        String tmp3;
         if(c == '+')
             tmp3 = tmp2 + tmp1;
         else throw new IllegalArgumentException("Operation "+c+" is not supported for strings.");
@@ -380,75 +380,15 @@ public class Parser {
             case '+': tmp3 = tmp2 + tmp1; break;
             case '-': tmp3 = tmp2 - tmp1; break;
             case '*': tmp3 = tmp2 * tmp1; break;
-            case '/':
-            {
+            case '^': tmp3 = (float) Math.pow(tmp2, tmp1); break;
+            case '>': tmp3 = tmp2 > tmp1 ? 1 : 0; break;
+            case '<': tmp3 = tmp2 < tmp1 ? 1 : 0; break;
+            case '=': tmp3 = tmp2 == tmp1 ? 1 : 0; break;
+            case '/': {
                 if(tmp1 != 0)
                     tmp3 = tmp2 / tmp1;
                 else
                     throw new ArithmeticException("Can't divide by zero");
-            } break;
-            case '^': tmp3 = (float) Math.pow(tmp2, tmp1); break;
-            case '>':
-            {
-                if(tmp2 > tmp1)
-                    tmp3 = 1;
-                else
-                    tmp3 = 0;
-            } break;
-            case '<':
-            {
-                if(tmp2 < tmp1)
-                    tmp3 = 1;
-                else
-                    tmp3 = 0;
-            } break;
-            case '=':
-            {
-                if(tmp2 == tmp1)
-                    tmp3 = 1;
-                else
-                    tmp3 = 0;
-            } break;
-            default: break;
-        }
-        stackValues.add(tmp3);
-    }
-
-    private void castFloatWithInteger(float tmp1, int tmp2, char c) {
-        float tmp3 = 0.0f;
-        switch (c)
-        {
-            case '+': tmp3 = tmp2 + tmp1; break;
-            case '-': tmp3 = tmp2 - tmp1; break;
-            case '*': tmp3 = tmp2 * tmp1; break;
-            case '/':
-            {
-                if(tmp1 != 0)
-                    tmp3 = tmp2 / tmp1;
-                else
-                    throw new ArithmeticException("Can't divide by zero");
-            } break;
-            case '^': tmp3 = (float) Math.pow(tmp2, tmp1); break;
-            case '>':
-            {
-                if(tmp2 > tmp1)
-                    tmp3 = 1;
-                else
-                    tmp3 = 0;
-            } break;
-            case '<':
-            {
-                if(tmp2 < tmp1)
-                    tmp3 = 1;
-                else
-                    tmp3 = 0;
-            } break;
-            case '=':
-            {
-                if(tmp2 == tmp1)
-                    tmp3 = 1;
-                else
-                    tmp3 = 0;
             } break;
             default: break;
         }
@@ -457,122 +397,17 @@ public class Parser {
 
     private void castFloat(Object first, Object second, char c) {
         float tmp1 = (float) first;
-        if(second instanceof Float)
-        {
-            float tmp2 = (float) second;
-            castFloatWithFloat(tmp1, tmp2, c);
-        }
-        else if(second instanceof Integer)
-        {
-            int tmp2 = (int) second;
-            castFloatWithInteger(tmp1, tmp2, c);
-        }
-    }
-
-    private void castIntegerWithFloat(int tmp1, float tmp2, char c) {
-        float tmp3 = 0.0f;
-        switch (c)
-        {
-            case '+': tmp3 = tmp2 + tmp1; break;
-            case '-': tmp3 = tmp2 - tmp1; break;
-            case '*': tmp3 = tmp2 * tmp1; break;
-            case '/':
-            {
-                if(tmp1 != 0)
-                    tmp3 = tmp2 / tmp1;
-                else
-                    throw new ArithmeticException("Can't divide by zero");
-            } break;
-            case '^': tmp3 = (float) Math.pow(tmp2, tmp1); break;
-            case '>':
-            {
-                if(tmp2 > tmp1)
-                    tmp3 = 1;
-                else
-                    tmp3 = 0;
-            } break;
-            case '<':
-            {
-                if(tmp2 < tmp1)
-                    tmp3 = 1;
-                else
-                    tmp3 = 0;
-            } break;
-            case '=':
-            {
-                if(tmp2 == tmp1)
-                    tmp3 = 1;
-                else
-                    tmp3 = 0;
-            } break;
-            default: break;
-        }
-        stackValues.add(tmp3);
-    }
-
-    private void castIntegerWithInteger(int tmp1, int tmp2, char c) {
-        int tmp3 = 0;
-        switch (c)
-        {
-            case '+': tmp3 = tmp2 + tmp1; break;
-            case '-': tmp3 = tmp2 - tmp1; break;
-            case '*': tmp3 = tmp2 * tmp1; break;
-            case '/':
-            {
-                if(tmp1 != 0)
-                    tmp3 = tmp2 / tmp1;
-                else
-                    throw new ArithmeticException("Can't divide by zero");
-            } break;
-            case '^': tmp3 = (int) Math.pow(tmp2, tmp1); break;
-            case '>':
-            {
-                if(tmp2 > tmp1)
-                    tmp3 = 1;
-                else
-                    tmp3 = 0;
-            } break;
-            case '<':
-            {
-                if(tmp2 < tmp1)
-                    tmp3 = 1;
-                else
-                    tmp3 = 0;
-            } break;
-            case '=':
-            {
-                if(tmp2 == tmp1)
-                    tmp3 = 1;
-                else
-                    tmp3 = 0;
-            } break;
-            default: break;
-        }
-        stackValues.add(tmp3);
-    }
-
-    private void castInteger(Object first, Object second, char c) {
-        int tmp1 = (int) first;
-        if(second instanceof Float)
-        {
-            float tmp2 = (float) second;
-            castIntegerWithFloat(tmp1, tmp2, c);
-        }
-        else if(second instanceof Integer)
-        {
-            int tmp2 = (int) second;
-            castIntegerWithInteger(tmp1, tmp2, c);
-        }
+        float tmp2 = (float) second;
+        castFloatWithFloat(tmp1, tmp2, c);
     }
 
     private void castTypes(Object first, Object second, char c) {
         // byte, short, int, long, float, double, char, boolean, String
+        // TODO: Implement supporting int
         if(first instanceof String || second instanceof String) {
             castString(first, second, c);
-        } else if(first instanceof Float) {
+        } else {
             castFloat(first, second, c);
-        } else if(first instanceof Integer) {
-            castInteger(first, second, c);
         }
     }
 
