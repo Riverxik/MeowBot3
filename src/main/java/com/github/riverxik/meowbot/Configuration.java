@@ -103,7 +103,7 @@ public class Configuration {
             moderationEnable = (boolean) modules.get("moderation");
             customCommandsEnable = (boolean) modules.get("customCommands");
             currencyEnable = (boolean) modules.get("currency");
-            betsEbable = (boolean) modules.get("bets");
+            betsEnable = (boolean) modules.get("bets");
             streamLiveEnable = (boolean) modules.get("streamLive");
             streamOfflineEnable = (boolean) modules.get("streamOffline");
             streamFollower = (boolean) modules.get("streamFollower");

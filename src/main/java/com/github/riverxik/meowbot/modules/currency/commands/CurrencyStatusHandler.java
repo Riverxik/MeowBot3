@@ -46,8 +46,7 @@ public class CurrencyStatusHandler extends AbstractCommand{
                         chat.sendMessage(channel,
                                 String.format("%s, Available commands: currency, currency on/off/name/inc/sub", sender));
                     } break;
-                    default:
-                        new CurrencyUserHandler().execute(channel, sender, args, chat);
+                    default: new CurrencyUserHandler().execute(channel, sender, args, chat); break;
                 }
             }
         } else {

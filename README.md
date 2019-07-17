@@ -14,12 +14,13 @@
   You can try it already - just compile and run :)
 
 ## Quick start
-- Start a bot with `start.bat`:
+  - Start a bot with start.bat:
 
   ```cmd
   @java -jar meowbot-1.0-SNAPSHOT-jar-with-dependencies.jar
   ```
-- Change `config.json`
+  
+  - Change config.json
 
   ```json
   { 
@@ -31,22 +32,25 @@
     }
   }
   ```
-- You can get you `chatToken` from [Twitch chat password](https://twitchapps.com/tmi/)
-- `clientAppId` and `clientAppSecret` from [Twitch dev dashboard](https://dev.twitch.tv/)
-- The rest of the settings are adjusted as you need
+  
+  - You can get you 'chatToken' from [Twitch chat password](https://twitchapps.com/tmi/)
+
+  - 'clientAppId' and 'clientAppSecret' from [Twitch dev dashboard](https://dev.twitch.tv/)
+
+  - The rest of the settings are adjusted as you need
  
 ## Used libraries
-  - [Twitch4j](https://github.com/twitch4j/twitch4j) - The core of twitch: @twitch4j
-  - [SQLite](https://www.sqlite.org/index.html) - I use this library for work with database
+- [Twitch4j](https://github.com/twitch4j/twitch4j) - The core of twitch: @twitch4j
+- [SQLite](https://www.sqlite.org/index.html) - I use this library for work with database
 
 ## Features
   With this bot you can manage your twitch chat!
-  - [x] Supports any number of channels.
-  - [x] Currency system.
-  - [ ] Custom commands for any channel (For any wanted group: viewers, mods, subscribers).
-  - [ ] Bet system: play bets, win prize, make your channel chat more active! :>
-  - [ ] Chat notifications: when stream goes live, sub/resub event, cheers, raids.
-  - [ ] Statistic for your stream.
+- [x] Supports any number of channels.
+- [x] Currency system.
+- [ ] Custom commands for any channel (For any wanted group: viewers, mods, subscribers).
+- [ ] Bet system: play bets, win prize, make your channel chat more active! :>
+- [ ] Chat notifications: when stream goes live, sub/resub event, cheers, raids.
+- [ ] Statistic for your stream.
 ## License
 ----
 MIT

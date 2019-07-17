@@ -6,7 +6,6 @@ import com.github.twitch4j.common.events.channel.ChannelChangeGameEvent;
 import com.github.twitch4j.common.events.channel.ChannelChangeTitleEvent;
 import com.github.twitch4j.helix.domain.GameList;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 public class ChangeGameOrTitle {
@@ -29,7 +28,7 @@ public class ChangeGameOrTitle {
     }
 
     private String getGameNameById(String gameId) {
-        GameList gameList = TwitchBot.twitchClient.getHelix()
+        GameList gameList = TwitchBot.getTwitchClient().getHelix()
                 .getGames(Collections.singletonList(gameId), null).execute();
         return gameList.getGames().get(0).getName();
     }

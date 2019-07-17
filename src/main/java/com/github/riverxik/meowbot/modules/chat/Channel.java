@@ -4,7 +4,6 @@ import com.github.riverxik.meowbot.Configuration;
 import com.github.riverxik.meowbot.database.Database;
 import com.github.riverxik.meowbot.modules.TwitchBot;
 import com.github.riverxik.meowbot.modules.currency.CurrencyManager;
-import com.github.twitch4j.helix.domain.SubscriptionList;
 import com.github.twitch4j.helix.domain.UserList;
 import com.github.twitch4j.kraken.domain.KrakenSubscription;
 import com.github.twitch4j.kraken.domain.KrakenSubscriptionList;
@@ -107,7 +106,7 @@ public class Channel {
 
     public long getChannelId() {
         try {
-            UserList resultList = TwitchBot.twitchClient.getHelix().getUsers(null, null, Collections.singletonList(name)).execute();
+            UserList resultList = TwitchBot.getTwitchClient().getHelix().getUsers(null, null, Collections.singletonList(name)).execute();
             return resultList.getUsers().get(0).getId();
         } catch (Exception e) {
             return -1;
@@ -118,7 +117,7 @@ public class Channel {
     public void updateSubscribers() {
         long channelId = getChannelId();
         // TODO: if subscribers count more than 20 it will return not all of them
-        KrakenSubscriptionList subList = TwitchBot.twitchClient.getKraken().getChannelSubscribers(
+        KrakenSubscriptionList subList = TwitchBot.getTwitchClient().getKraken().getChannelSubscribers(
                 settings.getAccessToken(),
                 channelId,
                 null,

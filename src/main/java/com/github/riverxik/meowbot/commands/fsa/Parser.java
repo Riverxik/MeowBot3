@@ -78,11 +78,9 @@ public class Parser {
                 return parse();
             }
 
-            if (topToken.equals(rules.get(0).getName())) {
-                if ("ENDOFFILE".equals(currentToken)) {
-                    popStack();
-                    return false;
-                }
+            if (topToken.equals(rules.get(0).getName()) && "ENDOFFILE".equals(currentToken)) {
+                popStack();
+                return false;
             }
 
             if ("BOTTOM".equals(topToken)) {
@@ -300,85 +298,64 @@ public class Parser {
         return allRulesString;
     }
 
+    private boolean isLetterOrDigitOrSymbol(char currentSymbol) {
+        return Character.isLetterOrDigit(currentSymbol)
+                || currentSymbol == '(' || currentSymbol == ')'
+                || currentSymbol == '+' || currentSymbol == '-'
+                || currentSymbol == '*' || currentSymbol == '/'
+                || currentSymbol == '=' || currentSymbol == '^'
+                || currentSymbol == ',' || currentSymbol == ';'
+                || currentSymbol == '<' || currentSymbol == '>'
+                || currentSymbol == '~';
+    }
+
     private void loadRules()
     {
-        String allRulesString = getStringRules();
-
-        int length = allRulesString.length();
-        int numberOfSymbol = 0;
+        String allRulesString = getStringRules(), name = "";
+        int length = allRulesString.length(), numberOfSymbol = 0;
+        boolean isName = true, isRule = true;
         StringBuilder buffer = new StringBuilder();
-        boolean isName = true;
-        boolean isRule = true;
-        String name = "";
         List<String> values = new ArrayList<>();
         List<String> choiceUnity = new ArrayList<>();
-        while(true)
-        {
+        while(true) {
             if(numberOfSymbol == length)
                 break;
             char currentSymbol = allRulesString.charAt(numberOfSymbol);
-            if(currentSymbol == ' ')
-            {
+            if(currentSymbol == ' ') {
                 numberOfSymbol++;
                 continue;
             }
-            if(Character.isLetterOrDigit(currentSymbol)
-                    || currentSymbol == '(' || currentSymbol == ')'
-                    || currentSymbol == '+' || currentSymbol == '-'
-                    || currentSymbol == '*' || currentSymbol == '/'
-                    || currentSymbol == '=' || currentSymbol == '^'
-                    || currentSymbol == ',' || currentSymbol == ';'
-                    || currentSymbol == '<' || currentSymbol == '>'
-                    || currentSymbol == '~')
-            {
+            if(isLetterOrDigitOrSymbol(currentSymbol)) {
                 buffer.append(currentSymbol);
                 numberOfSymbol++;
                 continue;
             }
-            if(isName)
-            {
-                if(currentSymbol == '@')
-                {
+            if(isName) {
+                if(currentSymbol == '@') {
                     name = buffer.toString();
                     isName = false;
                     numberOfSymbol++;
                     buffer.setLength(0);
                 }
-            }
-            else
-            {
-                if(currentSymbol == '}' && isRule)
-                {
+            } else {
+                if(currentSymbol == '}' && isRule) {
                     values.add(buffer.toString());
-                    numberOfSymbol++;
                     buffer.setLength(0);
-                }
-                else if(currentSymbol == '}')
-                {
+                } else if(currentSymbol == '}') {
                     choiceUnity.add(buffer.toString());
-                    numberOfSymbol++;
                     buffer.setLength(0);
-                }
-                else if(currentSymbol == '\n' || currentSymbol == '\0')
-                {
+                } else if(currentSymbol == '|') {
+                    isRule = false;
+                    buffer.setLength(0);
+                } else if(currentSymbol == '\n' || currentSymbol == '\0') {
                     isName = true;
                     isRule = true;
-                    numberOfSymbol++;
                     rules.add(new Rule(name, values, choiceUnity));
                     name = "";
                     values = new ArrayList<>();
                     choiceUnity = new ArrayList<>();
                 }
-                else if(currentSymbol == '|')
-                {
-                    isRule = false;
-                    numberOfSymbol++;
-                    buffer.setLength(0);
-                }
-                else
-                {
-                    numberOfSymbol++;
-                }
+                numberOfSymbol++;
             }
         }
     }
@@ -566,6 +543,7 @@ public class Parser {
                 else
                     tmp3 = 0;
             } break;
+            default: break;
         }
         stackValues.add(tmp3);
     }

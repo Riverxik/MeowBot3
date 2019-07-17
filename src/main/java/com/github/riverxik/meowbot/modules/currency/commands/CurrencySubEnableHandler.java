@@ -36,6 +36,7 @@ public class CurrencySubEnableHandler extends AbstractCommand{
                     default:
                         chat.sendMessage(channel,
                                 String.format("%s, Available commands: currency sub, currency sub on/off/inc", sender));
+                        break;
                 }
             }
         } else {
