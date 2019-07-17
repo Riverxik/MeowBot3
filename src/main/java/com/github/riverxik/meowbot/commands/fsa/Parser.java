@@ -311,9 +311,12 @@ public class Parser {
 
     private void loadRules()
     {
-        String allRulesString = getStringRules(), name = "";
-        int length = allRulesString.length(), numberOfSymbol = 0;
-        boolean isName = true, isRule = true;
+        String allRulesString = getStringRules();
+        String name = "";
+        int length = allRulesString.length();
+        int numberOfSymbol = 0;
+        boolean isName = true;
+        boolean isRule = true;
         StringBuilder buffer = new StringBuilder();
         List<String> values = new ArrayList<>();
         List<String> choiceUnity = new ArrayList<>();

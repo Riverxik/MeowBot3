@@ -14,13 +14,12 @@ import org.slf4j.LoggerFactory;
  * @author RiVeRx
  * @version 1.0
  */
-public class TwitchBot {
+public final class TwitchBot {
 
     private static final Logger log = LoggerFactory.getLogger(TwitchBot.class);
     private static TwitchClient twitchClient = null;
 
-    /** Constructs twitch bot instance */
-    public TwitchBot() {
+    public static void initialize() {
         log.info("Initializing twitch-service...");
         TwitchClientBuilder clientBuilder = TwitchClientBuilder.builder();
 
@@ -43,10 +42,9 @@ public class TwitchBot {
     public static TwitchClient getTwitchClient() { return twitchClient; }
 
     /** Registers all events */
-    public void registerFeatures() {
+    public static void registerFeatures() {
         log.info("Component registration...");
         new PublicMessages(twitchClient.getEventManager());
-        new PrivateMessages(twitchClient.getEventManager());
         new SubscribersOnly(twitchClient.getEventManager());
         new ChangeGameOrTitle(twitchClient.getEventManager());
         // TODO: Maybe i should put all this events together to one class.
@@ -54,7 +52,7 @@ public class TwitchBot {
     }
 
     /** Connects to all twitch channels */
-    public void start() {
+    public static void start() {
         log.info("Connecting to channels...");
         for(Channel channel : Configuration.loadingChannels) {
             String channelName = channel.getName();
@@ -70,14 +68,5 @@ public class TwitchBot {
      */
     public static void sendMessageToChat(String channelName, String message) {
         twitchClient.getChat().sendMessage(channelName, message);
-    }
-
-    /**
-     * Sends private message.
-     * @param userName - nickname of user to send message.
-     * @param message - string to send.
-     */
-    public static void sendPmMessage(String userName, String message) {
-        twitchClient.getChat().sendMessage("murameowbot", String.format("/w %s %s", userName, message));
     }
 }
