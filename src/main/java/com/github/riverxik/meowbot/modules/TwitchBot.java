@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 public class TwitchBot {
 
     private static final Logger log = LoggerFactory.getLogger(TwitchBot.class);
-    public static TwitchClient twitchClient;
+    public static TwitchClient twitchClient = null;
 
     /** Constructs twitch bot instance */
     public TwitchBot() {
@@ -43,10 +43,10 @@ public class TwitchBot {
     /** Registers all events */
     public void registerFeatures() {
         log.info("Component registration...");
-        PublicMessages publicMessages = new PublicMessages(twitchClient.getEventManager());
-        PrivateMessages privateMessages = new PrivateMessages(twitchClient.getEventManager());
-        SubscribersOnly subscribersOnly = new SubscribersOnly(twitchClient.getEventManager());
-        ChangeGameOrTitle changeGameOrTitle = new ChangeGameOrTitle(twitchClient.getEventManager());
+        new PublicMessages(twitchClient.getEventManager());
+        new PrivateMessages(twitchClient.getEventManager());
+        new SubscribersOnly(twitchClient.getEventManager());
+        new ChangeGameOrTitle(twitchClient.getEventManager());
         // TODO: Maybe i should put all this events together to one class.
         // add events
     }

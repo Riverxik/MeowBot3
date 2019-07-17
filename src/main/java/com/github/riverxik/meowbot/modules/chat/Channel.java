@@ -4,6 +4,7 @@ import com.github.riverxik.meowbot.Configuration;
 import com.github.riverxik.meowbot.database.Database;
 import com.github.riverxik.meowbot.modules.TwitchBot;
 import com.github.riverxik.meowbot.modules.currency.CurrencyManager;
+import com.github.twitch4j.helix.domain.SubscriptionList;
 import com.github.twitch4j.helix.domain.UserList;
 import com.github.twitch4j.kraken.domain.KrakenSubscription;
 import com.github.twitch4j.kraken.domain.KrakenSubscriptionList;
@@ -116,6 +117,7 @@ public class Channel {
 
     public void updateSubscribers() {
         long channelId = getChannelId();
+        // TODO: if subscribers count more than 20 it will return not all of them
         KrakenSubscriptionList subList = TwitchBot.twitchClient.getKraken().getChannelSubscribers(
                 settings.getAccessToken(),
                 channelId,
@@ -131,14 +133,15 @@ public class Channel {
     }
 
     private int calculateNewCurrency(ChannelUser user, int oldCurrency) throws SQLException {
+        int newCurrency = oldCurrency;
         if(user.isSub() || user.isVip()) {
             int multiplier = CurrencyManager.getChannelSubMultiplier(name);
-            oldCurrency += multiplier;
+            newCurrency += multiplier;
         } else {
             int increment = CurrencyManager.getChannelCurrencyInc(name);
-            oldCurrency += increment;
+            newCurrency += increment;
         }
-        return oldCurrency;
+        return newCurrency;
     }
 
     private void executeQuery(String query) {

@@ -6,10 +6,10 @@ import com.github.twitch4j.chat.events.roomstate.SubscribersOnlyEvent;
 public class SubscribersOnly {
 
     public SubscribersOnly(EventManager eventManager) {
-        eventManager.onEvent(SubscribersOnlyEvent.class).subscribe(event -> OnSubscribersOnly(event));
+        eventManager.onEvent(SubscribersOnlyEvent.class).subscribe(this::onSubscribersOnly);
     }
 
-    private void OnSubscribersOnly(SubscribersOnlyEvent event) {
+    private void onSubscribersOnly(SubscribersOnlyEvent event) {
         event.getTwitchChat().sendMessage(event.getChannel().getName(), "Unsub's are resting now DxCat");
     }
 }

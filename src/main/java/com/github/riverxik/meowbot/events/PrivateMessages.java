@@ -4,8 +4,6 @@ import com.github.riverxik.meowbot.modules.PrivateMessageManager;
 import com.github.riverxik.meowbot.modules.TwitchBot;
 import com.github.philippheuer.events4j.EventManager;
 import com.github.twitch4j.common.events.user.PrivateMessageEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Works with private messages
@@ -14,17 +12,15 @@ import org.slf4j.LoggerFactory;
  */
 public class PrivateMessages {
 
-    private static final Logger log = LoggerFactory.getLogger(PrivateMessages.class);
-
     /**
      * Handles the private message event
      * @param eventManager - event manager from TwitchClient {@link TwitchBot#twitchClient}
      */
     public PrivateMessages(EventManager eventManager) {
-        eventManager.onEvent(PrivateMessageEvent.class).subscribe(event -> OnPrivateMessage(event));
+        eventManager.onEvent(PrivateMessageEvent.class).subscribe(event -> onPrivateMessage(event));
     }
 
-    private void OnPrivateMessage(PrivateMessageEvent event) {
+    private void onPrivateMessage(PrivateMessageEvent event) {
         String sender = event.getUser().getName();
         String message = event.getMessage();
 

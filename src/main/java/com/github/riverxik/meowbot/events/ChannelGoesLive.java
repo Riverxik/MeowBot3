@@ -12,16 +12,20 @@ public class ChannelGoesLive {
     private static final Logger log = LoggerFactory.getLogger(ChannelGoesLive.class);
 
     public ChannelGoesLive(EventManager eventManager) {
-        eventManager.onEvent(ChannelGoLiveEvent.class).subscribe(event -> OnChannelGoLive(event));
+        eventManager.onEvent(ChannelGoLiveEvent.class).subscribe(this::onChannelGoesLive);
     }
 
-    private void OnChannelGoLive(ChannelGoLiveEvent event) {
+    private void onChannelGoesLive(ChannelGoLiveEvent event) {
         String channelName = event.getChannel().getName();
         String title = event.getTitle();
         long game = event.getGameId();
-        if(Configuration.isStreamLiveEnable())
+        if(Configuration.isStreamLiveEnable()) {
             TwitchBot.sendMessageToChat(channelName, String.format("[%s] starts: %s on game: %s", channelName, title, game));
-        else
+            log.info(String.format("[%s] starts: %s on game: %s", channelName, title, game));
+        }
+        else {
             System.out.println(String.format("[%s] starts: %s on game: %s", channelName, title, game));
+            log.info(String.format("[%s] starts: %s on game: %s", channelName, title, game));
+        }
     }
 }

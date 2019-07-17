@@ -23,17 +23,17 @@ public class PrivateMessageManager {
         log.info(String.format("[PM][%s] - [%s]", sender, message));
 
         if(sender.equals(Configuration.admin))
-            return processAdminCommand(message);
+            return processAdminCommand();
         else
-            return processUserCommand(message);
+            return processUserCommand();
     }
 
-    private static String processAdminCommand(String message) {
+    private static String processAdminCommand() {
         return "You are admin :>";
         // TODO: Code that precess admin pm commands
     }
 
-    private static String processUserCommand(String message) {
+    private static String processUserCommand() {
         return "You are lovely user :3";
         // TODO: Code that precess user pm commands
     }

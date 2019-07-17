@@ -3,7 +3,6 @@ package com.github.riverxik.meowbot.modules.currency.commands;
 import com.github.riverxik.meowbot.Configuration;
 import com.github.riverxik.meowbot.commands.AbstractCommand;
 import com.github.riverxik.meowbot.commands.CommandRights;
-import com.github.riverxik.meowbot.modules.currency.CurrencyManager;
 import com.github.twitch4j.chat.TwitchChat;
 
 import java.util.Arrays;

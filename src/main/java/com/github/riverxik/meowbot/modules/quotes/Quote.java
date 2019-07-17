@@ -8,4 +8,12 @@ public class Quote {
         this.quoteId = quoteId;
         this.quoteText = quoteText;
     }
+
+    public int getQuoteId() {
+        return quoteId;
+    }
+
+    public String getQuoteText() {
+        return quoteText;
+    }
 }

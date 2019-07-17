@@ -5,26 +5,26 @@ import java.util.List;
 
 public class Lexer {
 
-    public List<Token> getTokenList() { return this.tokenList; }
-
     private String inputString = null;
-    private int position = 0;
-    private final char COMMAND_SYMBOL = '!';
-    private final String AVAILABLE_SYMBOLS = "+-*/^'(),?~><;=";
-    private final String AVAILABLE_SYMBOLS_IN_WORDS = "'%";
-    private List<Token> tokenList = new ArrayList<>();
 
+    private int position = 0;
+    private static final char COMMAND_SYMBOL = '!';
+    private static final String AVAILABLE_SYMBOLS = "+-*/^'(),?~><;=";
+    private static final String AVAILABLE_SYMBOLS_IN_WORDS = "'%";
+    private List<Token> tokenList = new ArrayList<>();
     public Lexer(String inputString) {
         this.inputString = inputString+" "+'\0';
     }
 
-    public void tokenize() {
+    public List<Token> getTokenList() { return this.tokenList; }
+
+    public void tokenize(boolean debug) {
         while(true) {
             char current = getCurrent();
             if(COMMAND_SYMBOL == current)
                 tokenList.add(tokenizeCommandSymbol());
             if('\"' == current)
-                tokenList.add(tokenizeLongString(current));
+                tokenList.add(tokenizeLongString());
             if(Character.isLetter(current))
                 tokenList.add(tokenizeString(current));
             if(Character.isDigit(current))
@@ -35,6 +35,7 @@ public class Lexer {
                 break;
         }
         tokenList.add(new Token(";"));
+        if (debug) showAllTokens();
     }
 
     private Token tokenizeSymbol(char symbol) {
@@ -51,7 +52,7 @@ public class Lexer {
         return symbolToken;
     }
 
-    private Token tokenizeLongString(char startSymbol) {
+    private Token tokenizeLongString() {
         char nextSymbol = getCurrent();
         String value = "";
         while(nextSymbol != '\"') {
@@ -114,11 +115,11 @@ public class Lexer {
                     return floatToken;
                 } else {
                     Token intToken = new Token("INTEGERNUM");
-                    int tmp = 0;
+                    int tmp;
                     try {
                         tmp = Integer.valueOf(value);
                     } catch (NumberFormatException e) {
-                        throw new RuntimeException("Integer number is not in integer range");
+                        throw new IllegalArgumentException("Integer number is not in integer range");
                     }
                     intToken.setIntValue(tmp);
                     return intToken;

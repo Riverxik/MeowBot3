@@ -4,10 +4,7 @@ import com.github.riverxik.meowbot.commands.*;
 import com.github.riverxik.meowbot.database.Database;
 import com.github.riverxik.meowbot.modules.chat.Channel;
 import com.github.riverxik.meowbot.modules.chat.ChannelSettings;
-import com.github.riverxik.meowbot.modules.currency.commands.CurrencyIncHandler;
-import com.github.riverxik.meowbot.modules.currency.commands.CurrencyNameHandler;
 import com.github.riverxik.meowbot.modules.currency.commands.CurrencyStatusHandler;
-import com.github.riverxik.meowbot.modules.currency.commands.CurrencySubEnableHandler;
 import com.github.riverxik.meowbot.modules.quotes.commands.QuoteHandle;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -57,15 +54,18 @@ public class Configuration {
     private static boolean moderationEnable = false; // TODO: use this for enabling/disabling events for all channels
     private static boolean customCommandsEnable = false;
     private static boolean currencyEnable = false;
-    private static boolean betsEbable = false;
+    private static boolean betsEnable = false;
     private static boolean streamLiveEnable = false;
     private static boolean streamOfflineEnable = false;
     private static boolean streamFollower = false;
 
+    public static boolean isModerationEnable() { return moderationEnable; }
+    public static boolean isCustomCommandsEnable() { return customCommandsEnable; }
+    public static boolean isCurrencyEnable() { return currencyEnable; }
+    public static boolean isBetsEnable() { return betsEnable; }
     public static boolean isStreamLiveEnable() { return streamLiveEnable; }
     public static boolean isStreamOfflineEnable() { return streamOfflineEnable; }
     public static boolean isStreamFollower() { return streamFollower; }
-    public static boolean isCurrencyEnable() { return currencyEnable; }
 
     /**
      * Loads configurations settings from config.json, if config file doesn't exist creates it.
@@ -114,11 +114,11 @@ public class Configuration {
         } else log.error("Error. Couldn't read the configuration!");
     }
 
-    private static JSONObject readJsonFromFile(String s) {
+    private static JSONObject readJsonFromFile(String fileName) {
         JSONParser parser = new JSONParser();
 
         try {
-            Object obj = parser.parse(new FileReader("config.json"));
+            Object obj = parser.parse(new FileReader(fileName));
             return (JSONObject) obj;
 
         } catch (ParseException | IOException e) {
