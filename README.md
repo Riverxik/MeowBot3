@@ -7,6 +7,7 @@
   
 |Master|Develop|
 |---|---|
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/f93615088a78419b914eab889eeddd7e)](https://app.codacy.com/app/Riverxik/MeowBot3?utm_source=github.com&utm_medium=referral&utm_content=Riverxik/MeowBot3&utm_campaign=Badge_Grade_Dashboard)
 | [![Build Status](https://travis-ci.org/Riverxik/MeowBot3.svg?branch=master)](https://travis-ci.org/Riverxik/MeowBot3)  | [![Build Status](https://travis-ci.org/Riverxik/MeowBot3.svg?branch=develop)](https://travis-ci.org/Riverxik/MeowBot3) |
 
 ## Installation
