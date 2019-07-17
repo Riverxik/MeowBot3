@@ -25,6 +25,7 @@ public class QuoteHandle extends AbstractCommand{
                             new RemoveQuoteHandle().execute(channel, sender, args2, chat);
                         }
                     } break;
+                    default: break;
                 }
             } else if (args[0] instanceof Integer) {
                 String quote = QuotesManager.showQuote(channel, (int) args[0]);

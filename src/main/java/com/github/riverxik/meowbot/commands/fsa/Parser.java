@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Parser {
@@ -64,9 +65,8 @@ public class Parser {
                 break;
             }
         }
-        if(topStack().equals("BOTTOM"))
-            if(isDebug)
-                System.out.println("Code is valid");
+        if("BOTTOM".equals(topStack()) && isDebug)
+            System.out.println("Code is valid");
     }
 
     private boolean parse() {
@@ -78,15 +78,13 @@ public class Parser {
                 return parse();
             }
 
-            if (topToken.equals(rules.get(0).getName())) {
-                if (currentToken.equals("ENDOFFILE")) {
-                    popStack();
-                    return false;
-                }
+            if (topToken.equals(rules.get(0).getName()) && "ENDOFFILE".equals(currentToken)) {
+                popStack();
+                return false;
             }
 
-            if (topToken.equals("BOTTOM")) {
-                if(currentToken.equals(";")) {
+            if ("BOTTOM".equals(topToken)) {
+                if(";".equals(currentToken)) {
                     //pushParamsToStack(rules.get(0).getName());
                     //nextToken();
                     //return parse();
@@ -123,6 +121,7 @@ public class Parser {
                     popStack();
                     return parse();
                 }
+                default: break;
             }
         }
         return false;
@@ -140,6 +139,7 @@ public class Parser {
             case "less": logical(0); break;
             case "more": logical(1); break;
             case "equal": logical(2); break;
+            default: break;
         }
     }
 
@@ -218,6 +218,7 @@ public class Parser {
                 popStack();
                 break;
             }
+            default: break;
         }
     }
 
@@ -234,7 +235,7 @@ public class Parser {
                 for(int j = tokens.size()-1; j > -1; j--)
                 {
                     String tmpToken = tokens.get(j);
-                    if(!tmpToken.equals("e"))
+                    if(!"e".equals(tmpToken))
                         pushParamsToStack(tmpToken);
                 }
                 return;
@@ -243,12 +244,11 @@ public class Parser {
             {
                 if(i == possibleTokenIndexes.size()-1)
                     for (int j = 0; j < tmpRule.getChoiceUnity().size(); j++) {
-                        notFoundTokens.append(tmpRule.getChoiceUnity().get(j).toString()).append(",");
+                        notFoundTokens.append(tmpRule.getChoiceUnity().get(j)).append(",");
                     }
-                //tmpRule.getChoiceUnity().forEach(notFoundTokens::append);
             }
         }
-        throw new RuntimeException("Unexpected token [" + currentToken + "] expected [" + notFoundTokens + "]");
+        throw new IllegalArgumentException("Unexpected token [" + currentToken + "] expected [" + notFoundTokens + "]");
     }
 
     private List<Integer> foundIndexOfToken(String name)
@@ -261,42 +261,14 @@ public class Parser {
         return possibleIndexes;
     }
 
-    private void expression() {
-        String currentToken = getToken();
-        if(currentToken.equals("STRING"))
-        {
-            String currentRes = (String) getTokenRes();
-            stackValues.add(currentRes);
-        }
-        else if(currentToken.equals("FLOATNUM"))
-        {
-            float currentRes =  (float) getTokenRes();
-            stackValues.add(currentRes);
-        }
-        else if(currentToken.equals("INTEGERNUM"))
-        {
-            int currentRes = (Integer) getTokenRes();
-            stackValues.add(currentRes);
-        }
-        popStack();
-        nextToken();
-    }
-
     private String topStack() {
         return storeStack.get(storeStack.size()-1);
     }
 
     private void popStack() { storeStack.remove(storeStack.size()-1); }
 
-    private void replaceStack(String... parameters) {
-        popStack();
-        pushParamsToStack(parameters);
-    }
-
     private void pushParamsToStack(String... parameters) {
-        for (int i = 0; i < parameters.length; i++) {
-            storeStack.add(parameters[i]);
-        }
+        Collections.addAll(storeStack, parameters);
     }
 
     private void nextToken() { position++; }
@@ -310,13 +282,12 @@ public class Parser {
     }
 
     private void showAllRules() {
-        for (int i = 0; i < rules.size(); i++) {
-            System.out.println(String.format("%s > %s | %s", rules.get(i).getName(), rules.get(i).getValue(), rules.get(i).getChoiceUnity()));
+        for (Rule rule : rules) {
+            System.out.println(String.format("%s > %s | %s", rule.getName(), rule.getValue(), rule.getChoiceUnity()));
         }
     }
 
-    private void loadRules()
-    {
+    private String getStringRules() {
         String allRulesString = "";
         try {
             allRulesString = new String(Files.readAllBytes(Paths.get("rules.txt")), "UTF-8");
@@ -324,277 +295,119 @@ public class Parser {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return allRulesString;
+    }
 
+    private boolean isLetterOrDigitOrSymbol(char currentSymbol) {
+        return Character.isLetterOrDigit(currentSymbol)
+                || currentSymbol == '(' || currentSymbol == ')'
+                || currentSymbol == '+' || currentSymbol == '-'
+                || currentSymbol == '*' || currentSymbol == '/'
+                || currentSymbol == '=' || currentSymbol == '^'
+                || currentSymbol == ',' || currentSymbol == ';'
+                || currentSymbol == '<' || currentSymbol == '>'
+                || currentSymbol == '~';
+    }
+
+    private void loadRules()
+    {
+        String allRulesString = getStringRules();
+        String name = "";
         int length = allRulesString.length();
         int numberOfSymbol = 0;
-        StringBuilder buffer = new StringBuilder();
         boolean isName = true;
         boolean isRule = true;
-        String name = "";
+        StringBuilder buffer = new StringBuilder();
         List<String> values = new ArrayList<>();
         List<String> choiceUnity = new ArrayList<>();
-        while(true)
-        {
+        while(true) {
             if(numberOfSymbol == length)
                 break;
             char currentSymbol = allRulesString.charAt(numberOfSymbol);
-            if(currentSymbol == ' ')
-            {
+            if(currentSymbol == ' ') {
                 numberOfSymbol++;
                 continue;
             }
-            if(Character.isLetterOrDigit(currentSymbol)
-                    || currentSymbol == '(' || currentSymbol == ')'
-                    || currentSymbol == '+' || currentSymbol == '-'
-                    || currentSymbol == '*' || currentSymbol == '/'
-                    || currentSymbol == '=' || currentSymbol == '^'
-                    || currentSymbol == ',' || currentSymbol == ';'
-                    || currentSymbol == '<' || currentSymbol == '>'
-                    || currentSymbol == '~')
-            {
+            if(isLetterOrDigitOrSymbol(currentSymbol)) {
                 buffer.append(currentSymbol);
                 numberOfSymbol++;
                 continue;
             }
-            if(isName)
-            {
-                if(currentSymbol == '@')
-                {
+            if(isName) {
+                if(currentSymbol == '@') {
                     name = buffer.toString();
                     isName = false;
                     numberOfSymbol++;
                     buffer.setLength(0);
                 }
-            }
-            else
-            {
-                if(currentSymbol == '}' && isRule)
-                {
+            } else {
+                if(currentSymbol == '}' && isRule) {
                     values.add(buffer.toString());
-                    numberOfSymbol++;
                     buffer.setLength(0);
-                }
-                else if(currentSymbol == '}')
-                {
+                } else if(currentSymbol == '}') {
                     choiceUnity.add(buffer.toString());
-                    numberOfSymbol++;
                     buffer.setLength(0);
-                }
-                else if(currentSymbol == '\n' || currentSymbol == '\0')
-                {
+                } else if(currentSymbol == '|') {
+                    isRule = false;
+                    buffer.setLength(0);
+                } else if(currentSymbol == '\n' || currentSymbol == '\0') {
                     isName = true;
                     isRule = true;
-                    numberOfSymbol++;
                     rules.add(new Rule(name, values, choiceUnity));
                     name = "";
                     values = new ArrayList<>();
                     choiceUnity = new ArrayList<>();
                 }
-                else if(currentSymbol == '|')
-                {
-                    isRule = false;
-                    numberOfSymbol++;
-                    buffer.setLength(0);
-                }
-                else
-                {
-                    numberOfSymbol++;
-                }
+                numberOfSymbol++;
             }
         }
     }
 
-    /*
-    * Really sorry for that old method code but i'm so lazy to make it better now :>
-    * I should make it better sometimes.
-    * It works, so...
-    * */
+    private void castString(Object first, Object second, char c) {
+        String tmp1 = first.toString();
+        String tmp2 = second.toString();
+        String tmp3;
+        if(c == '+')
+            tmp3 = tmp2 + tmp1;
+        else throw new IllegalArgumentException("Operation "+c+" is not supported for strings.");
+        stackValues.add(tmp3);
+    }
+
+    private void castFloatWithFloat(float tmp1, float tmp2, char c) {
+        float tmp3 = 0.0f;
+        switch (c)
+        {
+            case '+': tmp3 = tmp2 + tmp1; break;
+            case '-': tmp3 = tmp2 - tmp1; break;
+            case '*': tmp3 = tmp2 * tmp1; break;
+            case '^': tmp3 = (float) Math.pow(tmp2, tmp1); break;
+            case '>': tmp3 = tmp2 > tmp1 ? 1 : 0; break;
+            case '<': tmp3 = tmp2 < tmp1 ? 1 : 0; break;
+            case '=': tmp3 = tmp2 == tmp1 ? 1 : 0; break;
+            case '/': {
+                if(tmp1 != 0)
+                    tmp3 = tmp2 / tmp1;
+                else
+                    throw new ArithmeticException("Can't divide by zero");
+            } break;
+            default: break;
+        }
+        stackValues.add(tmp3);
+    }
+
+    private void castFloat(Object first, Object second, char c) {
+        float tmp1 = (float) first;
+        float tmp2 = (float) second;
+        castFloatWithFloat(tmp1, tmp2, c);
+    }
+
     private void castTypes(Object first, Object second, char c) {
-        String firstType = first.getClass().getSimpleName();
-        String secondType = second.getClass().getSimpleName();
         // byte, short, int, long, float, double, char, boolean, String
-        if(first instanceof String || second instanceof String)
-        {
-            String tmp1 = first.toString();
-            String tmp2 = second.toString();
-            String tmp3 = "";
-            if(c == '+')
-                tmp3 = tmp2 + tmp1;
-            else throw new RuntimeException("Operation "+c+" is not supported for strings.");
-            stackValues.add(tmp3);
-        }
-        else
-        if(first instanceof Float)
-        {
-            float tmp1 = (float) first;
-            if(second instanceof Float)
-            {
-                float tmp2 = (float) second;
-                float tmp3 = 0.0f;
-                switch (c)
-                {
-                    case '+': tmp3 = tmp2 + tmp1; break;
-                    case '-': tmp3 = tmp2 - tmp1; break;
-                    case '*': tmp3 = tmp2 * tmp1; break;
-                    case '/':
-                    {
-                        if(tmp1 != 0)
-                            tmp3 = tmp2 / tmp1;
-                        else
-                            throw new RuntimeException("Can't divide by zero");
-                    } break;
-                    case '^': tmp3 = (float) Math.pow(tmp2, tmp1); break;
-                    case '>':
-                    {
-                        if(tmp2 > tmp1)
-                            tmp3 = 1;
-                        else
-                            tmp3 = 0;
-                    } break;
-                    case '<':
-                    {
-                        if(tmp2 < tmp1)
-                            tmp3 = 1;
-                        else
-                            tmp3 = 0;
-                    } break;
-                    case '=':
-                    {
-                        if(tmp2 == tmp1)
-                            tmp3 = 1;
-                        else
-                            tmp3 = 0;
-                    } break;
-                }
-                stackValues.add(tmp3);
-            }
-            else if(second instanceof Integer)
-            {
-                int tmp2 = (int) second;
-                float tmp3 = 0.0f;
-                switch (c)
-                {
-                    case '+': tmp3 = tmp2 + tmp1; break;
-                    case '-': tmp3 = tmp2 - tmp1; break;
-                    case '*': tmp3 = tmp2 * tmp1; break;
-                    case '/':
-                    {
-                        if(tmp1 != 0)
-                            tmp3 = tmp2 / tmp1;
-                        else
-                            throw new RuntimeException("Can't divide by zero");
-                    } break;
-                    case '^': tmp3 = (float) Math.pow(tmp2, tmp1); break;
-                    case '>':
-                    {
-                        if(tmp2 > tmp1)
-                            tmp3 = 1;
-                        else
-                            tmp3 = 0;
-                    } break;
-                    case '<':
-                    {
-                        if(tmp2 < tmp1)
-                            tmp3 = 1;
-                        else
-                            tmp3 = 0;
-                    } break;
-                    case '=':
-                    {
-                        if(tmp2 == tmp1)
-                            tmp3 = 1;
-                        else
-                            tmp3 = 0;
-                    } break;
-                }
-                stackValues.add(tmp3);
-            }
-        }
-        else if(first instanceof Integer)
-        {
-            int tmp1 = (int) first;
-            if(second instanceof Float)
-            {
-                float tmp2 = (float) second;
-                float tmp3 = 0.0f;
-                switch (c)
-                {
-                    case '+': tmp3 = tmp2 + tmp1; break;
-                    case '-': tmp3 = tmp2 - tmp1; break;
-                    case '*': tmp3 = tmp2 * tmp1; break;
-                    case '/':
-                    {
-                        if(tmp1 != 0)
-                            tmp3 = tmp2 / tmp1;
-                        else
-                            throw new RuntimeException("Can't divide by zero");
-                    } break;
-                    case '^': tmp3 = (float) Math.pow(tmp2, tmp1); break;
-                    case '>':
-                    {
-                        if(tmp2 > tmp1)
-                            tmp3 = 1;
-                        else
-                            tmp3 = 0;
-                    } break;
-                    case '<':
-                    {
-                        if(tmp2 < tmp1)
-                            tmp3 = 1;
-                        else
-                            tmp3 = 0;
-                    } break;
-                    case '=':
-                    {
-                        if(tmp2 == tmp1)
-                            tmp3 = 1;
-                        else
-                            tmp3 = 0;
-                    } break;
-                }
-                stackValues.add(tmp3);
-            }
-            else if(second instanceof Integer)
-            {
-                int tmp2 = (int) second;
-                int tmp3 = 0;
-                switch (c)
-                {
-                    case '+': tmp3 = tmp2 + tmp1; break;
-                    case '-': tmp3 = tmp2 - tmp1; break;
-                    case '*': tmp3 = tmp2 * tmp1; break;
-                    case '/':
-                    {
-                        if(tmp1 != 0)
-                            tmp3 = tmp2 / tmp1;
-                        else
-                            throw new RuntimeException("Can't divide by zero");
-                    } break;
-                    case '^': tmp3 = (int) Math.pow(tmp2, tmp1); break;
-                    case '>':
-                    {
-                        if(tmp2 > tmp1)
-                            tmp3 = 1;
-                        else
-                            tmp3 = 0;
-                    } break;
-                    case '<':
-                    {
-                        if(tmp2 < tmp1)
-                            tmp3 = 1;
-                        else
-                            tmp3 = 0;
-                    } break;
-                    case '=':
-                    {
-                        if(tmp2 == tmp1)
-                            tmp3 = 1;
-                        else
-                            tmp3 = 0;
-                    } break;
-                }
-                stackValues.add(tmp3);
-            }
+        // TODO: Implement supporting int
+        if(first instanceof String || second instanceof String) {
+            castString(first, second, c);
+        } else {
+            castFloat(first, second, c);
         }
     }
 

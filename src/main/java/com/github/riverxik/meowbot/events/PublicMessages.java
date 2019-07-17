@@ -66,7 +66,7 @@ public class PublicMessages {
     private static Object[] parseCommand(String message) {
         try {
             Lexer lexer = new Lexer(message);
-            lexer.tokenize();
+            lexer.tokenize(false);
             Parser parser = new Parser(lexer.getTokenList());
             parser.start(false);
 

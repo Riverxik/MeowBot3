@@ -45,9 +45,9 @@ public class Bot {
             Configuration.loadCommands();
 
             log.info("Starting twitch-bot...");
-            TwitchBot twitchBot = new TwitchBot();
-            twitchBot.registerFeatures();
-            twitchBot.start();
+            TwitchBot.initialize();
+            TwitchBot.registerFeatures();
+            TwitchBot.start();
         }
     }
 

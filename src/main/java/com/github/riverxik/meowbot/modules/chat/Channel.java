@@ -106,7 +106,7 @@ public class Channel {
 
     public long getChannelId() {
         try {
-            UserList resultList = TwitchBot.twitchClient.getHelix().getUsers(null, null, Collections.singletonList(name)).execute();
+            UserList resultList = TwitchBot.getTwitchClient().getHelix().getUsers(null, null, Collections.singletonList(name)).execute();
             return resultList.getUsers().get(0).getId();
         } catch (Exception e) {
             return -1;
@@ -116,7 +116,8 @@ public class Channel {
 
     public void updateSubscribers() {
         long channelId = getChannelId();
-        KrakenSubscriptionList subList = TwitchBot.twitchClient.getKraken().getChannelSubscribers(
+        // TODO: if subscribers count more than 20 it will return not all of them
+        KrakenSubscriptionList subList = TwitchBot.getTwitchClient().getKraken().getChannelSubscribers(
                 settings.getAccessToken(),
                 channelId,
                 null,
@@ -131,14 +132,15 @@ public class Channel {
     }
 
     private int calculateNewCurrency(ChannelUser user, int oldCurrency) throws SQLException {
+        int newCurrency = oldCurrency;
         if(user.isSub() || user.isVip()) {
             int multiplier = CurrencyManager.getChannelSubMultiplier(name);
-            oldCurrency += multiplier;
+            newCurrency += multiplier;
         } else {
             int increment = CurrencyManager.getChannelCurrencyInc(name);
-            oldCurrency += increment;
+            newCurrency += increment;
         }
-        return oldCurrency;
+        return newCurrency;
     }
 
     private void executeQuery(String query) {

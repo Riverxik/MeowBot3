@@ -8,7 +8,7 @@ public class ChannelUser {
     private boolean isMod = false;
     private boolean isSub = false;
     private boolean isVip = false;
-    CommandRights rightLevel = CommandRights.EVERYONE;
+    private CommandRights rightLevel = CommandRights.EVERYONE;
 
     public ChannelUser(String name, boolean isOwner, boolean isMod, boolean isSub, boolean isVip) {
         this.name = name;
@@ -24,6 +24,8 @@ public class ChannelUser {
     public String getName() {
         return name;
     }
+
+    public boolean isOwner() { return isOwner; }
 
     public boolean isMod() {
         return isMod;

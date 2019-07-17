@@ -7,10 +7,10 @@ import com.github.twitch4j.chat.events.channel.FollowEvent;
 public class ChannelGainFollower {
 
     public ChannelGainFollower(EventManager eventManager) {
-        eventManager.onEvent(FollowEvent.class).subscribe(event -> OnFollowEvent(event));
+        eventManager.onEvent(FollowEvent.class).subscribe(this::onFollowEvent);
     }
 
-    private void OnFollowEvent(FollowEvent event) {
+    private void onFollowEvent(FollowEvent event) {
         String channelName = event.getChannel().getName();
         String userName = event.getUser().getName();
         if(Configuration.isStreamFollower())

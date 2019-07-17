@@ -281,7 +281,7 @@ public class CurrencyManager {
             channel.removeAllUsersFromChannel();
 
             HystrixCommandProperties.Setter().withExecutionTimeoutEnabled(TIMEOUT_ENABLED);
-            Chatters chatters = TwitchBot.twitchClient.getMessagingInterface().getChatters(channel.getName()).execute();
+            Chatters chatters = TwitchBot.getTwitchClient().getMessagingInterface().getChatters(channel.getName()).execute();
 
             List<String> userNameAllViewers = chatters.getAllViewers();
             List<String> userNameMods = chatters.getModerators();
