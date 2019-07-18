@@ -5,9 +5,9 @@
   So, i had to change the api of the new version of bot and here it is.
   Now i can add more some features which wasn't available on latest api.
   
-|Master|Develop|
-|---|---|
-| [![Build Status](https://travis-ci.org/Riverxik/MeowBot3.svg?branch=master)](https://travis-ci.org/Riverxik/MeowBot3)  | [![Build Status](https://travis-ci.org/Riverxik/MeowBot3.svg?branch=develop)](https://travis-ci.org/Riverxik/MeowBot3) |
+|Master|Develop|Code Quality
+|---|---|---|
+| [![Build Status](https://travis-ci.org/Riverxik/MeowBot3.svg?branch=master)](https://travis-ci.org/Riverxik/MeowBot3)  | [![Build Status](https://travis-ci.org/Riverxik/MeowBot3.svg?branch=develop)](https://travis-ci.org/Riverxik/MeowBot3) | [![Codacy Badge](https://api.codacy.com/project/badge/Grade/72ab0cb044c64bf6abc709f6f945f9fd)](https://www.codacy.com/app/Riverxik/MeowBot3?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Riverxik/MeowBot3&amp;utm_campaign=Badge_Grade) |
 
 ## Installation
   Bot isn't complete for now. I'm still developing it.
