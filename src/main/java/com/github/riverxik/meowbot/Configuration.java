@@ -13,10 +13,7 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -89,6 +86,8 @@ public class Configuration {
                             tmpSettings
                     );
                     loadingChannels.add(tmpChannel);
+                } else {
+                    log.error("Illegal JSON file!");
                 }
             }
             log.info("All channels has been successfully read!");
@@ -119,6 +118,7 @@ public class Configuration {
 
         try {
             Object obj = parser.parse(new FileReader(fileName));
+            log.info("File has been successful read");
             return (JSONObject) obj;
 
         } catch (ParseException | IOException e) {
@@ -179,7 +179,7 @@ public class Configuration {
         return false;
     }
 
-    @SuppressWarnings("unchecked")
+    //@SuppressWarnings("unchecked")
     public static void createConfigurationFile(Bot bot) {
         JSONObject obj = new JSONObject();
 
@@ -193,23 +193,23 @@ public class Configuration {
         JSONObject channel = new JSONObject();
         channel.put("channelName", "murameowbot");
         channel.put("accessToken", "");
-        channel.put("moderationEnabled", false);
-        channel.put("currencyEnabled", false);
-        channel.put("customCommandsEnabled", false);
-        channel.put("betsEnabled", false);
+        channel.put("moderationEnabled", true);
+        channel.put("currencyEnabled", true);
+        channel.put("customCommandsEnabled", true);
+        channel.put("betsEnabled", true);
         channels.add(channel);
         obj.put("channels", channels);
 
         // For disabling modules for all channel.
         // Not implemented right now.
         JSONObject modules = new JSONObject();
-        modules.put("currency", false);
-        modules.put("moderation", false);
-        modules.put("bets", false);
-        modules.put("customCommands", false);
-        modules.put("streamLive", false);
-        modules.put("streamOffline", false);
-        modules.put("streamFollower", false);
+        modules.put("currency", true);
+        modules.put("moderation", true);
+        modules.put("bets", true);
+        modules.put("customCommands", true);
+        modules.put("streamLive", true);
+        modules.put("streamOffline", true);
+        modules.put("streamFollower", true);
         obj.put("modules", modules);
 
         obj.put("admin", "putYourNicknameHere");
@@ -221,13 +221,12 @@ public class Configuration {
             bot.say("Configuration file 'config.json' has been generated. Please fill it out ;)");
             file.flush();
             file.close();
-            java.lang.System.exit(0);
         } catch (IOException e) {
             bot.say("Something wrong. Couldn't create configuration file.");
             log.error("Couldn't create configuration file.", e.toString());
             e.printStackTrace();
-            java.lang.System.exit(0);
         }
+        System.exit(0);
     }
 
     /**

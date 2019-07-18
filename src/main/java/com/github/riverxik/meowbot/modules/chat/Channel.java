@@ -75,32 +75,30 @@ public class Channel {
 
     /** Updates all user information of current channel */
     public void updateAllUsersInDatabase() {
-        if(settings.isCurrencyEnabled()) {
-            Database database = new Database();
-            database.connect();
-            String query = "";
-            try {
-                Statement statement = database.getConnection().createStatement();
-                for(ChannelUser user : channelUsers) {
-                    query = "SELECT `userName`, `currency` FROM `"+name+"` WHERE `userName` = '"+user.getName()+"' ";
-                    ResultSet resultSet = statement.executeQuery(query);
-                    if(resultSet.next()) { // Пользователь нашёлся
-                        if(settings.isCurrencyEnabled()) { // Валюта включена
-                            int newCurrency = calculateNewCurrency(user, resultSet.getInt(2));
-                            query = "UPDATE `"+name+"` SET `currency` = "+newCurrency+" WHERE `userName` = '"+user.getName()+"' ";
-                            statement.executeUpdate(query);
-                        }
-                    } else {
-                        query = "replace into `"+name+"` (`userName`, `currency`, `money`)\n" +
-                                "values ('"+user.getName()+"', '0', '0');";
+        Database database = new Database();
+        database.connect();
+        String query = "";
+        try {
+            Statement statement = database.getConnection().createStatement();
+            for(ChannelUser user : channelUsers) {
+                query = "SELECT `userName`, `currency` FROM `"+name+"` WHERE `userName` = '"+user.getName()+"' ";
+                ResultSet resultSet = statement.executeQuery(query);
+                if(resultSet.next()) { // Пользователь нашёлся
+                    if(settings.isCurrencyEnabled()) { // Валюта включена
+                        int newCurrency = calculateNewCurrency(user, resultSet.getInt(2));
+                        query = "UPDATE `"+name+"` SET `currency` = "+newCurrency+" WHERE `userName` = '"+user.getName()+"' ";
                         statement.executeUpdate(query);
                     }
+                } else {
+                    query = "replace into `"+name+"` (`userName`, `currency`, `money`)\n" +
+                            "values ('"+user.getName()+"', '0', '0');";
+                    statement.executeUpdate(query);
                 }
-                statement.close();
-                database.disconnect();
-            } catch (SQLException e) {
-                e.printStackTrace();
             }
+            statement.close();
+            database.disconnect();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 

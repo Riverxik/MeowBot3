@@ -31,8 +31,10 @@ public class Bot {
 
     private void init() {
         log.info("Looking for configuration...");
-        if(isConfigExists()) {
 
+        if (createConfigIfNotExists()) {
+            Configuration.createConfigurationFile(this);
+        } else {
             Configuration.loadConfiguration();
 
             log.info("Looking for database...");
@@ -49,6 +51,7 @@ public class Bot {
             TwitchBot.registerFeatures();
             TwitchBot.start();
         }
+
     }
 
     private void loadModules() {
@@ -58,21 +61,17 @@ public class Bot {
         }
     }
 
-    private boolean isConfigExists() {
+    private boolean createConfigIfNotExists() {
         JSONParser parser = new JSONParser();
         try {
             parser.parse(new FileReader("config.json"));
             log.info("Configuration has been found!");
-            return true;
-
+            return false;
         } catch (ParseException | IOException e){
-            if(e.getMessage().equals("config.json (Не удается найти указанный файл)")) {
-                say(e.getMessage());
-                log.error("Configuration file couldn't found!!");
-                Configuration.createConfigurationFile(this);
-            }
+            say(e.getMessage());
+            log.error("Configuration file couldn't found!");
         }
-        return false;
+        return true;
     }
 
     /**
@@ -80,6 +79,6 @@ public class Bot {
      * @param text - String for print.
      */
     public void say(String text) {
-        System.out.println(String.format("[Meowbot] >>> [%s]", text));
+        System.out.print(String.format("[Meowbot] >>> [%s]\n", text));
     }
 }
