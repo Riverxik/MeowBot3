@@ -4,16 +4,19 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.codehaus.plexus.util.FileUtils;
+import org.junit.*;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.channels.FileLockInterruptionException;
 import java.util.List;
 
 public class ConfigurationTest {
     private int i;
-    List<ILoggingEvent> logList;
+    private List<ILoggingEvent> logList;
 
     @Before
     public void setUp() throws Exception {
@@ -23,7 +26,12 @@ public class ConfigurationTest {
         listAppender.start();
         log.addAppender(listAppender);
         logList = listAppender.list;
-        Configuration.loadConfiguration();
+        Configuration.loadConfiguration("config.json");
+    }
+
+    @After
+    public void CleanIp() throws Exception {
+
     }
 
     @Test
@@ -81,48 +89,54 @@ public class ConfigurationTest {
 
     @Test
     public void testLoadConfigurationWhereConfigIsNull() throws Exception {
-        Assert.assertNotEquals("Error!", logList.get(i).getMessage());
-        Assert.assertNotEquals(Level.ERROR, logList.get(i).getLevel());
+        Configuration.loadConfiguration("not.exists");
+        Assert.assertEquals("Error!", logList.get(5).getMessage());
+        Assert.assertEquals(Level.ERROR, logList.get(5).getLevel());
 
-        Assert.assertNotEquals("Error. Couldn't read the configuration!", logList.get(i).getMessage());
-        Assert.assertNotEquals(Level.ERROR, logList.get(i).getLevel());
+        Assert.assertEquals("Error. Couldn't read the configuration!", logList.get(6).getMessage());
+        Assert.assertEquals(Level.ERROR, logList.get(6).getLevel());
     }
 
     @Test
-    public void testLoadConfigurationWhereChannelIsNotJsonObject() throws Exception {
-        Assert.assertEquals("File has been successful read", logList.get(i).getMessage());
-        Assert.assertEquals(Level.INFO, logList.get(i++).getLevel());
-
-        Assert.assertEquals("Reading configuration...", logList.get(i).getMessage());
-        Assert.assertEquals(Level.INFO, logList.get(i++).getLevel());
-
-        Assert.assertNotEquals("Illegal JSON file!", logList.get(i).getMessage());
-        Assert.assertNotEquals(Level.ERROR, logList.get(i).getLevel());
-
+    public void testCheckOrCreateDatabaseFileWhenDatabaseNotExists() throws Exception {
+        try {
+            File file = new File("database.db");
+            if (file.exists()) {
+                file.delete();
+            }
+            Configuration.checkOrCreateDatabaseFile();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
     }
 
     @Test
-    public void testCheckOrCreateDatabaseFile() throws Exception {
-
+    public void testCheckOrCreateDatabaseFileWhenDatabaseIsExists() throws Exception {
+        try {
+            Configuration.checkOrCreateDatabaseFile();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
     }
 
     @Test
     public void testCreateConfigurationFile() throws Exception {
-
-    }
-
-    @Test
-    public void testLoadChannels() throws Exception {
-
-    }
-
-    @Test
-    public void testLoadCommands() throws Exception {
-
-    }
-
-    @Test
-    public void testGetChannelByName() throws Exception {
-
+        File original = new File("config.json");
+        File copied = new File("config.json.bak");
+        if (original.exists()) {
+            FileUtils.copyFile(original, copied);
+            if (copied.exists()) {
+                if(original.delete()); {
+                    Configuration.createConfigurationFile();
+                    FileUtils.copyFile(copied, original);
+                    if (!copied.delete())
+                        Assert.fail();
+                }
+            }
+        } else {
+            Configuration.createConfigurationFile();
+        }
     }
 }

@@ -15,8 +15,8 @@ import java.io.PrintStream;
 import java.util.List;
 
 public class BotTest {
-    List<ILoggingEvent> logList;
-    Bot bot;
+    private List<ILoggingEvent> logList;
+    private Bot bot;
 
     @Before
     public void setUp() {

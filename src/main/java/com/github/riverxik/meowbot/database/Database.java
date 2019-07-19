@@ -9,7 +9,7 @@ import java.sql.*;
  */
 public class Database {
 
-    private Connection connection;
+    private static Connection connection;
 
     private static final String path = "database.db";
 
@@ -17,7 +17,7 @@ public class Database {
      * Establishes connection with database.
      * @return - true if database is connected successfully.
      */
-    public boolean connect() {
+    public static boolean connect() {
         try {
             connection = null;
             Class.forName("org.sqlite.JDBC");
@@ -30,7 +30,7 @@ public class Database {
     }
 
     /** Disconnects current connection */
-    public void disconnect() {
+    public static void disconnect() {
         try {
             connection.close();
         } catch (SQLException e) {
@@ -41,7 +41,7 @@ public class Database {
     /** Returns current connection
      * @return connection-instance
      */
-    public Connection getConnection() {
-        return this.connection;
+    public static Connection getConnection() {
+        return connection;
     }
 }

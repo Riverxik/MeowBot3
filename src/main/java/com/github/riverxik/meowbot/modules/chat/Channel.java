@@ -5,10 +5,7 @@ import com.github.riverxik.meowbot.database.Database;
 import com.github.riverxik.meowbot.modules.TwitchBot;
 import com.github.riverxik.meowbot.modules.currency.CurrencyManager;
 import com.github.twitch4j.helix.domain.Subscription;
-import com.github.twitch4j.helix.domain.SubscriptionList;
 import com.github.twitch4j.helix.domain.UserList;
-import com.github.twitch4j.kraken.domain.KrakenSubscription;
-import com.github.twitch4j.kraken.domain.KrakenSubscriptionList;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -42,9 +39,8 @@ public class Channel {
     /** Adds current channel information to database. */
     public void addChannel() {
         try {
-            Database database = new Database();
-            database.connect();
-            Statement statement = database.getConnection().createStatement();
+            Database.connect();
+            Statement statement = Database.getConnection().createStatement();
             String query = "REPLACE INTO `channels` (`channelName`, `accessToken`,\n" +
                     "`moderationEnabled`, `currencyEnabled`, `customCommandsEnabled`,\n" +
                     "`betsEnabled`)\n" +
@@ -59,7 +55,7 @@ public class Channel {
                     "AND `betsEnabled` = '"+settings.isBetsEnabled()+"')";
             statement.execute(query);
             statement.close();
-            database.disconnect();
+            Database.disconnect();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -77,11 +73,10 @@ public class Channel {
 
     /** Updates all user information of current channel */
     public void updateAllUsersInDatabase() {
-        Database database = new Database();
-        database.connect();
+        Database.connect();
         String query = "";
         try {
-            Statement statement = database.getConnection().createStatement();
+            Statement statement = Database.getConnection().createStatement();
             for(ChannelUser user : channelUsers) {
                 query = "SELECT `userName`, `currency` FROM `"+name+"` WHERE `userName` = '"+user.getName()+"' ";
                 ResultSet resultSet = statement.executeQuery(query);
@@ -98,7 +93,7 @@ public class Channel {
                 }
             }
             statement.close();
-            database.disconnect();
+            Database.disconnect();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -145,12 +140,11 @@ public class Channel {
 
     private void executeQuery(String query) {
         try {
-            Database database = new Database();
-            database.connect();
-            Statement statement = database.getConnection().createStatement();
+            Database.connect();
+            Statement statement = Database.getConnection().createStatement();
             statement.execute(query);
             statement.close();
-            database.disconnect();
+            Database.disconnect();
         } catch (SQLException e) {
             // throws if table exists or something went wrong.
         }

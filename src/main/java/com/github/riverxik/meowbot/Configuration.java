@@ -67,28 +67,24 @@ public class Configuration {
     /**
      * Loads configurations settings from config.json, if config file doesn't exist creates it.
      */
-    public static void loadConfiguration() {
-        JSONObject config = readJsonFromFile("config.json");
+    public static void loadConfiguration(String fileName) {
+        JSONObject config = readJsonFromFile(fileName);
         if(config != null) {
             log.info("Reading configuration...");
             JSONArray channels = (JSONArray) config.get("channels");
             for(Object channel : channels) {
-                if(channel instanceof JSONObject) {
-                    ChannelSettings tmpSettings = new ChannelSettings(
-                            (boolean) ((JSONObject) channel).get("moderationEnabled"),
-                            (boolean) ((JSONObject) channel).get("currencyEnabled"),
-                            (boolean) ((JSONObject) channel).get("betsEnabled"),
-                            (boolean) ((JSONObject) channel).get("customCommandsEnabled"),
-                            String.valueOf(((JSONObject) channel).get("accessToken"))
-                    );
-                    Channel tmpChannel = new Channel(
-                            String.valueOf(((JSONObject) channel).get("channelName")),
-                            tmpSettings
-                    );
-                    loadingChannels.add(tmpChannel);
-                } else {
-                    log.error("Illegal JSON file!");
-                }
+                ChannelSettings tmpSettings = new ChannelSettings(
+                        (boolean) ((JSONObject) channel).get("moderationEnabled"),
+                        (boolean) ((JSONObject) channel).get("currencyEnabled"),
+                        (boolean) ((JSONObject) channel).get("betsEnabled"),
+                        (boolean) ((JSONObject) channel).get("customCommandsEnabled"),
+                        String.valueOf(((JSONObject) channel).get("accessToken"))
+                );
+                Channel tmpChannel = new Channel(
+                        String.valueOf(((JSONObject) channel).get("channelName")),
+                        tmpSettings
+                );
+                loadingChannels.add(tmpChannel);
             }
             log.info("All channels has been successfully read!");
 
@@ -133,13 +129,13 @@ public class Configuration {
      */
     public static void checkOrCreateDatabaseFile() {
         File file = new File("database.db");
-        if(file.exists() && !file.isDirectory()) {
+        if(file.exists()) {
             log.info("Database is found!");
         } else {
             log.info("Database is doesn't exists. Trying to create...");
             try {
-                if(file.createNewFile())
-                    log.info("Database has been successfully created!");
+                file.createNewFile();
+                log.info("Database has been successfully created!");
             } catch (IOException e) {
                 log.error("Couldn't create the database!", e.getMessage());
                 e.printStackTrace();
@@ -149,14 +145,14 @@ public class Configuration {
     }
 
     private static void initDatabase() {
-        if(createChannelsTable()) log.info("Channels table has been loaded!");
+        createChannelsTable();
+        log.info("Channels table has been loaded!");
         // Остальные таблицы тут
     }
 
-    private static boolean createChannelsTable() {
+    private static void createChannelsTable() {
         try {
-            Database database = new Database();
-            database.connect();
+            Database.connect();
             String query = "CREATE TABLE IF NOT EXISTS `channels` (\n" +
                     "\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
                     "\t`channelName`\tTEXT NOT NULL UNIQUE,\n" +
@@ -166,21 +162,19 @@ public class Configuration {
                     "\t`customCommandsEnabled`\tBOOLEAN NOT NULL DEFAULT false,\n" +
                     "\t`betsEnabled`\tBOOLEAN NOT NULL DEFAULT false\n" +
                     ");";
-            Statement statement = database.getConnection().createStatement();
+            Statement statement = Database.getConnection().createStatement();
             statement.execute(query);
             statement.close();
-            database.disconnect();
-            return true;
+            Database.disconnect();
 
         } catch (SQLException e) {
             log.error("Error while creating channels table!", e.getMessage());
             e.printStackTrace();
         }
-        return false;
     }
 
     //@SuppressWarnings("unchecked")
-    public static void createConfigurationFile(Bot bot) {
+    public static boolean createConfigurationFile() {
         JSONObject obj = new JSONObject();
 
         JSONObject tokens = new JSONObject();
@@ -218,15 +212,14 @@ public class Configuration {
         try (FileWriter file = new FileWriter("config.json")) {
             file.write(obj.toJSONString());
             log.info("Configuration file 'config.json' has been generated.");
-            bot.say("Configuration file 'config.json' has been generated. Please fill it out ;)");
             file.flush();
             file.close();
+            return true;
         } catch (IOException e) {
-            bot.say("Something wrong. Couldn't create configuration file.");
             log.error("Couldn't create configuration file.", e.toString());
             e.printStackTrace();
         }
-        System.exit(0);
+        return false;
     }
 
     /**
@@ -243,7 +236,7 @@ public class Configuration {
 
     public static void loadCommands() {
         commandRegistry.put("error", new CommandErrorHandler());
-        commandRegistry.put("test", new TestAbstractCommandHandler());
+        commandRegistry.put("test", new AbstractTestCommandHandler());
         commandRegistry.put("right", new ShowUserRightsHandle());
         commandRegistry.put("help", new HelpCommandHandle());
         commandRegistry.put("currency", new CurrencyStatusHandler());

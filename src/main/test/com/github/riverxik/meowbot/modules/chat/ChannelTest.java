@@ -7,8 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class ChannelTest {
-    Channel channel;
-    ChannelUser user;
+    private Channel channel;
+    private ChannelUser user;
 
     @Before
     public void setUp() throws Exception {
@@ -49,13 +49,24 @@ public class ChannelTest {
         channel.addUserToChannel(meowbotExpected);
         ChannelUser meowbotUser = channel.getChannelUserByName("murameowbot");
 
-        Configuration.loadConfiguration();
-        String adminName = Configuration.admin;
-        // Expected admin
-        ChannelUser adminUser = new ChannelUser(adminName, false, true, false, false);
-        // Actual admin
-        ChannelUser admin = channel.getChannelUserByName(adminName);
-
         Assert.assertEquals(meowbotExpected, meowbotUser);
+    }
+
+    @Test
+    public void testGettingUsersCount() throws Exception {
+        channel.addUserToChannel(user);
+        Assert.assertEquals(1, channel.getUsersCount());
+    }
+
+    @Test
+    public void testIsCurrencyDisabled() throws Exception {
+        try {
+            channel.getSettings().setCurrencyEnabled(false);
+            channel.addUserToChannel(user);
+            channel.updateAllUsersInDatabase();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
     }
 }

@@ -7,11 +7,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class ChannelUserTest {
-    ChannelUser owner;
-    ChannelUser mod;
-    ChannelUser sub;
-    ChannelUser vip;
-    ChannelUser viewer;
+    private ChannelUser owner;
+    private ChannelUser mod;
+    private ChannelUser sub;
+    private ChannelUser vip;
+    private ChannelUser viewer;
 
     @Before
     public void setUp() throws Exception {
@@ -29,11 +29,6 @@ public class ChannelUserTest {
         sub = null;
         vip = null;
         viewer = null;
-    }
-
-    @Test
-    public void testGetName() throws Exception {
-
     }
 
     @Test
