@@ -9,9 +9,6 @@ import org.junit.*;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.channels.FileLockInterruptionException;
 import java.util.List;
 
 public class ConfigurationTest {
@@ -27,11 +24,6 @@ public class ConfigurationTest {
         log.addAppender(listAppender);
         logList = listAppender.list;
         Configuration.loadConfiguration("config.json");
-    }
-
-    @After
-    public void CleanIp() throws Exception {
-
     }
 
     @Test
@@ -128,7 +120,7 @@ public class ConfigurationTest {
         if (original.exists()) {
             FileUtils.copyFile(original, copied);
             if (copied.exists()) {
-                if(original.delete()); {
+                if(original.delete()) {
                     Configuration.createConfigurationFile();
                     FileUtils.copyFile(copied, original);
                     if (!copied.delete())

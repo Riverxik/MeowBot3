@@ -4,6 +4,7 @@ import com.github.riverxik.meowbot.Configuration;
 import com.github.riverxik.meowbot.modules.TwitchBot;
 import com.github.twitch4j.chat.TwitchChat;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,6 +38,11 @@ public class HelpCommandHandleTest {
 
     @Test
     public void testExecute() throws Exception {
-        new HelpCommandHandle().execute(channel, sender, null, chat);
+        try {
+            new HelpCommandHandle().execute(channel, sender, null, chat);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
     }
 }

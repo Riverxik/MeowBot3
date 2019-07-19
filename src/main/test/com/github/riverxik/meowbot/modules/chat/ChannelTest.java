@@ -1,6 +1,5 @@
 package com.github.riverxik.meowbot.modules.chat;
 
-import com.github.riverxik.meowbot.Configuration;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
