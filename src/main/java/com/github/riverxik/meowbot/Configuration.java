@@ -13,10 +13,7 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -70,26 +67,24 @@ public class Configuration {
     /**
      * Loads configurations settings from config.json, if config file doesn't exist creates it.
      */
-    public static void loadConfiguration() {
-        JSONObject config = readJsonFromFile("config.json");
+    public static void loadConfiguration(String fileName) {
+        JSONObject config = readJsonFromFile(fileName);
         if(config != null) {
             log.info("Reading configuration...");
             JSONArray channels = (JSONArray) config.get("channels");
             for(Object channel : channels) {
-                if(channel instanceof JSONObject) {
-                    ChannelSettings tmpSettings = new ChannelSettings(
-                            (boolean) ((JSONObject) channel).get("moderationEnabled"),
-                            (boolean) ((JSONObject) channel).get("currencyEnabled"),
-                            (boolean) ((JSONObject) channel).get("betsEnabled"),
-                            (boolean) ((JSONObject) channel).get("customCommandsEnabled"),
-                            String.valueOf(((JSONObject) channel).get("accessToken"))
-                    );
-                    Channel tmpChannel = new Channel(
-                            String.valueOf(((JSONObject) channel).get("channelName")),
-                            tmpSettings
-                    );
-                    loadingChannels.add(tmpChannel);
-                }
+                ChannelSettings tmpSettings = new ChannelSettings(
+                        (boolean) ((JSONObject) channel).get("moderationEnabled"),
+                        (boolean) ((JSONObject) channel).get("currencyEnabled"),
+                        (boolean) ((JSONObject) channel).get("betsEnabled"),
+                        (boolean) ((JSONObject) channel).get("customCommandsEnabled"),
+                        String.valueOf(((JSONObject) channel).get("accessToken"))
+                );
+                Channel tmpChannel = new Channel(
+                        String.valueOf(((JSONObject) channel).get("channelName")),
+                        tmpSettings
+                );
+                loadingChannels.add(tmpChannel);
             }
             log.info("All channels has been successfully read!");
 
@@ -119,6 +114,7 @@ public class Configuration {
 
         try {
             Object obj = parser.parse(new FileReader(fileName));
+            log.info("File has been successful read");
             return (JSONObject) obj;
 
         } catch (ParseException | IOException e) {
@@ -133,13 +129,13 @@ public class Configuration {
      */
     public static void checkOrCreateDatabaseFile() {
         File file = new File("database.db");
-        if(file.exists() && !file.isDirectory()) {
+        if(file.exists()) {
             log.info("Database is found!");
         } else {
             log.info("Database is doesn't exists. Trying to create...");
             try {
-                if(file.createNewFile())
-                    log.info("Database has been successfully created!");
+                file.createNewFile();
+                log.info("Database has been successfully created!");
             } catch (IOException e) {
                 log.error("Couldn't create the database!", e.getMessage());
                 e.printStackTrace();
@@ -149,14 +145,14 @@ public class Configuration {
     }
 
     private static void initDatabase() {
-        if(createChannelsTable()) log.info("Channels table has been loaded!");
+        createChannelsTable();
+        log.info("Channels table has been loaded!");
         // Остальные таблицы тут
     }
 
-    private static boolean createChannelsTable() {
+    private static void createChannelsTable() {
         try {
-            Database database = new Database();
-            database.connect();
+            Database.connect();
             String query = "CREATE TABLE IF NOT EXISTS `channels` (\n" +
                     "\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
                     "\t`channelName`\tTEXT NOT NULL UNIQUE,\n" +
@@ -166,21 +162,19 @@ public class Configuration {
                     "\t`customCommandsEnabled`\tBOOLEAN NOT NULL DEFAULT false,\n" +
                     "\t`betsEnabled`\tBOOLEAN NOT NULL DEFAULT false\n" +
                     ");";
-            Statement statement = database.getConnection().createStatement();
+            Statement statement = Database.getConnection().createStatement();
             statement.execute(query);
             statement.close();
-            database.disconnect();
-            return true;
+            Database.disconnect();
 
         } catch (SQLException e) {
             log.error("Error while creating channels table!", e.getMessage());
             e.printStackTrace();
         }
-        return false;
     }
 
-    @SuppressWarnings("unchecked")
-    public static void createConfigurationFile(Bot bot) {
+    //@SuppressWarnings("unchecked")
+    public static boolean createConfigurationFile() {
         JSONObject obj = new JSONObject();
 
         JSONObject tokens = new JSONObject();
@@ -193,23 +187,23 @@ public class Configuration {
         JSONObject channel = new JSONObject();
         channel.put("channelName", "murameowbot");
         channel.put("accessToken", "");
-        channel.put("moderationEnabled", false);
-        channel.put("currencyEnabled", false);
-        channel.put("customCommandsEnabled", false);
-        channel.put("betsEnabled", false);
+        channel.put("moderationEnabled", true);
+        channel.put("currencyEnabled", true);
+        channel.put("customCommandsEnabled", true);
+        channel.put("betsEnabled", true);
         channels.add(channel);
         obj.put("channels", channels);
 
         // For disabling modules for all channel.
         // Not implemented right now.
         JSONObject modules = new JSONObject();
-        modules.put("currency", false);
-        modules.put("moderation", false);
-        modules.put("bets", false);
-        modules.put("customCommands", false);
-        modules.put("streamLive", false);
-        modules.put("streamOffline", false);
-        modules.put("streamFollower", false);
+        modules.put("currency", true);
+        modules.put("moderation", true);
+        modules.put("bets", true);
+        modules.put("customCommands", true);
+        modules.put("streamLive", true);
+        modules.put("streamOffline", true);
+        modules.put("streamFollower", true);
         obj.put("modules", modules);
 
         obj.put("admin", "putYourNicknameHere");
@@ -218,16 +212,14 @@ public class Configuration {
         try (FileWriter file = new FileWriter("config.json")) {
             file.write(obj.toJSONString());
             log.info("Configuration file 'config.json' has been generated.");
-            bot.say("Configuration file 'config.json' has been generated. Please fill it out ;)");
             file.flush();
             file.close();
-            java.lang.System.exit(0);
+            return true;
         } catch (IOException e) {
-            bot.say("Something wrong. Couldn't create configuration file.");
             log.error("Couldn't create configuration file.", e.toString());
             e.printStackTrace();
-            java.lang.System.exit(0);
         }
+        return false;
     }
 
     /**
@@ -244,7 +236,7 @@ public class Configuration {
 
     public static void loadCommands() {
         commandRegistry.put("error", new CommandErrorHandler());
-        commandRegistry.put("test", new TestAbstractCommandHandler());
+        commandRegistry.put("test", new AbstractTestCommandHandler());
         commandRegistry.put("right", new ShowUserRightsHandle());
         commandRegistry.put("help", new HelpCommandHandle());
         commandRegistry.put("currency", new CurrencyStatusHandler());

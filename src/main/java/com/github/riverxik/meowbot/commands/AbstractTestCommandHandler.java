@@ -2,7 +2,7 @@ package com.github.riverxik.meowbot.commands;
 
 import com.github.twitch4j.chat.TwitchChat;
 
-public class TestAbstractCommandHandler extends AbstractCommand{
+public class AbstractTestCommandHandler extends AbstractCommand{
 
     @Override
     public void execute(String channel, String sender, Object[] args, TwitchChat chat) {

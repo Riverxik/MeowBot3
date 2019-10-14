@@ -31,48 +31,41 @@ public class Bot {
 
     private void init() {
         log.info("Looking for configuration...");
-        if(isConfigExists()) {
 
-            Configuration.loadConfiguration();
+        createConfigIfItNotExists();
+        Configuration.loadConfiguration("config.json");
 
-            log.info("Looking for database...");
-            Configuration.checkOrCreateDatabaseFile();
+        log.info("Looking for database...");
+        Configuration.checkOrCreateDatabaseFile();
 
-            log.info("Loading channels...");
-            Configuration.loadChannels();
+        log.info("Loading channels...");
+        Configuration.loadChannels();
 
-            log.info("Loading commands...");
-            Configuration.loadCommands();
+        log.info("Loading commands...");
+        Configuration.loadCommands();
 
-            log.info("Starting twitch-bot...");
-            TwitchBot.initialize();
-            TwitchBot.registerFeatures();
-            TwitchBot.start();
-        }
+        log.info("Starting twitch-bot...");
+        TwitchBot.initialize();
+        TwitchBot.registerFeatures();
+        TwitchBot.start();
+
     }
 
     private void loadModules() {
-        if (Configuration.isCurrencyEnable()) {
-            new CurrencyManager();
-            new QuotesManager();
-        }
+        new CurrencyManager();
+        new QuotesManager();
     }
 
-    private boolean isConfigExists() {
+    private void createConfigIfItNotExists() {
         JSONParser parser = new JSONParser();
         try {
             parser.parse(new FileReader("config.json"));
             log.info("Configuration has been found!");
-            return true;
-
         } catch (ParseException | IOException e){
-            if(e.getMessage().equals("config.json (Не удается найти указанный файл)")) {
-                say(e.getMessage());
-                log.error("Configuration file couldn't found!!");
-                Configuration.createConfigurationFile(this);
-            }
+            say(e.getMessage());
+            log.error("Configuration file couldn't found!");
+            Configuration.createConfigurationFile();
         }
-        return false;
     }
 
     /**
@@ -80,6 +73,6 @@ public class Bot {
      * @param text - String for print.
      */
     public void say(String text) {
-        System.out.println(String.format("[Meowbot] >>> [%s]", text));
+        System.out.print(String.format("[Meowbot] >>> [%s]\n", text));
     }
 }

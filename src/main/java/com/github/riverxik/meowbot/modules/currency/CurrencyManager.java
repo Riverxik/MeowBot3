@@ -151,11 +151,10 @@ public class CurrencyManager {
     }
 
     public static int getUserCurrency(String channelName, String userName) {
-        Database database = new Database();
-        database.connect();
+        Database.connect();
         int count = 0;
         try {
-            Statement statement = database.getConnection().createStatement();
+            Statement statement = Database.getConnection().createStatement();
             String query = "SELECT `currency` FROM `"+channelName+"` " +
                     "WHERE `userName` = '"+userName.toLowerCase()+"'";
             ResultSet resultSet = statement.executeQuery(query);
@@ -163,7 +162,7 @@ public class CurrencyManager {
                 count = resultSet.getInt("currency");
             }
             statement.close();
-            database.disconnect();
+            Database.disconnect();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -187,10 +186,9 @@ public class CurrencyManager {
             boolean subEnable = false;
             int subMultiplier = 2;
             log.info(String.format("Loading currency settings for [%s]...", channelName));
-            Database database = new Database();
-            database.connect();
+            Database.connect();
             try {
-                Statement statement = database.getConnection().createStatement();
+                Statement statement = Database.getConnection().createStatement();
                 // Currency name.
                 String query = "SELECT `currencyName`, `currencyInc`, " +
                         "`subEnable`, `subMultiplier` " +
@@ -203,7 +201,7 @@ public class CurrencyManager {
                     subMultiplier = res.getInt("subMultiplier");
                 }
                 statement.close();
-                database.disconnect();
+                Database.disconnect();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -215,16 +213,15 @@ public class CurrencyManager {
         for(Channel channel : Configuration.loadingChannels) {
             String channelName = channel.getName();
             log.info(String.format("Setup currency settings for [%s]...", channelName));
-            Database database = new Database();
-            database.connect();
+            Database.connect();
             try {
-                Statement statement = database.getConnection().createStatement();
+                Statement statement = Database.getConnection().createStatement();
                 String query = "INSERT INTO `currency` (`channelName`) " +
                         "SELECT '"+channelName+"' " +
                         "WHERE NOT EXISTS(SELECT 1 FROM `currency` WHERE `channelName` = '"+channelName+"')";
                 statement.execute(query);
                 statement.close();
-                database.disconnect();
+                Database.disconnect();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -234,9 +231,8 @@ public class CurrencyManager {
     private void createCurrencyTable() {
         try {
             log.info("Looking for currency table...");
-            Database database = new Database();
-            database.connect();
-            Statement statement = database.getConnection().createStatement();
+            Database.connect();
+            Statement statement = Database.getConnection().createStatement();
             String query = "CREATE TABLE IF NOT EXISTS `currency` (\n" +
                     "\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
                     "\t`channelName`\tTEXT NOT NULL DEFAULT 'channel' UNIQUE,\n" +
@@ -250,7 +246,7 @@ public class CurrencyManager {
             statement.execute(query);
             log.info("Currency table successfully created!");
             statement.close();
-            database.disconnect();
+            Database.disconnect();
         } catch (SQLException e) {
             e.printStackTrace();
             log.error("SQL: " + e.getMessage());
@@ -317,10 +313,9 @@ public class CurrencyManager {
 
     private static void updateCurrencySettings() {
         for(Channel channel : Configuration.loadingChannels) {
-            Database database = new Database();
-            database.connect();
+            Database.connect();
             try {
-                Statement statement = database.getConnection().createStatement();
+                Statement statement = Database.getConnection().createStatement();
                 String channelName = channel.getName();
                 String currencyName = CurrencyManager.getChannelCurrencyName(channelName);
                 int currencyInc = CurrencyManager.getChannelCurrencyInc(channelName);
@@ -339,7 +334,7 @@ public class CurrencyManager {
                         "AND `subMultiplier` = '"+subMultiplier+"')";
                 statement.execute(query);
                 statement.close();
-                database.disconnect();
+                Database.disconnect();
             } catch (SQLException e) {
                 e.getMessage();
             }

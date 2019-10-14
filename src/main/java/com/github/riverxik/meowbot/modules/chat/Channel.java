@@ -1,12 +1,12 @@
 package com.github.riverxik.meowbot.modules.chat;
 
 import com.github.riverxik.meowbot.Configuration;
+import com.github.riverxik.meowbot.commands.CommandRights;
 import com.github.riverxik.meowbot.database.Database;
 import com.github.riverxik.meowbot.modules.TwitchBot;
 import com.github.riverxik.meowbot.modules.currency.CurrencyManager;
+import com.github.twitch4j.helix.domain.Subscription;
 import com.github.twitch4j.helix.domain.UserList;
-import com.github.twitch4j.kraken.domain.KrakenSubscription;
-import com.github.twitch4j.kraken.domain.KrakenSubscriptionList;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -40,9 +40,8 @@ public class Channel {
     /** Adds current channel information to database. */
     public void addChannel() {
         try {
-            Database database = new Database();
-            database.connect();
-            Statement statement = database.getConnection().createStatement();
+            Database.connect();
+            Statement statement = Database.getConnection().createStatement();
             String query = "REPLACE INTO `channels` (`channelName`, `accessToken`,\n" +
                     "`moderationEnabled`, `currencyEnabled`, `customCommandsEnabled`,\n" +
                     "`betsEnabled`)\n" +
@@ -57,7 +56,7 @@ public class Channel {
                     "AND `betsEnabled` = '"+settings.isBetsEnabled()+"')";
             statement.execute(query);
             statement.close();
-            database.disconnect();
+            Database.disconnect();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -75,32 +74,29 @@ public class Channel {
 
     /** Updates all user information of current channel */
     public void updateAllUsersInDatabase() {
-        if(settings.isCurrencyEnabled()) {
-            Database database = new Database();
-            database.connect();
-            String query = "";
-            try {
-                Statement statement = database.getConnection().createStatement();
-                for(ChannelUser user : channelUsers) {
-                    query = "SELECT `userName`, `currency` FROM `"+name+"` WHERE `userName` = '"+user.getName()+"' ";
-                    ResultSet resultSet = statement.executeQuery(query);
-                    if(resultSet.next()) { // Пользователь нашёлся
-                        if(settings.isCurrencyEnabled()) { // Валюта включена
-                            int newCurrency = calculateNewCurrency(user, resultSet.getInt(2));
-                            query = "UPDATE `"+name+"` SET `currency` = "+newCurrency+" WHERE `userName` = '"+user.getName()+"' ";
-                            statement.executeUpdate(query);
-                        }
-                    } else {
-                        query = "replace into `"+name+"` (`userName`, `currency`, `money`)\n" +
-                                "values ('"+user.getName()+"', '0', '0');";
+        Database.connect();
+        String query = "";
+        try {
+            Statement statement = Database.getConnection().createStatement();
+            for(ChannelUser user : channelUsers) {
+                query = "SELECT `userName`, `currency` FROM `"+name+"` WHERE `userName` = '"+user.getName()+"' ";
+                ResultSet resultSet = statement.executeQuery(query);
+                if(resultSet.next()) { // Пользователь нашёлся
+                    if(settings.isCurrencyEnabled()) { // Валюта включена
+                        int newCurrency = calculateNewCurrency(user, resultSet.getInt(2));
+                        query = "UPDATE `"+name+"` SET `currency` = "+newCurrency+" WHERE `userName` = '"+user.getName()+"' ";
                         statement.executeUpdate(query);
                     }
+                } else {
+                    query = "replace into `"+name+"` (`userName`, `currency`, `money`)\n" +
+                            "values ('"+user.getName()+"', '0', '0');";
+                    statement.executeUpdate(query);
                 }
-                statement.close();
-                database.disconnect();
-            } catch (SQLException e) {
-                e.printStackTrace();
             }
+            statement.close();
+            Database.disconnect();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -117,17 +113,18 @@ public class Channel {
     public void updateSubscribers() {
         long channelId = getChannelId();
         // TODO: if subscribers count more than 20 it will return not all of them
-        KrakenSubscriptionList subList = TwitchBot.getTwitchClient().getKraken().getChannelSubscribers(
-                settings.getAccessToken(),
+        List<Subscription> list = TwitchBot.getTwitchClient().getHelix().getSubscriptions(
+                this.getSettings().getAccessToken(),
                 channelId,
                 null,
                 null,
-                null
-        ).execute();
-        for (KrakenSubscription sub : subList.getSubscriptions()) {
-            String name = sub.getUser().getDisplayName();
-            ChannelUser user = getChannelUserByName(name);
+                100
+        ).execute().getSubscriptions();
+        for (Subscription sub : list) {
+            String userName = sub.getUserName();
+            ChannelUser user = getChannelUserByName(userName);
             user.setSub(true);
+            user.setRightLevel(CommandRights.VIP_SUB);
         }
     }
 
@@ -145,12 +142,11 @@ public class Channel {
 
     private void executeQuery(String query) {
         try {
-            Database database = new Database();
-            database.connect();
-            Statement statement = database.getConnection().createStatement();
+            Database.connect();
+            Statement statement = Database.getConnection().createStatement();
             statement.execute(query);
             statement.close();
-            database.disconnect();
+            Database.disconnect();
         } catch (SQLException e) {
             // throws if table exists or something went wrong.
         }
