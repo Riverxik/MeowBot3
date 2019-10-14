@@ -1,6 +1,7 @@
 package com.github.riverxik.meowbot.modules.chat;
 
 import com.github.riverxik.meowbot.Configuration;
+import com.github.riverxik.meowbot.commands.CommandRights;
 import com.github.riverxik.meowbot.database.Database;
 import com.github.riverxik.meowbot.modules.TwitchBot;
 import com.github.riverxik.meowbot.modules.currency.CurrencyManager;
@@ -123,6 +124,7 @@ public class Channel {
             String userName = sub.getUserName();
             ChannelUser user = getChannelUserByName(userName);
             user.setSub(true);
+            user.setRightLevel(CommandRights.VIP_SUB);
         }
     }
 
