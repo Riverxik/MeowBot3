@@ -41,6 +41,8 @@ public class CommandErrorHandlerTest {
             new CommandErrorHandler().execute(channel, anotherSender, args, chat);
             // !admin & toggle
             new CommandErrorHandler().execute(channel, anotherSender, argsToggle, chat);
+            // Param[] is null
+            new CommandErrorHandler().execute(channel, sender, null, chat);
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
