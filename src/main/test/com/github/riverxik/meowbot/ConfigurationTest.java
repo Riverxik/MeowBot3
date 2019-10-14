@@ -119,13 +119,11 @@ public class ConfigurationTest {
         File copied = new File("config.json.bak");
         if (original.exists()) {
             FileUtils.copyFile(original, copied);
-            if (copied.exists()) {
-                if(original.delete()) {
-                    Configuration.createConfigurationFile();
-                    FileUtils.copyFile(copied, original);
-                    if (!copied.delete())
-                        Assert.fail();
-                }
+            if (copied.exists() && original.delete()) {
+                Configuration.createConfigurationFile();
+                FileUtils.copyFile(copied, original);
+                if (!copied.delete())
+                    Assert.fail();
             }
         } else {
             Configuration.createConfigurationFile();
