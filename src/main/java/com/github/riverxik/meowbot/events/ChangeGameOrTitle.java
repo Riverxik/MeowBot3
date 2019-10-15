@@ -1,7 +1,7 @@
 package com.github.riverxik.meowbot.events;
 
 import com.github.philippheuer.events4j.EventManager;
-import com.github.riverxik.meowbot.modules.TwitchBot;
+import com.github.riverxik.meowbot.modules.TwitchBotHelper;
 import com.github.twitch4j.common.events.channel.ChannelChangeGameEvent;
 import com.github.twitch4j.common.events.channel.ChannelChangeTitleEvent;
 import com.github.twitch4j.helix.domain.GameList;
@@ -18,17 +18,17 @@ public class ChangeGameOrTitle {
     private void onChangeGame(ChannelChangeGameEvent event) {
         String channelName = event.getChannel().getName();
         String game = getGameNameById(String.valueOf(event.getGameId()));
-        TwitchBot.sendMessageToChat(channelName, String.format("[%s] now playing: %s", channelName, game));
+        TwitchBotHelper.sendMessageToChat(channelName, String.format("[%s] now playing: %s", channelName, game));
     }
 
     private void onChangeTitle(ChannelChangeTitleEvent event) {
         String channelName = event.getChannel().getName();
         String title = event.getTitle();
-        TwitchBot.sendMessageToChat(channelName, String.format("[%s] change title to: %s", channelName, title));
+        TwitchBotHelper.sendMessageToChat(channelName, String.format("[%s] change title to: %s", channelName, title));
     }
 
     private String getGameNameById(String gameId) {
-        GameList gameList = TwitchBot.getTwitchClient().getHelix()
+        GameList gameList = TwitchBotHelper.getTwitchClient().getHelix()
                 .getGames(Collections.singletonList(gameId), null).execute();
         return gameList.getGames().get(0).getName();
     }

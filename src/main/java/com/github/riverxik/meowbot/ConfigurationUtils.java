@@ -1,7 +1,11 @@
 package com.github.riverxik.meowbot;
 
-import com.github.riverxik.meowbot.commands.*;
-import com.github.riverxik.meowbot.database.Database;
+import com.github.riverxik.meowbot.commands.AbstractCommand;
+import com.github.riverxik.meowbot.commands.AbstractTestCommandHandler;
+import com.github.riverxik.meowbot.commands.CommandErrorHandler;
+import com.github.riverxik.meowbot.commands.HelpCommandHandle;
+import com.github.riverxik.meowbot.commands.ShowUserRightsHandle;
+import com.github.riverxik.meowbot.database.DatabaseUtils;
 import com.github.riverxik.meowbot.modules.chat.Channel;
 import com.github.riverxik.meowbot.modules.chat.ChannelSettings;
 import com.github.riverxik.meowbot.modules.currency.commands.CurrencyStatusHandler;
@@ -25,8 +29,8 @@ import java.util.List;
  * @author RiVeRx
  * @version 1.0
  */
-public class Configuration {
-    private static final Logger log = LoggerFactory.getLogger(Configuration.class);
+public class ConfigurationUtils {
+    private static final Logger log = LoggerFactory.getLogger(ConfigurationUtils.class);
 
     /** Debug mode */
     public static boolean debug = false;
@@ -152,7 +156,7 @@ public class Configuration {
 
     private static void createChannelsTable() {
         try {
-            Database.connect();
+            DatabaseUtils.connect();
             String query = "CREATE TABLE IF NOT EXISTS `channels` (\n" +
                     "\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
                     "\t`channelName`\tTEXT NOT NULL UNIQUE,\n" +
@@ -162,10 +166,10 @@ public class Configuration {
                     "\t`customCommandsEnabled`\tBOOLEAN NOT NULL DEFAULT false,\n" +
                     "\t`betsEnabled`\tBOOLEAN NOT NULL DEFAULT false\n" +
                     ");";
-            Statement statement = Database.getConnection().createStatement();
+            Statement statement = DatabaseUtils.getConnection().createStatement();
             statement.execute(query);
             statement.close();
-            Database.disconnect();
+            DatabaseUtils.disconnect();
 
         } catch (SQLException e) {
             log.error("Error while creating channels table!", e.getMessage());

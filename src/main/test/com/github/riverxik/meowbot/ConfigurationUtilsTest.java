@@ -5,60 +5,62 @@ import ch.qos.logback.core.read.ListAppender;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import org.codehaus.plexus.util.FileUtils;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
 
-public class ConfigurationTest {
+public class ConfigurationUtilsTest {
     private int i;
     private List<ILoggingEvent> logList;
 
     @Before
     public void setUp() throws Exception {
         i = 0;
-        Logger log = (Logger) LoggerFactory.getLogger(Configuration.class);
+        Logger log = (Logger) LoggerFactory.getLogger(ConfigurationUtils.class);
         ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
         listAppender.start();
         log.addAppender(listAppender);
         logList = listAppender.list;
-        Configuration.loadConfiguration("config.json");
+        ConfigurationUtils.loadConfiguration("config.json");
     }
 
     @Test
     public void testIsCurrencyEnable() throws Exception {
-        Assert.assertEquals(true, Configuration.isCurrencyEnable());
+        Assert.assertEquals(true, ConfigurationUtils.isCurrencyEnable());
     }
 
     @Test
     public void testIsModerationEnable() throws Exception {
-        Assert.assertEquals(true, Configuration.isModerationEnable());
+        Assert.assertEquals(true, ConfigurationUtils.isModerationEnable());
     }
 
     @Test
     public void testIsCustomCommandsEnable() throws Exception {
-        Assert.assertEquals(true, Configuration.isCustomCommandsEnable());
+        Assert.assertEquals(true, ConfigurationUtils.isCustomCommandsEnable());
     }
 
     @Test
     public void testIsBetsEnable() throws Exception {
-        Assert.assertEquals(true, Configuration.isBetsEnable());
+        Assert.assertEquals(true, ConfigurationUtils.isBetsEnable());
     }
 
     @Test
     public void testIsStreamLiveEnable() throws Exception {
-        Assert.assertEquals(true, Configuration.isStreamLiveEnable());
+        Assert.assertEquals(true, ConfigurationUtils.isStreamLiveEnable());
     }
 
     @Test
     public void testIsStreamOfflineEnable() throws Exception {
-        Assert.assertEquals(true, Configuration.isStreamOfflineEnable());
+        Assert.assertEquals(true, ConfigurationUtils.isStreamOfflineEnable());
     }
 
     @Test
     public void testIsStreamFollower() throws Exception {
-        Assert.assertEquals(true, Configuration.isStreamFollower());
+        Assert.assertEquals(true, ConfigurationUtils.isStreamFollower());
     }
 
     @Test
@@ -81,7 +83,7 @@ public class ConfigurationTest {
 
     @Test
     public void testLoadConfigurationWhereConfigIsNull() throws Exception {
-        Configuration.loadConfiguration("not.exists");
+        ConfigurationUtils.loadConfiguration("not.exists");
         Assert.assertEquals("Error!", logList.get(5).getMessage());
         Assert.assertEquals(Level.ERROR, logList.get(5).getLevel());
 
@@ -96,7 +98,7 @@ public class ConfigurationTest {
             if (file.exists()) {
                 file.delete();
             }
-            Configuration.checkOrCreateDatabaseFile();
+            ConfigurationUtils.checkOrCreateDatabaseFile();
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -106,7 +108,7 @@ public class ConfigurationTest {
     @Test
     public void testCheckOrCreateDatabaseFileWhenDatabaseIsExists() throws Exception {
         try {
-            Configuration.checkOrCreateDatabaseFile();
+            ConfigurationUtils.checkOrCreateDatabaseFile();
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
@@ -120,13 +122,13 @@ public class ConfigurationTest {
         if (original.exists()) {
             FileUtils.copyFile(original, copied);
             if (copied.exists() && original.delete()) {
-                Configuration.createConfigurationFile();
+                ConfigurationUtils.createConfigurationFile();
                 FileUtils.copyFile(copied, original);
                 if (!copied.delete())
                     Assert.fail();
             }
         } else {
-            Configuration.createConfigurationFile();
+            ConfigurationUtils.createConfigurationFile();
         }
     }
 }

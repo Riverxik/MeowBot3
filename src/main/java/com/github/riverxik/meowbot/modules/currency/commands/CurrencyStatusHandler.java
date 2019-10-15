@@ -1,6 +1,6 @@
 package com.github.riverxik.meowbot.modules.currency.commands;
 
-import com.github.riverxik.meowbot.Configuration;
+import com.github.riverxik.meowbot.ConfigurationUtils;
 import com.github.riverxik.meowbot.commands.AbstractCommand;
 import com.github.riverxik.meowbot.commands.CommandRights;
 import com.github.twitch4j.chat.TwitchChat;
@@ -23,11 +23,11 @@ public class CurrencyStatusHandler extends AbstractCommand{
                 String arg = String.valueOf(args[0]);
                 switch (arg) {
                     case "on" : {
-                        Configuration.getChannelByName(channel).getSettings().setCurrencyEnabled(true);
+                        ConfigurationUtils.getChannelByName(channel).getSettings().setCurrencyEnabled(true);
                         chat.sendMessage(channel, String.format("%s, Currency system now enabled", sender));
                     } break;
                     case "off" : {
-                        Configuration.getChannelByName(channel).getSettings().setCurrencyEnabled(false);
+                        ConfigurationUtils.getChannelByName(channel).getSettings().setCurrencyEnabled(false);
                         chat.sendMessage(channel, String.format("%s, Currency system now disabled", sender));
                     } break;
                     case "name" : {
@@ -59,6 +59,6 @@ public class CurrencyStatusHandler extends AbstractCommand{
     }
 
     private boolean getCurrencyStatus(String channelName) {
-        return Configuration.getChannelByName(channelName).getSettings().isCurrencyEnabled();
+        return ConfigurationUtils.getChannelByName(channelName).getSettings().isCurrencyEnabled();
     }
 }

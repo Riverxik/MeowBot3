@@ -1,7 +1,7 @@
 package com.github.riverxik.meowbot.modules.quotes;
 
-import com.github.riverxik.meowbot.Configuration;
-import com.github.riverxik.meowbot.database.Database;
+import com.github.riverxik.meowbot.ConfigurationUtils;
+import com.github.riverxik.meowbot.database.DatabaseUtils;
 import com.github.riverxik.meowbot.modules.chat.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +20,9 @@ public class QuotesManager {
     }
 
     public static int getNextChannelQuoteId(String channelName) {
-        Database.connect();
+        DatabaseUtils.connect();
         try {
-            Statement statement = Database.getConnection().createStatement();
+            Statement statement = DatabaseUtils.getConnection().createStatement();
             String query = "SELECT `quoteId` FROM `quotes` WHERE `channelName` = '"+channelName+"' " +
                     "ORDER BY `quoteId` DESC";
             ResultSet resultSet = statement.executeQuery(query);
@@ -31,7 +31,7 @@ public class QuotesManager {
                 id = resultSet.getInt("quoteId");
             }
             statement.close();
-            Database.disconnect();
+            DatabaseUtils.disconnect();
             return ++id;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -41,14 +41,14 @@ public class QuotesManager {
     }
 
     public static boolean addNewQuote(String channelName, int quoteId, String quoteText) {
-        Database.connect();
+        DatabaseUtils.connect();
         try {
-            Statement statement = Database.getConnection().createStatement();
+            Statement statement = DatabaseUtils.getConnection().createStatement();
             String query = "INSERT INTO `quotes` (`channelName`, `quoteId`, `quoteText`) " +
                     "VALUES ('"+channelName+"', '"+quoteId+"', '"+quoteText+"')";
             statement.execute(query);
             statement.close();
-            Database.disconnect();
+            DatabaseUtils.disconnect();
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -59,9 +59,9 @@ public class QuotesManager {
 
     public static String showQuote(String channelName, int quoteId) {
         String quoteText = String.format("Can't find quote with id = [%d]", quoteId);
-        Database.connect();
+        DatabaseUtils.connect();
         try {
-            Statement statement = Database.getConnection().createStatement();
+            Statement statement = DatabaseUtils.getConnection().createStatement();
             String query = "SELECT `quoteText` FROM `quotes` WHERE `channelName` = '"+channelName+"' " +
                     "AND `quoteId` = '"+quoteId+"'";
             ResultSet resultSet = statement.executeQuery(query);
@@ -69,7 +69,7 @@ public class QuotesManager {
                 quoteText = resultSet.getString("quoteText");
             }
             statement.close();
-            Database.disconnect();
+            DatabaseUtils.disconnect();
             return quoteText;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -79,14 +79,14 @@ public class QuotesManager {
     }
 
     public static boolean removeQuote(String channelName, int quoteId) {
-        Database.connect();
+        DatabaseUtils.connect();
         try {
-            Statement statement = Database.getConnection().createStatement();
+            Statement statement = DatabaseUtils.getConnection().createStatement();
             String query = "DELETE FROM `quotes` WHERE `channelName` = '"+channelName+"' " +
                     "AND `quoteId` = '"+quoteId+"'";
             statement.execute(query);
             statement.close();
-            Database.disconnect();
+            DatabaseUtils.disconnect();
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -97,9 +97,9 @@ public class QuotesManager {
 
     private void createQuotesTable() {
         log.info("Looking for quotes table...");
-        Database.connect();
+        DatabaseUtils.connect();
         try {
-            Statement statement = Database.getConnection().createStatement();
+            Statement statement = DatabaseUtils.getConnection().createStatement();
             String query = "CREATE TABLE IF NOT EXISTS [quotes] (\n" +
                     "[id] INTEGER DEFAULT '0' NOT NULL PRIMARY KEY AUTOINCREMENT,\n" +
                     "[channelName] VARCHAR(50) DEFAULT 'unknown' NOT NULL,\n" +
@@ -109,7 +109,7 @@ public class QuotesManager {
             statement.execute(query);
             log.info("Quotes table successfully created!");
             statement.close();
-            Database.disconnect();
+            DatabaseUtils.disconnect();
         } catch (SQLException e) {
             e.printStackTrace();
             log.error("SQL: " + e.getMessage());
@@ -117,7 +117,7 @@ public class QuotesManager {
     }
 
     private void loadChannelQuotes() {
-        for (Channel channel : Configuration.loadingChannels) {
+        for (Channel channel : ConfigurationUtils.loadingChannels) {
             channel.getSettings().setQuotes(new ChannelQuotes(channel.getName()));
         }
     }

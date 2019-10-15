@@ -31,8 +31,8 @@
   </appender>
   
   	<logger name="com.github.riverxik.meowbot.Bot" level="INFO"/>
-  	<logger name="com.github.riverxik.meowbot.Configuration" level="INFO" />
-  	<logger name="com.github.riverxik.meowbot.modules.TwitchBot" level="INFO" />
+  	<logger name="com.github.riverxik.meowbot.ConfigurationUtils" level="INFO" />
+  	<logger name="com.github.riverxik.meowbot.modules.TwitchBotHelper" level="INFO" />
 	<logger name="com.github.riverxik.meowbot.events.PublicMessages" level="INFO" />
 	<logger name="com.github.riverxik.meowbot.modules.currency.CurrencyManager" level="INFO" />
 	<logger name="com.github.riverxik.meowbot.modules.quotes.QuotesManager" level="INFO" />

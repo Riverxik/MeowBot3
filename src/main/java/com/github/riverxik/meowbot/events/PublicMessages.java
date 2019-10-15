@@ -1,9 +1,9 @@
 package com.github.riverxik.meowbot.events;
 
-import com.github.riverxik.meowbot.Configuration;
+import com.github.riverxik.meowbot.ConfigurationUtils;
 import com.github.riverxik.meowbot.commands.fsa.Lexer;
 import com.github.riverxik.meowbot.commands.fsa.Parser;
-import com.github.riverxik.meowbot.modules.TwitchBot;
+import com.github.riverxik.meowbot.modules.TwitchBotHelper;
 import com.github.philippheuer.events4j.EventManager;
 import com.github.twitch4j.chat.TwitchChat;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
@@ -22,7 +22,7 @@ public class PublicMessages {
     private static final Logger log = LoggerFactory.getLogger(PublicMessages.class);
     /**
      * Handles new channel messages.
-     * @param eventManager - event manager from TwitchClient {@link TwitchBot#twitchClient}
+     * @param eventManager - event manager from TwitchClient {@link TwitchBotHelper#twitchClient}
      */
     public PublicMessages(EventManager eventManager) {
         eventManager.onEvent(ChannelMessageEvent.class).subscribe(this::onChannelMessage);
@@ -56,8 +56,8 @@ public class PublicMessages {
     }
 
     private void processCommand(String channel, String sender, String baseCommand, Object[] args, TwitchChat chat) {
-        if (Configuration.commandRegistry.containsKey(baseCommand)) {
-            Configuration.commandRegistry.get(baseCommand).execute(channel, sender, args, chat);
+        if (ConfigurationUtils.commandRegistry.containsKey(baseCommand)) {
+            ConfigurationUtils.commandRegistry.get(baseCommand).execute(channel, sender, args, chat);
         } else {
             log.info("Unknown command: " + baseCommand);
         }

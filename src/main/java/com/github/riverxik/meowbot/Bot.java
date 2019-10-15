@@ -1,7 +1,7 @@
 package com.github.riverxik.meowbot;
 
 import com.github.riverxik.meowbot.modules.currency.CurrencyManager;
-import com.github.riverxik.meowbot.modules.TwitchBot;
+import com.github.riverxik.meowbot.modules.TwitchBotHelper;
 import com.github.riverxik.meowbot.modules.quotes.QuotesManager;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -33,21 +33,21 @@ public class Bot {
         log.info("Looking for configuration...");
 
         createConfigIfItNotExists();
-        Configuration.loadConfiguration("config.json");
+        ConfigurationUtils.loadConfiguration("config.json");
 
         log.info("Looking for database...");
-        Configuration.checkOrCreateDatabaseFile();
+        ConfigurationUtils.checkOrCreateDatabaseFile();
 
         log.info("Loading channels...");
-        Configuration.loadChannels();
+        ConfigurationUtils.loadChannels();
 
         log.info("Loading commands...");
-        Configuration.loadCommands();
+        ConfigurationUtils.loadCommands();
 
         log.info("Starting twitch-bot...");
-        TwitchBot.initialize();
-        TwitchBot.registerFeatures();
-        TwitchBot.start();
+        TwitchBotHelper.initialize();
+        TwitchBotHelper.registerFeatures();
+        TwitchBotHelper.start();
 
     }
 
@@ -64,7 +64,7 @@ public class Bot {
         } catch (ParseException | IOException e){
             say(e.getMessage());
             log.error("Configuration file couldn't found!");
-            Configuration.createConfigurationFile();
+            ConfigurationUtils.createConfigurationFile();
         }
     }
 

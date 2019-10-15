@@ -1,6 +1,6 @@
 package com.github.riverxik.meowbot.modules.currency.commands;
 
-import com.github.riverxik.meowbot.Configuration;
+import com.github.riverxik.meowbot.ConfigurationUtils;
 import com.github.riverxik.meowbot.commands.AbstractCommand;
 import com.github.riverxik.meowbot.commands.CommandRights;
 import com.github.riverxik.meowbot.modules.currency.CurrencyManager;
@@ -11,7 +11,7 @@ public class CurrencyIncHandler extends AbstractCommand{
     public void execute(String channel, String sender, Object[] args, TwitchChat chat) {
         if (hasRight(channel, sender, CommandRights.OWNER)) {
             if (args.length == 0) {
-                int currentInc = Configuration.getChannelByName(channel)
+                int currentInc = ConfigurationUtils.getChannelByName(channel)
                         .getSettings().getCurrency().getCurrencyInc();
                 chat.sendMessage(channel, String.format("%s, current increment: %d", sender, currentInc));
             }

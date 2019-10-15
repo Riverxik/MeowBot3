@@ -1,9 +1,9 @@
 package com.github.riverxik.meowbot.modules.chat;
 
-import com.github.riverxik.meowbot.Configuration;
+import com.github.riverxik.meowbot.ConfigurationUtils;
 import com.github.riverxik.meowbot.commands.CommandRights;
-import com.github.riverxik.meowbot.database.Database;
-import com.github.riverxik.meowbot.modules.TwitchBot;
+import com.github.riverxik.meowbot.database.DatabaseUtils;
+import com.github.riverxik.meowbot.modules.TwitchBotHelper;
 import com.github.riverxik.meowbot.modules.currency.CurrencyManager;
 import com.github.twitch4j.helix.domain.Subscription;
 import com.github.twitch4j.helix.domain.UserList;
@@ -40,8 +40,8 @@ public class Channel {
     /** Adds current channel information to database. */
     public void addChannel() {
         try {
-            Database.connect();
-            Statement statement = Database.getConnection().createStatement();
+            DatabaseUtils.connect();
+            Statement statement = DatabaseUtils.getConnection().createStatement();
             String query = "REPLACE INTO `channels` (`channelName`, `accessToken`,\n" +
                     "`moderationEnabled`, `currencyEnabled`, `customCommandsEnabled`,\n" +
                     "`betsEnabled`)\n" +
@@ -56,7 +56,7 @@ public class Channel {
                     "AND `betsEnabled` = '"+settings.isBetsEnabled()+"')";
             statement.execute(query);
             statement.close();
-            Database.disconnect();
+            DatabaseUtils.disconnect();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -74,10 +74,10 @@ public class Channel {
 
     /** Updates all user information of current channel */
     public void updateAllUsersInDatabase() {
-        Database.connect();
+        DatabaseUtils.connect();
         String query = "";
         try {
-            Statement statement = Database.getConnection().createStatement();
+            Statement statement = DatabaseUtils.getConnection().createStatement();
             for(ChannelUser user : channelUsers) {
                 query = "SELECT `userName`, `currency` FROM `"+name+"` WHERE `userName` = '"+user.getName()+"' ";
                 ResultSet resultSet = statement.executeQuery(query);
@@ -94,7 +94,7 @@ public class Channel {
                 }
             }
             statement.close();
-            Database.disconnect();
+            DatabaseUtils.disconnect();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -102,7 +102,7 @@ public class Channel {
 
     public long getChannelId() {
         try {
-            UserList resultList = TwitchBot.getTwitchClient().getHelix().getUsers(null, null, Collections.singletonList(name)).execute();
+            UserList resultList = TwitchBotHelper.getTwitchClient().getHelix().getUsers(null, null, Collections.singletonList(name)).execute();
             return resultList.getUsers().get(0).getId();
         } catch (Exception e) {
             return -1;
@@ -113,7 +113,7 @@ public class Channel {
     public void updateSubscribers() {
         long channelId = getChannelId();
         // TODO: if subscribers count more than 20 it will return not all of them
-        List<Subscription> list = TwitchBot.getTwitchClient().getHelix().getSubscriptions(
+        List<Subscription> list = TwitchBotHelper.getTwitchClient().getHelix().getSubscriptions(
                 this.getSettings().getAccessToken(),
                 channelId,
                 null,
@@ -142,11 +142,11 @@ public class Channel {
 
     private void executeQuery(String query) {
         try {
-            Database.connect();
-            Statement statement = Database.getConnection().createStatement();
+            DatabaseUtils.connect();
+            Statement statement = DatabaseUtils.getConnection().createStatement();
             statement.execute(query);
             statement.close();
-            Database.disconnect();
+            DatabaseUtils.disconnect();
         } catch (SQLException e) {
             // throws if table exists or something went wrong.
         }
@@ -173,7 +173,7 @@ public class Channel {
             if (userName.equals(user.getName()))
                 return user;
         }
-        if (Configuration.admin.equals(userName))
+        if (ConfigurationUtils.admin.equals(userName))
             return new ChannelUser(userName, true, true, true, true);
         else
             return new ChannelUser("User not found", false, false, false, false);

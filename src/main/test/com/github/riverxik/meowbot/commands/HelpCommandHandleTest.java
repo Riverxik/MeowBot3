@@ -1,7 +1,7 @@
 package com.github.riverxik.meowbot.commands;
 
-import com.github.riverxik.meowbot.Configuration;
-import com.github.riverxik.meowbot.modules.TwitchBot;
+import com.github.riverxik.meowbot.ConfigurationUtils;
+import com.github.riverxik.meowbot.modules.TwitchBotHelper;
 import com.github.twitch4j.chat.TwitchChat;
 import org.junit.After;
 import org.junit.Assert;
@@ -15,18 +15,18 @@ public class HelpCommandHandleTest {
 
     @Before
     public void setUp() throws Exception {
-        Configuration.loadConfiguration("config.json");
-        Configuration.checkOrCreateDatabaseFile();
-        Configuration.loadChannels();
-        Configuration.loadCommands();
+        ConfigurationUtils.loadConfiguration("config.json");
+        ConfigurationUtils.checkOrCreateDatabaseFile();
+        ConfigurationUtils.loadChannels();
+        ConfigurationUtils.loadCommands();
 
-        TwitchBot.initialize();
-        TwitchBot.registerFeatures();
-        TwitchBot.start();
+        TwitchBotHelper.initialize();
+        TwitchBotHelper.registerFeatures();
+        TwitchBotHelper.start();
 
-        channel = Configuration.loadingChannels.get(0).getName();
-        sender = Configuration.admin;
-        chat = TwitchBot.getTwitchClient().getChat();
+        channel = ConfigurationUtils.loadingChannels.get(0).getName();
+        sender = ConfigurationUtils.admin;
+        chat = TwitchBotHelper.getTwitchClient().getChat();
     }
 
     @After

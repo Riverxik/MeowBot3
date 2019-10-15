@@ -7,7 +7,7 @@ import java.sql.*;
  * @author RiVeRx
  * @version 1.0
  */
-public class Database {
+public class DatabaseUtils {
 
     private static Connection connection;
 
