@@ -1,10 +1,6 @@
 package com.github.riverxik.meowbot;
 
-import com.github.riverxik.meowbot.commands.AbstractCommand;
-import com.github.riverxik.meowbot.commands.AbstractTestCommandHandler;
-import com.github.riverxik.meowbot.commands.CommandErrorHandler;
-import com.github.riverxik.meowbot.commands.HelpCommandHandle;
-import com.github.riverxik.meowbot.commands.ShowUserRightsHandle;
+import com.github.riverxik.meowbot.commands.*;
 import com.github.riverxik.meowbot.database.DatabaseUtils;
 import com.github.riverxik.meowbot.modules.chat.Channel;
 import com.github.riverxik.meowbot.modules.chat.ChannelSettings;
@@ -245,6 +241,7 @@ public class ConfigurationUtils {
         commandRegistry.put("help", new HelpCommandHandle());
         commandRegistry.put("currency", new CurrencyStatusHandler());
         commandRegistry.put("quote", new QuoteHandle());
+        commandRegistry.put("calc", new CalcCommandHandler());
     }
 
     public static Channel getChannelByName(String channelName) {
