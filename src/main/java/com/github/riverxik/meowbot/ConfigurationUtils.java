@@ -1,6 +1,12 @@
 package com.github.riverxik.meowbot;
 
-import com.github.riverxik.meowbot.commands.*;
+
+import com.github.riverxik.meowbot.commands.AbstractCommand;
+import com.github.riverxik.meowbot.commands.AbstractTestCommandHandler;
+import com.github.riverxik.meowbot.commands.CommandErrorHandler;
+import com.github.riverxik.meowbot.commands.CalcCommandHandler;
+import com.github.riverxik.meowbot.commands.HelpCommandHandle;
+import com.github.riverxik.meowbot.commands.ShowUserRightsHandle;
 import com.github.riverxik.meowbot.database.DatabaseUtils;
 import com.github.riverxik.meowbot.modules.chat.Channel;
 import com.github.riverxik.meowbot.modules.chat.ChannelSettings;
