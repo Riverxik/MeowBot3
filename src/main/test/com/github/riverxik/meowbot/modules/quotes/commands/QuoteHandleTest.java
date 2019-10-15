@@ -1,8 +1,8 @@
 package com.github.riverxik.meowbot.modules.quotes.commands;
 
 import com.github.riverxik.meowbot.Bot;
-import com.github.riverxik.meowbot.Configuration;
-import com.github.riverxik.meowbot.modules.TwitchBot;
+import com.github.riverxik.meowbot.ConfigurationUtils;
+import com.github.riverxik.meowbot.modules.TwitchBotHelper;
 import com.github.riverxik.meowbot.modules.chat.Channel;
 import com.github.riverxik.meowbot.modules.chat.ChannelSettings;
 import com.github.riverxik.meowbot.modules.chat.ChannelUser;
@@ -19,8 +19,8 @@ public class QuoteHandleTest {
     @Before
     public void setUp() throws Exception {
         new Bot();
-        senderName = Configuration.admin;
-        chat = TwitchBot.getTwitchClient().getChat();
+        senderName = ConfigurationUtils.admin;
+        chat = TwitchBotHelper.getTwitchClient().getChat();
     }
 
     @Test

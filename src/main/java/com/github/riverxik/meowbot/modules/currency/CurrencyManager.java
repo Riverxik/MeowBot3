@@ -1,8 +1,8 @@
 package com.github.riverxik.meowbot.modules.currency;
 
-import com.github.riverxik.meowbot.Configuration;
-import com.github.riverxik.meowbot.database.Database;
-import com.github.riverxik.meowbot.modules.TwitchBot;
+import com.github.riverxik.meowbot.ConfigurationUtils;
+import com.github.riverxik.meowbot.database.DatabaseUtils;
+import com.github.riverxik.meowbot.modules.TwitchBotHelper;
 import com.github.riverxik.meowbot.modules.chat.Channel;
 import com.github.riverxik.meowbot.modules.chat.ChannelUser;
 import com.github.twitch4j.tmi.domain.Chatters;
@@ -41,7 +41,7 @@ public class CurrencyManager {
      */
     public static String getChannelCurrencyName(String channelName) {
         try {
-            return Configuration.getChannelByName(channelName).getSettings().getCurrency().getCurrencyName();
+            return ConfigurationUtils.getChannelByName(channelName).getSettings().getCurrency().getCurrencyName();
         } catch (NullPointerException e) {
             return String.format("Couldn't found currency name for %s", channelName);
         }
@@ -55,7 +55,7 @@ public class CurrencyManager {
      */
     public static String setChannelCurrencyName(String channelName, String currencyName) {
         try {
-            Configuration.getChannelByName(channelName).getSettings().getCurrency().setCurrencyName(currencyName);
+            ConfigurationUtils.getChannelByName(channelName).getSettings().getCurrency().setCurrencyName(currencyName);
             updateCurrencySettings();
             return String.format("Currency name for %s has been updated to [%s]", channelName, currencyName);
         } catch (NullPointerException e) {
@@ -70,7 +70,7 @@ public class CurrencyManager {
      */
     public static int getChannelCurrencyInc(String channelName) {
         try {
-            return Configuration.getChannelByName(channelName).getSettings().getCurrency().getCurrencyInc();
+            return ConfigurationUtils.getChannelByName(channelName).getSettings().getCurrency().getCurrencyInc();
         } catch (NullPointerException e) {
             return -1;
         }
@@ -84,7 +84,7 @@ public class CurrencyManager {
      */
     public static int setChannelCurrencyInc(String channelName, int currencyInc) {
         try {
-            Configuration.getChannelByName(channelName).getSettings().getCurrency().setCurrencyInc(currencyInc);
+            ConfigurationUtils.getChannelByName(channelName).getSettings().getCurrency().setCurrencyInc(currencyInc);
             updateCurrencySettings();
             return 1;
         } catch (NullPointerException e) {
@@ -99,7 +99,7 @@ public class CurrencyManager {
      */
     public static boolean getChannelSubEnable(String channelName) {
         try {
-            return Configuration.getChannelByName(channelName).getSettings().getCurrency().isSubEnable();
+            return ConfigurationUtils.getChannelByName(channelName).getSettings().getCurrency().isSubEnable();
         } catch (NullPointerException e) {
             return false;
         }
@@ -113,7 +113,7 @@ public class CurrencyManager {
      */
     public static boolean setChannelSubEnable(String channelName, boolean isSubEnable) {
         try {
-            Configuration.getChannelByName(channelName).getSettings().getCurrency().setSubEnable(isSubEnable);
+            ConfigurationUtils.getChannelByName(channelName).getSettings().getCurrency().setSubEnable(isSubEnable);
             updateCurrencySettings();
             return true;
         } catch (NullPointerException e) {
@@ -128,7 +128,7 @@ public class CurrencyManager {
      */
     public static int getChannelSubMultiplier(String channelName) {
         try {
-            return Configuration.getChannelByName(channelName).getSettings().getCurrency().getSubMultiplier();
+            return ConfigurationUtils.getChannelByName(channelName).getSettings().getCurrency().getSubMultiplier();
         } catch (NullPointerException e) {
             return 1;
         }
@@ -142,7 +142,7 @@ public class CurrencyManager {
      */
     public static int setChannelSubMultiplier(String channelName, int subMultiplier) {
         try {
-            Configuration.getChannelByName(channelName).getSettings().getCurrency().setSubMultiplier(subMultiplier);
+            ConfigurationUtils.getChannelByName(channelName).getSettings().getCurrency().setSubMultiplier(subMultiplier);
             updateCurrencySettings();
             return 1;
         } catch (NullPointerException e) {
@@ -151,10 +151,10 @@ public class CurrencyManager {
     }
 
     public static int getUserCurrency(String channelName, String userName) {
-        Database.connect();
+        DatabaseUtils.connect();
         int count = 0;
         try {
-            Statement statement = Database.getConnection().createStatement();
+            Statement statement = DatabaseUtils.getConnection().createStatement();
             String query = "SELECT `currency` FROM `"+channelName+"` " +
                     "WHERE `userName` = '"+userName.toLowerCase()+"'";
             ResultSet resultSet = statement.executeQuery(query);
@@ -162,7 +162,7 @@ public class CurrencyManager {
                 count = resultSet.getInt("currency");
             }
             statement.close();
-            Database.disconnect();
+            DatabaseUtils.disconnect();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -179,16 +179,16 @@ public class CurrencyManager {
     }
 
     private void loadChannelCurrency() {
-        for (Channel channel : Configuration.loadingChannels) {
+        for (Channel channel : ConfigurationUtils.loadingChannels) {
             String channelName = channel.getName();
             String currencyName = "Points";
             int currencyInc = 1;
             boolean subEnable = false;
             int subMultiplier = 2;
             log.info(String.format("Loading currency settings for [%s]...", channelName));
-            Database.connect();
+            DatabaseUtils.connect();
             try {
-                Statement statement = Database.getConnection().createStatement();
+                Statement statement = DatabaseUtils.getConnection().createStatement();
                 // Currency name.
                 String query = "SELECT `currencyName`, `currencyInc`, " +
                         "`subEnable`, `subMultiplier` " +
@@ -201,7 +201,7 @@ public class CurrencyManager {
                     subMultiplier = res.getInt("subMultiplier");
                 }
                 statement.close();
-                Database.disconnect();
+                DatabaseUtils.disconnect();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -210,18 +210,18 @@ public class CurrencyManager {
     }
 
     private void setupChannelCurrency() {
-        for(Channel channel : Configuration.loadingChannels) {
+        for(Channel channel : ConfigurationUtils.loadingChannels) {
             String channelName = channel.getName();
             log.info(String.format("Setup currency settings for [%s]...", channelName));
-            Database.connect();
+            DatabaseUtils.connect();
             try {
-                Statement statement = Database.getConnection().createStatement();
+                Statement statement = DatabaseUtils.getConnection().createStatement();
                 String query = "INSERT INTO `currency` (`channelName`) " +
                         "SELECT '"+channelName+"' " +
                         "WHERE NOT EXISTS(SELECT 1 FROM `currency` WHERE `channelName` = '"+channelName+"')";
                 statement.execute(query);
                 statement.close();
-                Database.disconnect();
+                DatabaseUtils.disconnect();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -231,8 +231,8 @@ public class CurrencyManager {
     private void createCurrencyTable() {
         try {
             log.info("Looking for currency table...");
-            Database.connect();
-            Statement statement = Database.getConnection().createStatement();
+            DatabaseUtils.connect();
+            Statement statement = DatabaseUtils.getConnection().createStatement();
             String query = "CREATE TABLE IF NOT EXISTS `currency` (\n" +
                     "\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
                     "\t`channelName`\tTEXT NOT NULL DEFAULT 'channel' UNIQUE,\n" +
@@ -246,7 +246,7 @@ public class CurrencyManager {
             statement.execute(query);
             log.info("Currency table successfully created!");
             statement.close();
-            Database.disconnect();
+            DatabaseUtils.disconnect();
         } catch (SQLException e) {
             e.printStackTrace();
             log.error("SQL: " + e.getMessage());
@@ -273,11 +273,11 @@ public class CurrencyManager {
     }
 
     private void loadUsers() {
-        for(Channel channel : Configuration.loadingChannels) {
+        for(Channel channel : ConfigurationUtils.loadingChannels) {
             channel.removeAllUsersFromChannel();
 
             HystrixCommandProperties.Setter().withExecutionTimeoutEnabled(TIMEOUT_ENABLED);
-            Chatters chatters = TwitchBot.getTwitchClient().getMessagingInterface().getChatters(channel.getName()).execute();
+            Chatters chatters = TwitchBotHelper.getTwitchClient().getMessagingInterface().getChatters(channel.getName()).execute();
 
             List<String> userNameAllViewers = chatters.getAllViewers();
             List<String> userNameMods = chatters.getModerators();
@@ -312,10 +312,10 @@ public class CurrencyManager {
     }
 
     private static void updateCurrencySettings() {
-        for(Channel channel : Configuration.loadingChannels) {
-            Database.connect();
+        for(Channel channel : ConfigurationUtils.loadingChannels) {
+            DatabaseUtils.connect();
             try {
-                Statement statement = Database.getConnection().createStatement();
+                Statement statement = DatabaseUtils.getConnection().createStatement();
                 String channelName = channel.getName();
                 String currencyName = CurrencyManager.getChannelCurrencyName(channelName);
                 int currencyInc = CurrencyManager.getChannelCurrencyInc(channelName);
@@ -334,7 +334,7 @@ public class CurrencyManager {
                         "AND `subMultiplier` = '"+subMultiplier+"')";
                 statement.execute(query);
                 statement.close();
-                Database.disconnect();
+                DatabaseUtils.disconnect();
             } catch (SQLException e) {
                 e.getMessage();
             }

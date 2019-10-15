@@ -1,8 +1,10 @@
 package com.github.riverxik.meowbot.modules;
 
-import com.github.riverxik.meowbot.Configuration;
-import com.github.riverxik.meowbot.events.*;
+import com.github.riverxik.meowbot.ConfigurationUtils;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
+import com.github.riverxik.meowbot.events.ChangeGameOrTitle;
+import com.github.riverxik.meowbot.events.PublicMessages;
+import com.github.riverxik.meowbot.events.SubscribersOnly;
 import com.github.riverxik.meowbot.modules.chat.Channel;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
@@ -14,9 +16,9 @@ import org.slf4j.LoggerFactory;
  * @author RiVeRx
  * @version 1.0
  */
-public final class TwitchBot {
+public final class TwitchBotHelper {
 
-    private static final Logger log = LoggerFactory.getLogger(TwitchBot.class);
+    private static final Logger log = LoggerFactory.getLogger(TwitchBotHelper.class);
     private static TwitchClient twitchClient = null;
 
     public static void initialize() {
@@ -25,12 +27,12 @@ public final class TwitchBot {
 
         OAuth2Credential credential = new OAuth2Credential(
                 "twitch",
-                Configuration.chatToken
+                ConfigurationUtils.chatToken
         );
 
         twitchClient = clientBuilder
-                .withClientId(Configuration.clientAppId)
-                .withClientSecret(Configuration.clientAppSecret)
+                .withClientId(ConfigurationUtils.clientAppId)
+                .withClientSecret(ConfigurationUtils.clientAppSecret)
                 .withEnableKraken(true)
                 .withEnableHelix(true)
                 .withEnableChat(true)
@@ -54,7 +56,7 @@ public final class TwitchBot {
     /** Connects to all twitch channels */
     public static void start() {
         log.info("Connecting to channels...");
-        for(Channel channel : Configuration.loadingChannels) {
+        for(Channel channel : ConfigurationUtils.loadingChannels) {
             String channelName = channel.getName();
             twitchClient.getChat().joinChannel(channelName);
         }

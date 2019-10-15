@@ -1,6 +1,6 @@
 package com.github.riverxik.meowbot.modules.currency.commands;
 
-import com.github.riverxik.meowbot.Configuration;
+import com.github.riverxik.meowbot.ConfigurationUtils;
 import com.github.riverxik.meowbot.commands.AbstractCommand;
 import com.github.riverxik.meowbot.commands.CommandRights;
 import com.github.riverxik.meowbot.modules.currency.CurrencyManager;
@@ -11,7 +11,7 @@ public class CurrencySubMultiplierHandler extends AbstractCommand{
     public void execute(String channel, String sender, Object[] args, TwitchChat chat) {
         if (hasRight(channel, sender, CommandRights.OWNER)) {
             if (args.length == 0) {
-                int currentSubMultiplier = Configuration.getChannelByName(channel)
+                int currentSubMultiplier = ConfigurationUtils.getChannelByName(channel)
                         .getSettings().getCurrency().getSubMultiplier();
                 chat.sendMessage(channel,
                         String.format("%s, Current sub multiplier: %d", sender, currentSubMultiplier));

@@ -1,8 +1,8 @@
 package com.github.riverxik.meowbot.events;
 
 import com.github.philippheuer.events4j.EventManager;
-import com.github.riverxik.meowbot.Configuration;
-import com.github.riverxik.meowbot.modules.TwitchBot;
+import com.github.riverxik.meowbot.ConfigurationUtils;
+import com.github.riverxik.meowbot.modules.TwitchBotHelper;
 import com.github.twitch4j.common.events.channel.ChannelGoOfflineEvent;
 
 public class ChannelGoesOffline {
@@ -13,8 +13,8 @@ public class ChannelGoesOffline {
 
     private void onChannelOffline(ChannelGoOfflineEvent event) {
         String channelName = event.getChannel().getName();
-        if(Configuration.isStreamOfflineEnable())
-            TwitchBot.getTwitchClient().getChat().sendMessage(channelName, String.format("[%s] Goes offline", channelName));
+        if(ConfigurationUtils.isStreamOfflineEnable())
+            TwitchBotHelper.getTwitchClient().getChat().sendMessage(channelName, String.format("[%s] Goes offline", channelName));
         else
             System.out.println(String.format("[%s] Goes offline", channelName));
     }
