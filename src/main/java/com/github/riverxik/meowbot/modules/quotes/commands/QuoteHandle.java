@@ -14,7 +14,7 @@ public class QuoteHandle extends AbstractCommand{
             if (args[0] instanceof String) {
                 switch (args[0].toString()) {
                     case "add" : {
-                        if (hasRight(channel, sender, CommandRights.MODERATOR)) {
+                        if (hasRight(channel, sender, CommandRights.VIP_SUB)) {
                             Object[] args2 = Arrays.copyOfRange(args, 1, args.length);
                             new AddQuoteHandle().execute(channel, sender, args2, chat);
                         }
@@ -34,7 +34,7 @@ public class QuoteHandle extends AbstractCommand{
                 else chat.sendMessage(channel, quote);
             }
         } else {
-            chat.sendMessage(channel, String.format("%s, Use: !quote add/close/[id]", sender));
+            chat.sendMessage(channel, String.format("%s, Use: !quote add/remove/[id]", sender));
         }
     }
 }

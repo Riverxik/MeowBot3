@@ -3,8 +3,11 @@
   - [!currency](https://github.com/Riverxik/MeowBot3/blob/master/commands.md#currency) - Показывает текущее значение валюты
   - [!quote](https://github.com/Riverxik/MeowBot3/blob/master/commands.md#quote) - Показывает цитату из базы данных
 
-Команды для модераторов:
+Команды для VIP/SUB пользователей:
   - [!quote add](https://github.com/Riverxik/MeowBot3/blob/master/commands.md#quote-add) - Добавляет новую цитату в базу данных для текущего канала
+
+Команды для модераторов:
+  - [!alias add](https://github.com/Riverxik/MeowBot3/blob/master/commands.md#alias-add) - Добавляет новый алиас к команде для текущего канала
 
 Команды для админа:
   - [!currency](https://github.com/Riverxik/MeowBot3/blob/master/commands.md#currency) - Статус модуля валюты
@@ -13,6 +16,8 @@
   - [!currency sub](https://github.com/Riverxik/MeowBot3/blob/master/commands.md#currency-sub) - Статус множителя для подписчиков
   - [!currency sub inc](https://github.com/Riverxik/MeowBot3/blob/master/commands.md#currency-sub-inc) - Значение множителя для подписчиков
   - [!quote remove](https://github.com/Riverxik/MeowBot3/blob/master/commands.md#quote-remove) - Удаляет цитату из базы данных канала
+  - [!alias remove](https://github.com/Riverxik/MeowBot3/blob/master/commands.md#alias-remove) - Удаляет алиас из базы данных канала
+  
 ---
 
 ## !currency
@@ -34,8 +39,8 @@
 
 |Синтаксис                  |Пример                     |Описание                                   |Доступность|
 |---                        |---                        |---                                        |---        |
-|!currency name <String>]   |!currencyName "Буткоины"   |Переименовывает валюту для текущего канала |Админ      |
-|                           |!currencyName              |Выводит текущее значение названия валюты   |Админ      |
+|!currency name <String>    |!currency name "Буткоины"  |Переименовывает валюту для текущего канала |Админ      |
+|                           |!currency name             |Выводит текущее значение названия валюты   |Админ      |
 |                           |!currency name help        |Показывает небольшую справку по синтаксису |Админ      |
 
 [Наверх](https://github.com/Riverxik/MeowBot3/blob/master/commands.md#все-команды)
@@ -45,8 +50,8 @@
 
 |Синтаксис              |Пример             |Описание                                               |Доступность|
 |---                    |---                |---                                                    |---        |
-|!currency inc <Int>    |!currencyInc       |Показывает текущее значение                            |Админ      |
-|                       |!currencyInc 2     |Количество валюты, которую выдаёт бот каждые 5 минут   |Админ      |
+|!currency inc <Int>    |!currency inc      |Показывает текущее значение                            |Админ      |
+|                       |!currency inc 2    |Количество валюты, которую выдаёт бот каждые 5 минут   |Админ      |
 |                       |!currency inc help |Показывает небольшую справку по синтаксису             |Админ      |
 
 [Наверх](https://github.com/Riverxik/MeowBot3/blob/master/commands.md#все-команды)
@@ -56,7 +61,7 @@
 
 |Синтаксис              |Пример             |Описание                                       |Доступность|
 |---                    |---                |---                                            |---        |
-|!currency sub <String> |!subEnable         |Показывает статус множителя для подписчиков/vip|Админ      |
+|!currency sub <String> |!currency sub      |Показывает статус множителя для подписчиков/vip|Админ      |
 |                       |!currency sub on   |Включает множитель для подписчиков/vip         |Админ      |
 |                       |!currency sub off  |Выключает множитель для подписчиков/vip        |Админ      |
 |                       |!currency sub help |Показывает небольшую справку по синтаксису|Админ|
@@ -68,7 +73,7 @@
 
 |Синтаксис              |Пример             |Описание                                           |Доступность|
 |---                    |---                |---                                                |---        |
-|!currency sub inc <Int>|!subMultiplier     |Показывает значение множителя для подписчиков/vip  |Админ      |
+|!currency sub inc <Int>|!currency sub inc  |Показывает значение множителя для подписчиков/vip  |Админ      |
 |                       |!currency sub inc 5|Устанавливает множитель для подписчиков равным `5` |Админ      |
 
 [Наверх](https://github.com/Riverxik/MeowBot3/blob/master/commands.md#все-команды)
@@ -87,7 +92,7 @@
 
 |Синтаксис          |Пример                     |Описание                               |Доступность|
 |---                |---                        |---                                    |---        |
-|!quote add <String>|!quote add "Текст цитаты"  |Записывает `Текст цитаты` в базу данных|Модератор  |
+|!quote add <String>|!quote add "Текст цитаты"  |Записывает `Текст цитаты` в базу данных|VIP/SUB    |
 
 [Наверх](https://github.com/Riverxik/MeowBot3/blob/master/commands.md#все-команды)
 ---
@@ -97,6 +102,24 @@
 |Синтаксис          |Пример         |Описание                                       |Доступность            |
 |---                |---            |---                                            |---                    |
 |!quote remove <Int>|!quote remove 3|Удаляет цитату с id = `3` для текущего канала  |Админ, Владелец канала |
+
+[Наверх](https://github.com/Riverxik/MeowBot3/blob/master/commands.md#все-команды)
+---
+## !alias add
+[source](src/main/java/com/github/riverxik/meowbot/modules/alias/AddAliasCommandHandler.java)
+
+|Синтаксис          |Пример                     |Описание                                 |Доступность|
+|---                |---                        |---                                      |---        |
+|!alias add <String>|!alias add помощь help     |Привязывает алиас !помощь к команде !help|Модератор  |
+
+[Наверх](https://github.com/Riverxik/MeowBot3/blob/master/commands.md#все-команды)
+---
+## !alias remove
+[source](src/main/java/com/github/riverxik/meowbot/modules/alias/RemoveAliasCommandHandler.java)
+
+|Синтаксис             |Пример              |Описание                   |Доступность            |
+|---                   |---                 |---                        |---                    |
+|!alias remove <String>|!alias remove помощь|Удаляет алиас 'помощь'     |Админ, Владелец канала |
 
 [Наверх](https://github.com/Riverxik/MeowBot3/blob/master/commands.md#все-команды)
 ---
