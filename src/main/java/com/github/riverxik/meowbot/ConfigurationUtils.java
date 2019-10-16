@@ -8,6 +8,7 @@ import com.github.riverxik.meowbot.commands.CalcCommandHandler;
 import com.github.riverxik.meowbot.commands.HelpCommandHandle;
 import com.github.riverxik.meowbot.commands.ShowUserRightsHandle;
 import com.github.riverxik.meowbot.database.DatabaseUtils;
+import com.github.riverxik.meowbot.modules.alias.AliasHandler;
 import com.github.riverxik.meowbot.modules.chat.Channel;
 import com.github.riverxik.meowbot.modules.chat.ChannelSettings;
 import com.github.riverxik.meowbot.modules.currency.commands.CurrencyStatusHandler;
@@ -153,6 +154,8 @@ public class ConfigurationUtils {
     private static void initDatabase() {
         createChannelsTable();
         log.info("Channels table has been loaded!");
+        createAliasesTable();
+        log.info("Aliases table has been loaded!");
         // Остальные таблицы тут
     }
 
@@ -175,6 +178,26 @@ public class ConfigurationUtils {
 
         } catch (SQLException e) {
             log.error("Error while creating channels table!", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private static void createAliasesTable() {
+        try {
+            DatabaseUtils.connect();
+            String query = "CREATE TABLE IF NOT EXISTS `aliases` (\n" +
+                    "\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
+                    "\t`name`\tTEXT NOT NULL,\n" +
+                    "\t`command`\tTEXT NOT NULL,\n" +
+                    "\t`channel`\tTEXT NOT NULL\n" +
+                    ");";
+            Statement statement = DatabaseUtils.getConnection().createStatement();
+            statement.execute(query);
+            statement.close();
+            DatabaseUtils.disconnect();
+
+        } catch (SQLException e) {
+            log.error("Error while creating aliases table", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -248,6 +271,7 @@ public class ConfigurationUtils {
         commandRegistry.put("currency", new CurrencyStatusHandler());
         commandRegistry.put("quote", new QuoteHandle());
         commandRegistry.put("calc", new CalcCommandHandler());
+        commandRegistry.put("alias", new AliasHandler());
     }
 
     public static Channel getChannelByName(String channelName) {
