@@ -100,18 +100,18 @@ public class Channel {
         }
     }
 
-    public long getChannelId() {
+    public String getChannelId() {
         try {
             UserList resultList = TwitchBotHelper.getTwitchClient().getHelix().getUsers(null, null, Collections.singletonList(name)).execute();
             return resultList.getUsers().get(0).getId();
         } catch (Exception e) {
-            return -1;
+            return "-1";
         }
     }
 
 
     public void updateSubscribers() {
-        long channelId = getChannelId();
+        String channelId = getChannelId();
         // TODO: if subscribers count more than 20 it will return not all of them
         List<Subscription> list = TwitchBotHelper.getTwitchClient().getHelix().getSubscriptions(
                 this.getSettings().getAccessToken(),

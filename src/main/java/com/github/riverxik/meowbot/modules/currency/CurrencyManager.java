@@ -305,7 +305,8 @@ public class CurrencyManager {
             try {
              Thread.sleep(1000);
             } catch (InterruptedException e) {
-             e.printStackTrace();
+                log.error("Time-out error: ", e.getMessage());
+                e.printStackTrace();
             }
 
         }
