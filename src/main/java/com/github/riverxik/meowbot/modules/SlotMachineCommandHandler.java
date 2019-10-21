@@ -21,12 +21,14 @@ public class SlotMachineCommandHandler extends AbstractCommand{
                         //win
                         CurrencyManager.setUserCurrency(channel, sender, availableMaxBet+winScore);
                         chat.sendMessage(channel,
-                                String.format("%s spinning the roll: %s. You win: %d!", sender, rollString, winScore));
+                                String.format("%s spinning the roll: %s. You win: %d! Now you have: %d",
+                                        sender, rollString, winScore, availableMaxBet+winScore));
                     } else {
                         // lose
                         CurrencyManager.setUserCurrency(channel, sender, availableMaxBet-bet);
                         chat.sendMessage(channel,
-                                String.format("%s spinning the roll: %s. You lose: %d!", sender, rollString, bet));
+                                String.format("%s spinning the roll: %s. You lose: %d! Now you have: %d",
+                                        sender, rollString, bet, availableMaxBet-bet));
                     }
                 } else {
                     chat.sendMessage(channel, String.format("%s, Not enough currency!", sender));
@@ -34,6 +36,8 @@ public class SlotMachineCommandHandler extends AbstractCommand{
             } else {
                 chat.sendMessage(channel, String.format("%s, bet has to be positive integer number!", sender));
             }
+        } else {
+            chat.sendMessage(channel, String.format("%s, Use: !roll <bet>; F.e: !roll 5", sender));
         }
     }
 }
