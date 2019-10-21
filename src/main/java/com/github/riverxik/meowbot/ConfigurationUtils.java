@@ -8,6 +8,7 @@ import com.github.riverxik.meowbot.commands.CalcCommandHandler;
 import com.github.riverxik.meowbot.commands.HelpCommandHandle;
 import com.github.riverxik.meowbot.commands.ShowUserRightsHandle;
 import com.github.riverxik.meowbot.database.DatabaseUtils;
+import com.github.riverxik.meowbot.modules.SlotMachineCommandHandler;
 import com.github.riverxik.meowbot.modules.alias.AliasHandler;
 import com.github.riverxik.meowbot.modules.chat.Channel;
 import com.github.riverxik.meowbot.modules.chat.ChannelSettings;
@@ -272,6 +273,7 @@ public class ConfigurationUtils {
         commandRegistry.put("quote", new QuoteHandle());
         commandRegistry.put("calc", new CalcCommandHandler());
         commandRegistry.put("alias", new AliasHandler());
+        commandRegistry.put("roll", new SlotMachineCommandHandler());
     }
 
     public static Channel getChannelByName(String channelName) {

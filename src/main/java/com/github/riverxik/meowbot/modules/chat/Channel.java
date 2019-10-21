@@ -131,12 +131,13 @@ public class Channel {
 
     private int calculateNewCurrency(ChannelUser user, int oldCurrency) throws SQLException {
         int newCurrency = oldCurrency;
+        int incForActivity = user.getMessages() / 10;
         if(user.isSub() || user.isVip()) {
             int multiplier = CurrencyManager.getChannelSubMultiplier(name);
-            newCurrency += multiplier;
+            newCurrency += multiplier + incForActivity;
         } else {
             int increment = CurrencyManager.getChannelCurrencyInc(name);
-            newCurrency += increment;
+            newCurrency += increment + incForActivity;
         }
         return newCurrency;
     }

@@ -6,6 +6,7 @@ import com.github.riverxik.meowbot.commands.fsa.Parser;
 import com.github.riverxik.meowbot.modules.TwitchBotHelper;
 import com.github.philippheuer.events4j.EventManager;
 import com.github.riverxik.meowbot.modules.alias.AliasManager;
+import com.github.riverxik.meowbot.modules.chat.Channel;
 import com.github.twitch4j.chat.TwitchChat;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import org.slf4j.Logger;
@@ -37,17 +38,14 @@ public class PublicMessages {
 
         log.info(String.format("[%s][%s] - [%s]", channel, sender, message));
 
-        if(message.startsWith("!")) {
-//            String[] commandParts = message.substring(1).split(" ");
-//            String baseCommand = commandParts[0];
-//            int argsLength = commandParts.length - 1;
-//            String[] args = new String[argsLength];
+        // Active increasing currency
+        ConfigurationUtils.getChannelByName(channel).getChannelUserByName(sender).increaseMessages();
 
+        if(message.startsWith("!")) {
             Object[] commandParts = parseCommand(message);
             String baseCommand = String.valueOf(commandParts[0]).toLowerCase();
             Object[] args = Arrays.copyOfRange(commandParts, 1, commandParts.length);
 
-            // Проверки
             //Проверка на алиас
             baseCommand = AliasManager.findCommandByAlias(channel, baseCommand);
             // Выполнение

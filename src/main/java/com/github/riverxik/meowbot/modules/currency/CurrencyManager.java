@@ -169,6 +169,24 @@ public class CurrencyManager {
         return count;
     }
 
+    public static boolean setUserCurrency(String channelName, String userName, int newCurrency) {
+        DatabaseUtils.connect();
+        try {
+            Statement statement = DatabaseUtils.getConnection().createStatement();
+            String query = "UPDATE `"+channelName+"` SET `currency` = '"+newCurrency+"' " +
+                    "WHERE `userName` = '"+userName+"' ";
+            statement.executeUpdate(query);
+
+            statement.close();
+            DatabaseUtils.disconnect();
+            return true;
+        } catch (SQLException e) {
+            log.error("Error updating user currency: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     private void init() {
         // Create currency table.
         // Try to load settings for current channels about currency.
