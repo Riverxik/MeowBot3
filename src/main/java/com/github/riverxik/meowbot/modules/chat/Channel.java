@@ -124,7 +124,8 @@ public class Channel {
             String userName = sub.getUserName();
             ChannelUser user = getChannelUserByName(userName);
             user.setSub(true);
-            user.setRightLevel(CommandRights.VIP_SUB);
+            if (user.getRightLevel().index() < CommandRights.VIP_SUB.index())
+                user.setRightLevel(CommandRights.VIP_SUB);
         }
     }
 
