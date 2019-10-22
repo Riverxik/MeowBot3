@@ -31,7 +31,8 @@ public class SlotMachineCommandHandler extends AbstractCommand{
                                         sender, rollString, bet, availableMaxBet-bet));
                     }
                 } else {
-                    chat.sendMessage(channel, String.format("%s, Not enough currency!", sender));
+                    chat.sendMessage(channel,
+                            String.format("%s, Not enough currency! You have: %d", sender, availableMaxBet));
                 }
             } else {
                 chat.sendMessage(channel, String.format("%s, bet has to be positive integer number!", sender));

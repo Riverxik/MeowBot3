@@ -43,6 +43,7 @@ public class CurrencyManager {
         try {
             return ConfigurationUtils.getChannelByName(channelName).getSettings().getCurrency().getCurrencyName();
         } catch (NullPointerException e) {
+            log.error("Error while getting channel currency name: " + e.getMessage());
             return String.format("Couldn't found currency name for %s", channelName);
         }
     }
@@ -59,6 +60,7 @@ public class CurrencyManager {
             updateCurrencySettings();
             return String.format("Currency name for %s has been updated to [%s]", channelName, currencyName);
         } catch (NullPointerException e) {
+            log.error("Error while setting channel currency name: " + e.getMessage());
             return String.format("Couldn't found currency name for %s", channelName);
         }
     }
@@ -72,6 +74,7 @@ public class CurrencyManager {
         try {
             return ConfigurationUtils.getChannelByName(channelName).getSettings().getCurrency().getCurrencyInc();
         } catch (NullPointerException e) {
+            log.error("Error while getting channel currency increment: " + e.getMessage());
             return -1;
         }
     }
@@ -88,6 +91,7 @@ public class CurrencyManager {
             updateCurrencySettings();
             return 1;
         } catch (NullPointerException e) {
+            log.error("Error while setting channel currency increment: " + e.getMessage());
             return -1;
         }
     }
@@ -101,6 +105,7 @@ public class CurrencyManager {
         try {
             return ConfigurationUtils.getChannelByName(channelName).getSettings().getCurrency().isSubEnable();
         } catch (NullPointerException e) {
+            log.error("Error while getting channel currency sub enable: " + e.getMessage());
             return false;
         }
     }
@@ -117,6 +122,7 @@ public class CurrencyManager {
             updateCurrencySettings();
             return true;
         } catch (NullPointerException e) {
+            log.error("Error while setting channel currency sub enable: " + e.getMessage());
             return false;
         }
     }
@@ -130,6 +136,7 @@ public class CurrencyManager {
         try {
             return ConfigurationUtils.getChannelByName(channelName).getSettings().getCurrency().getSubMultiplier();
         } catch (NullPointerException e) {
+            log.error("Error while getting channel currency sub multiplier: " + e.getMessage());
             return 1;
         }
     }
@@ -146,6 +153,7 @@ public class CurrencyManager {
             updateCurrencySettings();
             return 1;
         } catch (NullPointerException e) {
+            log.error("Error while setting channel currency sub multiplier: " + e.getMessage());
             return 0;
         }
     }
@@ -164,6 +172,7 @@ public class CurrencyManager {
             statement.close();
             DatabaseUtils.disconnect();
         } catch (SQLException e) {
+            log.error("Error while getting user currency: " + e.getMessage());
             e.printStackTrace();
         }
         return count;
@@ -221,6 +230,7 @@ public class CurrencyManager {
                 statement.close();
                 DatabaseUtils.disconnect();
             } catch (SQLException e) {
+                log.error("Error while loading channel currency: " + e.getMessage());
                 e.printStackTrace();
             }
             channel.getSettings().setCurrency(new ChannelCurrency(currencyName, currencyInc, subEnable, subMultiplier));
@@ -241,6 +251,7 @@ public class CurrencyManager {
                 statement.close();
                 DatabaseUtils.disconnect();
             } catch (SQLException e) {
+                log.error("Error while setup channel currency: " + e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -266,8 +277,8 @@ public class CurrencyManager {
             statement.close();
             DatabaseUtils.disconnect();
         } catch (SQLException e) {
-            e.printStackTrace();
             log.error("SQL: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -355,6 +366,7 @@ public class CurrencyManager {
                 statement.close();
                 DatabaseUtils.disconnect();
             } catch (SQLException e) {
+                log.error("Error while updating channel currency settings: " + e.getMessage());
                 e.getMessage();
             }
         }
