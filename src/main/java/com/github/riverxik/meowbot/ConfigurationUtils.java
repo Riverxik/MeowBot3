@@ -5,6 +5,7 @@ import com.github.riverxik.meowbot.commands.AbstractCommand;
 import com.github.riverxik.meowbot.commands.AbstractTestCommandHandler;
 import com.github.riverxik.meowbot.commands.CommandErrorHandler;
 import com.github.riverxik.meowbot.commands.CalcCommandHandler;
+import com.github.riverxik.meowbot.commands.EncryptCommandHandler;
 import com.github.riverxik.meowbot.commands.HelpCommandHandle;
 import com.github.riverxik.meowbot.commands.ShowUserRightsHandle;
 import com.github.riverxik.meowbot.database.DatabaseUtils;
@@ -274,6 +275,7 @@ public class ConfigurationUtils {
         commandRegistry.put("calc", new CalcCommandHandler());
         commandRegistry.put("alias", new AliasHandler());
         commandRegistry.put("roll", new SlotMachineCommandHandler());
+        commandRegistry.put("encrypt", new EncryptCommandHandler());
     }
 
     public static Channel getChannelByName(String channelName) {
