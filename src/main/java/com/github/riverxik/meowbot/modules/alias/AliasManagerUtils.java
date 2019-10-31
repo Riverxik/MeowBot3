@@ -8,9 +8,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class AliasManager {
+public class AliasManagerUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(AliasManager.class);
+    private static final Logger log = LoggerFactory.getLogger(AliasManagerUtils.class);
 
     public static boolean isAliasExists(String channelName, String aliasName) {
         try {

@@ -5,8 +5,7 @@ import com.github.riverxik.meowbot.commands.fsa.Lexer;
 import com.github.riverxik.meowbot.commands.fsa.Parser;
 import com.github.riverxik.meowbot.modules.TwitchBotHelper;
 import com.github.philippheuer.events4j.EventManager;
-import com.github.riverxik.meowbot.modules.alias.AliasManager;
-import com.github.riverxik.meowbot.modules.chat.Channel;
+import com.github.riverxik.meowbot.modules.alias.AliasManagerUtils;
 import com.github.twitch4j.chat.TwitchChat;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import org.slf4j.Logger;
@@ -47,7 +46,7 @@ public class PublicMessages {
             Object[] args = Arrays.copyOfRange(commandParts, 1, commandParts.length);
 
             //Проверка на алиас
-            baseCommand = AliasManager.findCommandByAlias(channel, baseCommand);
+            baseCommand = AliasManagerUtils.findCommandByAlias(channel, baseCommand);
             // Выполнение
             processCommand(channel, sender, baseCommand, args, chat);
         }

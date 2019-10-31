@@ -9,18 +9,17 @@ public class EncryptCommandHandler extends AbstractCommand {
         if (args.length > 1 && args[0] instanceof String && args[1] instanceof Integer) {
             String text = String.valueOf(args[0]);
             int count = (int) args[1];
-            String answer = DeEncrypt(text, count);
+            String answer = deEncrypt(text, count);
             chat.sendMessage(channel, String.format("%s, Your encrypted message: %s", sender, answer));
         } else {
             chat.sendMessage(channel, String.format("%s, Use: !encrypt \"Text\" 3", sender));
         }
     }
 
-    private static String DeEncrypt(String text, int count) {
-        //if (count > 31 || count < 1) count = 3;
+    private static String deEncrypt(String text, int count) {
         String alphaStr = "абвгдеёжзиклмнопрстуфхцчшщъыьэюя";
         int length = alphaStr.length()-1;
-        count %= length;
+        int cnt = count % length;
         char[] array = text.toLowerCase().toCharArray();
         StringBuilder result = new StringBuilder();
 
@@ -28,7 +27,7 @@ public class EncryptCommandHandler extends AbstractCommand {
             char tmp = array[j];
             if (Character.isAlphabetic(tmp)) {
                 int ind = alphaStr.indexOf(tmp);
-                ind += count;
+                ind += cnt;
                 if (ind > alphaStr.length()-1)
                     ind = ind%length;
                 if (ind < 0){

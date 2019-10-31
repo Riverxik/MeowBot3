@@ -20,9 +20,9 @@ public class AddAliasCommandHandler extends AbstractCommand {
             // Проверка на существование такой команды
             if (ConfigurationUtils.commandRegistry.containsKey(commandName)) {
                 // Проверка на существование такого алиаса
-                if (!AliasManager.isAliasExists(channel, aliasName)) {
+                if (!AliasManagerUtils.isAliasExists(channel, aliasName)) {
                     // Добавляем в базу данных
-                    AliasManager.addNewAliasToDatabase(channel, aliasName, commandName);
+                    AliasManagerUtils.addNewAliasToDatabase(channel, aliasName, commandName);
                     chat.sendMessage(channel,
                             String.format("%s, Alias [%s]->[%s] has been added!", sender, aliasName, commandName));
                 } else {
