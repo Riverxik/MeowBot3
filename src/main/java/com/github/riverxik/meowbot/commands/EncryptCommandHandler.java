@@ -17,7 +17,7 @@ public class EncryptCommandHandler extends AbstractCommand {
     }
 
     private static String deEncrypt(String text, int count) {
-        String alphaStr = "абвгдеёжзиклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        String alphaStr = "абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         int length = alphaStr.length()-1;
         int cnt = count % length;
         char[] array = text.toCharArray();

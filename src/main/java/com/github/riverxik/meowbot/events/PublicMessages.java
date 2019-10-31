@@ -3,6 +3,7 @@ package com.github.riverxik.meowbot.events;
 import com.github.riverxik.meowbot.ConfigurationUtils;
 import com.github.riverxik.meowbot.commands.fsa.Lexer;
 import com.github.riverxik.meowbot.commands.fsa.Parser;
+import com.github.riverxik.meowbot.modules.CooldownUtils;
 import com.github.riverxik.meowbot.modules.TwitchBotHelper;
 import com.github.philippheuer.events4j.EventManager;
 import com.github.riverxik.meowbot.modules.alias.AliasManagerUtils;
@@ -47,8 +48,17 @@ public class PublicMessages {
 
             //Проверка на алиас
             baseCommand = AliasManagerUtils.findCommandByAlias(channel, baseCommand);
-            // Выполнение
-            processCommand(channel, sender, baseCommand, args, chat);
+            // Проверка команды на кулдаун
+            long estimateTime = CooldownUtils.isCommandAvailable(channel, baseCommand);
+            if (estimateTime == 0) {
+                // Выполнение
+                processCommand(channel, sender, baseCommand, args, chat);
+                CooldownUtils.cooldownCommand(channel, baseCommand); // Устанавливаем новый кулдаун
+            } else {
+                chat.sendMessage(channel,
+                        String.format("%s, Command %s is on cooldown: %d seconds left",
+                                sender, baseCommand, estimateTime / 1000));
+            }
         }
 
         if(event.getMessage().equals("meow"))

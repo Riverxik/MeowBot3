@@ -3,8 +3,9 @@ package com.github.riverxik.meowbot;
 
 import com.github.riverxik.meowbot.commands.AbstractCommand;
 import com.github.riverxik.meowbot.commands.AbstractTestCommandHandler;
-import com.github.riverxik.meowbot.commands.CommandErrorHandler;
 import com.github.riverxik.meowbot.commands.CalcCommandHandler;
+import com.github.riverxik.meowbot.commands.CommandErrorHandler;
+import com.github.riverxik.meowbot.commands.CooldownCommandHandle;
 import com.github.riverxik.meowbot.commands.EncryptCommandHandler;
 import com.github.riverxik.meowbot.commands.HelpCommandHandle;
 import com.github.riverxik.meowbot.commands.ShowUserRightsHandle;
@@ -162,6 +163,8 @@ public class ConfigurationUtils {
         log.info("Channels table has been loaded!");
         createAliasesTable();
         log.info("Aliases table has been loaded!");
+        createCommandCooldownTable();
+        log.info("Command cooldown table has been loaded!");
         // Остальные таблицы тут
     }
 
@@ -204,6 +207,27 @@ public class ConfigurationUtils {
 
         } catch (SQLException e) {
             log.error("Error while creating aliases table", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private static void createCommandCooldownTable() {
+        try {
+            DatabaseUtils.connect();
+            Statement statement = DatabaseUtils.getConnection().createStatement();
+            String query = "CREATE TABLE IF NOT EXISTS `cooldowns` (\n" +
+                    "\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
+                    "\t`commandName`\tTEXT NOT NULL,\n" +
+                    "\t`channelName`\tTEXT NOT NULL,\n" +
+                    "\t`cooldown`\tINTEGER NOT NULL,\n" +
+                    "\t`lastTimeUse`\tTEXT NOT NULL\n" +
+                    ");";
+            statement.execute(query);
+            statement.close();
+            DatabaseUtils.disconnect();
+
+        } catch (SQLException e) {
+            log.error("Error while creating command cooldown table", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -284,6 +308,7 @@ public class ConfigurationUtils {
         commandRegistry.put("alias", new AliasHandler());
         commandRegistry.put("roll", new SlotMachineCommandHandler());
         commandRegistry.put("encrypt", new EncryptCommandHandler());
+        commandRegistry.put("cooldown", new CooldownCommandHandle());
     }
 
     public static Channel getChannelByName(String channelName) {
