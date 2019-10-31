@@ -17,15 +17,15 @@ public class EncryptCommandHandler extends AbstractCommand {
     }
 
     private static String deEncrypt(String text, int count) {
-        String alphaStr = "абвгдеёжзиклмнопрстуфхцчшщъыьэюя";
+        String alphaStr = "абвгдеёжзиклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         int length = alphaStr.length()-1;
         int cnt = count % length;
-        char[] array = text.toLowerCase().toCharArray();
+        char[] array = text.toCharArray();
         StringBuilder result = new StringBuilder();
 
         for (int j = 0; j < array.length; j++) {
             char tmp = array[j];
-            if (Character.isAlphabetic(tmp)) {
+            if (Character.isLetterOrDigit(tmp)) {
                 int ind = alphaStr.indexOf(tmp);
                 ind += cnt;
                 if (ind > alphaStr.length()-1)

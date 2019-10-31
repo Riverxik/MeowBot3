@@ -24,10 +24,12 @@ public class CurrencyStatusHandler extends AbstractCommand{
                 switch (arg) {
                     case "on" : {
                         ConfigurationUtils.getChannelByName(channel).getSettings().setCurrencyEnabled(true);
+                        ConfigurationUtils.getChannelByName(channel).addChannel(); // Saves information to database
                         chat.sendMessage(channel, String.format("%s, Currency system now enabled", sender));
                     } break;
                     case "off" : {
                         ConfigurationUtils.getChannelByName(channel).getSettings().setCurrencyEnabled(false);
+                        ConfigurationUtils.getChannelByName(channel).addChannel(); // Saves information to database
                         chat.sendMessage(channel, String.format("%s, Currency system now disabled", sender));
                     } break;
                     case "name" : {

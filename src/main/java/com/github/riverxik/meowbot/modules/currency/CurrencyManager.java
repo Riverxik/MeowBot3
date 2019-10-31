@@ -224,7 +224,7 @@ public class CurrencyManager {
                 if(res.next()) {
                     currencyName = res.getString("currencyName");
                     currencyInc = res.getInt("currencyInc");
-                    subEnable = res.getBoolean("subEnable");
+                    subEnable = Boolean.valueOf(res.getString("subEnable"));
                     subMultiplier = res.getInt("subMultiplier");
                 }
                 statement.close();

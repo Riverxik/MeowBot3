@@ -43,6 +43,9 @@ public class ConfigurationUtils {
     /** Admin's nickname */
     public static String admin;
 
+    /** Loading from config file or database */
+    public static boolean isLoadFromCfg;
+
     /** Client's app id for this bot */
     public static String clientAppId;
 
@@ -113,6 +116,7 @@ public class ConfigurationUtils {
             streamFollower = (boolean) modules.get("streamFollower");
 
             admin = String.valueOf(config.get("admin"));
+            isLoadFromCfg = (boolean) config.get("loadFromCfg");
             log.info("Admin's nickname has been successfully read!");
 
         } else log.error("Error. Couldn't read the configuration!");
@@ -238,6 +242,7 @@ public class ConfigurationUtils {
         obj.put("modules", modules);
 
         obj.put("admin", "putYourNicknameHere");
+        obj.put("loadFromCfg", true);
 
         // Write to file
         try (FileWriter file = new FileWriter("config.json")) {
@@ -259,7 +264,10 @@ public class ConfigurationUtils {
      */
     public static void loadChannels() {
         for(Channel channel : loadingChannels) {
-            channel.addChannel();
+            if (isLoadFromCfg)
+                channel.addChannel(); // Saves configuration settings to database
+            else
+                channel.loadChannel(); // Loads configuration from database
             channel.createUsersTable();
         }
         log.info("Channels has been loaded!");

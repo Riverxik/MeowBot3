@@ -62,6 +62,37 @@ public class Channel {
         }
     }
 
+    /** Loads current channel information from database. */
+    public void loadChannel() {
+        boolean modEnabled = false;
+        boolean curEnabled = false;
+        boolean customComEnabled = false;
+        boolean betsEnabled = false;
+        try {
+            DatabaseUtils.connect();
+            Statement statement = DatabaseUtils.getConnection().createStatement();
+            String query = "SELECT `moderationEnabled`, `currencyEnabled`, `customCommandsEnabled`, `betsEnabled` " +
+                    "FROM `channels` WHERE `channelName` = '"+name+"' ";
+            ResultSet resultSet = statement.executeQuery(query);
+            if (resultSet.next()) {
+                modEnabled = Boolean.valueOf(resultSet.getString("moderationEnabled"));
+                curEnabled = Boolean.valueOf(resultSet.getString("currencyEnabled"));
+                customComEnabled = Boolean.valueOf(resultSet.getString("customCommandsEnabled"));
+                betsEnabled = Boolean.valueOf(resultSet.getString("betsEnabled"));
+            }
+            settings.setModerationEnabled(modEnabled);
+            settings.setCurrencyEnabled(curEnabled);
+            settings.setCustomCommandsEnabled(customComEnabled);
+            settings.setBetsEnabled(betsEnabled);
+
+            resultSet.close();
+            statement.close();
+            DatabaseUtils.disconnect();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     /** Creates a table for new channel in database */
     public void createUsersTable() {
         executeQuery("CREATE TABLE IF NOT EXISTS `"+name+"` (\n" +
