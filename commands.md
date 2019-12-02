@@ -2,6 +2,7 @@
 Пользовательские команды:
   - [!currency](https://github.com/Riverxik/MeowBot3/blob/master/commands.md#currency) - Показывает текущее значение валюты
   - [!quote](https://github.com/Riverxik/MeowBot3/blob/master/commands.md#quote) - Показывает цитату из базы данных
+  - [!roll](https://github.com/Riverxik/MeowBot3/blob/master/commands.md#roll) - Игровой автомат для игры на валюту
 
 Команды для VIP/SUB пользователей:
   - [!quote add](https://github.com/Riverxik/MeowBot3/blob/master/commands.md#quote-add) - Добавляет новую цитату в базу данных для текущего канала
@@ -84,6 +85,16 @@
 |Синтаксис      |Пример     |Описание                       |Доступность        |
 |---            |---        |---                            |---                |
 |!quote <int>   |!quote 2   |Выводит в чат цитату с id = `2`|Все пользователи   |
+
+[Наверх](https://github.com/Riverxik/MeowBot3/blob/master/commands.md#все-команды)
+---
+---
+## !roll
+[source](src/main/java/com/github/riverxik/meowbot/modules/SlotMachineCommandHandler.java)
+
+|Синтаксис      |Пример     |Описание                       |Доступность        |
+|---            |---        |---                            |---                |
+|!roll <int>    |!roll 5    |Запускает иговой автомат		|Все пользователи   |
 
 [Наверх](https://github.com/Riverxik/MeowBot3/blob/master/commands.md#все-команды)
 ---

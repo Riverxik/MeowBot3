@@ -47,6 +47,7 @@
   With this bot you can manage your twitch chat!
 - [x] Supports any number of channels.
 - [x] Currency system.
+- [x] Quote system.
 - [ ] Custom commands for any channel (For any wanted group: viewers, mods, subscribers).
 - [ ] Bet system: play bets, win prize, make your channel chat more active! :>
 - [ ] Chat notifications: when stream goes live, sub/resub event, cheers, raids.
