@@ -10,7 +10,7 @@ import java.util.Arrays;
 public class CurrencyStatusHandler extends AbstractCommand{
 
     @Override
-    public void execute(String channel, String sender, Object[] args, TwitchChat chat) {
+    public boolean execute(String channel, String sender, Object[] args, TwitchChat chat) {
         if (hasRight(channel, sender, CommandRights.OWNER)) {
             if (args.length == 0) {
                 if (getCurrencyStatus(channel)) {
@@ -24,38 +24,41 @@ public class CurrencyStatusHandler extends AbstractCommand{
                 switch (arg) {
                     case "on" : {
                         ConfigurationUtils.getChannelByName(channel).getSettings().setCurrencyEnabled(true);
+                        ConfigurationUtils.getChannelByName(channel).addChannel(); // Saves information to database
                         chat.sendMessage(channel, String.format("%s, Currency system now enabled", sender));
                     } break;
                     case "off" : {
                         ConfigurationUtils.getChannelByName(channel).getSettings().setCurrencyEnabled(false);
+                        ConfigurationUtils.getChannelByName(channel).addChannel(); // Saves information to database
                         chat.sendMessage(channel, String.format("%s, Currency system now disabled", sender));
                     } break;
                     case "name" : {
                         Object[] args2 = Arrays.copyOfRange(args, 1, args.length);
-                        new CurrencyNameHandler().execute(channel, sender, args2, chat);
-                    } break;
+                        return new CurrencyNameHandler().execute(channel, sender, args2, chat);
+                    }
                     case "inc" : {
                         Object[] args2 = Arrays.copyOfRange(args, 1, args.length);
-                        new CurrencyIncHandler().execute(channel, sender, args2, chat);
-                    } break;
+                        return new CurrencyIncHandler().execute(channel, sender, args2, chat);
+                    }
                     case "sub" : {
                         Object[] args2 = Arrays.copyOfRange(args, 1, args.length);
-                        new CurrencySubEnableHandler().execute(channel, sender, args2, chat);
-                    } break;
+                        return new CurrencySubEnableHandler().execute(channel, sender, args2, chat);
+                    }
                     case "help": {
                         chat.sendMessage(channel,
                                 String.format("%s, Available commands: currency, currency on/off/name/inc/sub", sender));
                     } break;
-                    default: new CurrencyUserHandler().execute(channel, sender, args, chat); break;
+                    default: return new CurrencyUserHandler().execute(channel, sender, args, chat);
                 }
             }
         } else {
             if (args.length == 0) {
-                new CurrencyUserHandler().execute(channel, sender, args, chat);
+                return new CurrencyUserHandler().execute(channel, sender, args, chat);
             } else if (args.length > 0 && args[0] instanceof String) {
-                new CurrencyUserHandler().execute(channel, sender, args, chat);
+                return new CurrencyUserHandler().execute(channel, sender, args, chat);
             }
         }
+        return false;
     }
 
     private boolean getCurrencyStatus(String channelName) {

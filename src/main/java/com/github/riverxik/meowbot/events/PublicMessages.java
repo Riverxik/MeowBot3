@@ -3,8 +3,10 @@ package com.github.riverxik.meowbot.events;
 import com.github.riverxik.meowbot.ConfigurationUtils;
 import com.github.riverxik.meowbot.commands.fsa.Lexer;
 import com.github.riverxik.meowbot.commands.fsa.Parser;
+import com.github.riverxik.meowbot.modules.CooldownUtils;
 import com.github.riverxik.meowbot.modules.TwitchBotHelper;
 import com.github.philippheuer.events4j.EventManager;
+import com.github.riverxik.meowbot.modules.alias.AliasManagerUtils;
 import com.github.twitch4j.chat.TwitchChat;
 import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import org.slf4j.Logger;
@@ -36,31 +38,41 @@ public class PublicMessages {
 
         log.info(String.format("[%s][%s] - [%s]", channel, sender, message));
 
-        if(message.startsWith("!")) {
-//            String[] commandParts = message.substring(1).split(" ");
-//            String baseCommand = commandParts[0];
-//            int argsLength = commandParts.length - 1;
-//            String[] args = new String[argsLength];
+        // Active increasing currency
+        ConfigurationUtils.getChannelByName(channel).getChannelUserByName(sender).increaseMessages();
 
+        if(message.startsWith("!")) {
             Object[] commandParts = parseCommand(message);
             String baseCommand = String.valueOf(commandParts[0]).toLowerCase();
             Object[] args = Arrays.copyOfRange(commandParts, 1, commandParts.length);
 
-            // Проверки
-            // Выполнение
-            processCommand(channel, sender, baseCommand, args, chat);
+            //Проверка на алиас
+            baseCommand = AliasManagerUtils.findCommandByAlias(channel, baseCommand);
+            // Проверка команды на кулдаун
+            long estimateTime = CooldownUtils.isCommandAvailable(channel, baseCommand, sender);
+            if (estimateTime == 0) {
+                // Выполнение
+                // return true if command should has a cooldown
+                if (processCommand(channel, sender, baseCommand, args, chat))
+                    CooldownUtils.cooldownCommand(channel, baseCommand, sender); // Устанавливаем новый кулдаун
+            } else {
+                chat.sendMessage(channel,
+                        String.format("%s, Command %s is on cooldown: %d seconds left",
+                                sender, baseCommand, estimateTime / 1000));
+            }
         }
 
         if(event.getMessage().equals("meow"))
             event.getTwitchChat().sendMessage(event.getChannel().getName(), event.getUser().getName() + " meow <3");
     }
 
-    private void processCommand(String channel, String sender, String baseCommand, Object[] args, TwitchChat chat) {
+    private boolean processCommand(String channel, String sender, String baseCommand, Object[] args, TwitchChat chat) {
         if (ConfigurationUtils.commandRegistry.containsKey(baseCommand)) {
-            ConfigurationUtils.commandRegistry.get(baseCommand).execute(channel, sender, args, chat);
+            return ConfigurationUtils.commandRegistry.get(baseCommand).execute(channel, sender, args, chat);
         } else {
             log.info("Unknown command: " + baseCommand);
         }
+        return false;
     }
 
     private static Object[] parseCommand(String message) {

@@ -6,7 +6,7 @@ import com.github.twitch4j.chat.TwitchChat;
 public class ShowUserRightsHandle extends AbstractCommand{
 
     @Override
-    public void execute(String channel, String sender, Object[] args, TwitchChat chat) {
+    public boolean execute(String channel, String sender, Object[] args, TwitchChat chat) {
         if (args.length > 0 && hasRight(channel, sender, CommandRights.MODERATOR)) {
             String userName = args[0].toString().toLowerCase();
             String right = ConfigurationUtils.getChannelByName(channel)
@@ -18,6 +18,8 @@ public class ShowUserRightsHandle extends AbstractCommand{
                     .getChannelUserByName(sender)
                     .getRightLevel().toString();
             chat.sendMessage(channel, String.format("%s, you role: %s", sender, right));
+
         }
+        return true;
     }
 }

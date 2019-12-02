@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 public class CurrencySubEnableHandler extends AbstractCommand{
     @Override
-    public void execute(String channel, String sender, Object[] args, TwitchChat chat) {
+    public boolean execute(String channel, String sender, Object[] args, TwitchChat chat) {
         if (hasRight(channel, sender, CommandRights.OWNER)) {
             if (args.length == 0) {
                 if (getCurrencySubStatus(channel)) {
@@ -31,8 +31,8 @@ public class CurrencySubEnableHandler extends AbstractCommand{
                     } break;
                     case "inc" : {
                         Object[] args2 = Arrays.copyOfRange(args, 1, args.length);
-                        new CurrencySubMultiplierHandler().execute(channel, sender, args2, chat);
-                    } break;
+                        return new CurrencySubMultiplierHandler().execute(channel, sender, args2, chat);
+                    }
                     default:
                         chat.sendMessage(channel,
                                 String.format("%s, Available commands: currency sub, currency sub on/off/inc", sender));
@@ -42,6 +42,7 @@ public class CurrencySubEnableHandler extends AbstractCommand{
         } else {
             chat.sendMessage(channel, String.format("%s, you haven't enough rights to do this", sender));
         }
+        return false;
     }
 
     private boolean getCurrencySubStatus(String channelName) {

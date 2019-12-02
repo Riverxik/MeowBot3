@@ -395,19 +395,43 @@ public class Parser {
         stackValues.add(tmp3);
     }
 
+    private void castIntegers(int tmp1, int tmp2, char c) {
+        int tmp3 = 0;
+        switch (c)
+        {
+            case '+': tmp3 = tmp2 + tmp1; break;
+            case '-': tmp3 = tmp2 - tmp1; break;
+            case '*': tmp3 = tmp2 * tmp1; break;
+            case '^': tmp3 = (int) Math.pow(tmp2, tmp1); break;
+            case '>': tmp3 = tmp2 > tmp1 ? 1 : 0; break;
+            case '<': tmp3 = tmp2 < tmp1 ? 1 : 0; break;
+            case '=': tmp3 = tmp2 == tmp1 ? 1 : 0; break;
+            case '/': {
+                if(tmp1 != 0)
+                    tmp3 = tmp2 / tmp1;
+                else
+                    throw new ArithmeticException("Can't divide by zero");
+            } break;
+            default: break;
+        }
+        stackValues.add(tmp3);
+    }
+
     private void castFloat(Object first, Object second, char c) {
-        float tmp1 = (float) first;
-        float tmp2 = (float) second;
+        float tmp1 = Float.parseFloat(first.toString());
+        float tmp2 = Float.parseFloat(second.toString());
         castFloatWithFloat(tmp1, tmp2, c);
     }
 
     private void castTypes(Object first, Object second, char c) {
         // byte, short, int, long, float, double, char, boolean, String
-        // TODO: Implement supporting int
         if(first instanceof String || second instanceof String) {
             castString(first, second, c);
         } else {
-            castFloat(first, second, c);
+            if (first instanceof Integer && second instanceof Integer)
+                castIntegers((int) first, (int) second, c);
+            else
+                castFloat(first, second, c);
         }
     }
 

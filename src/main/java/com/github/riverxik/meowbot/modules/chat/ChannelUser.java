@@ -9,6 +9,7 @@ public class ChannelUser {
     private boolean isSub = false;
     private boolean isVip = false;
     private CommandRights rightLevel = CommandRights.EVERYONE;
+    private int messages = 0;
 
     public ChannelUser(String name, boolean isOwner, boolean isMod, boolean isSub, boolean isVip) {
         this.name = name;
@@ -42,6 +43,8 @@ public class ChannelUser {
 
     public CommandRights getRightLevel() { return this.rightLevel; }
 
+    public int getMessages() { return this.messages; }
+
     public void setMod(boolean mod) {
         isMod = mod;
     }
@@ -55,4 +58,6 @@ public class ChannelUser {
     }
 
     public void setRightLevel(CommandRights level) { this.rightLevel = level; }
+
+    public void increaseMessages() { this.messages++; }
 }

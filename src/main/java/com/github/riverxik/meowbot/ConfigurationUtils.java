@@ -1,11 +1,17 @@
 package com.github.riverxik.meowbot;
 
+
 import com.github.riverxik.meowbot.commands.AbstractCommand;
 import com.github.riverxik.meowbot.commands.AbstractTestCommandHandler;
+import com.github.riverxik.meowbot.commands.CalcCommandHandler;
 import com.github.riverxik.meowbot.commands.CommandErrorHandler;
+import com.github.riverxik.meowbot.commands.CooldownCommandHandle;
+import com.github.riverxik.meowbot.commands.EncryptCommandHandler;
 import com.github.riverxik.meowbot.commands.HelpCommandHandle;
 import com.github.riverxik.meowbot.commands.ShowUserRightsHandle;
 import com.github.riverxik.meowbot.database.DatabaseUtils;
+import com.github.riverxik.meowbot.modules.SlotMachineCommandHandler;
+import com.github.riverxik.meowbot.modules.alias.AliasHandler;
 import com.github.riverxik.meowbot.modules.chat.Channel;
 import com.github.riverxik.meowbot.modules.chat.ChannelSettings;
 import com.github.riverxik.meowbot.modules.currency.commands.CurrencyStatusHandler;
@@ -37,6 +43,9 @@ public class ConfigurationUtils {
 
     /** Admin's nickname */
     public static String admin;
+
+    /** Loading from config file or database */
+    public static boolean isLoadFromCfg;
 
     /** Client's app id for this bot */
     public static String clientAppId;
@@ -108,6 +117,7 @@ public class ConfigurationUtils {
             streamFollower = (boolean) modules.get("streamFollower");
 
             admin = String.valueOf(config.get("admin"));
+            isLoadFromCfg = (boolean) config.get("loadFromCfg");
             log.info("Admin's nickname has been successfully read!");
 
         } else log.error("Error. Couldn't read the configuration!");
@@ -151,6 +161,10 @@ public class ConfigurationUtils {
     private static void initDatabase() {
         createChannelsTable();
         log.info("Channels table has been loaded!");
+        createAliasesTable();
+        log.info("Aliases table has been loaded!");
+        createCommandCooldownTable();
+        log.info("Command cooldown table has been loaded!");
         // Остальные таблицы тут
     }
 
@@ -173,6 +187,54 @@ public class ConfigurationUtils {
 
         } catch (SQLException e) {
             log.error("Error while creating channels table!", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private static void createAliasesTable() {
+        try {
+            DatabaseUtils.connect();
+            String query = "CREATE TABLE IF NOT EXISTS `aliases` (\n" +
+                    "\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
+                    "\t`name`\tTEXT NOT NULL,\n" +
+                    "\t`command`\tTEXT NOT NULL,\n" +
+                    "\t`channel`\tTEXT NOT NULL\n" +
+                    ");";
+            Statement statement = DatabaseUtils.getConnection().createStatement();
+            statement.execute(query);
+            statement.close();
+            DatabaseUtils.disconnect();
+
+        } catch (SQLException e) {
+            log.error("Error while creating aliases table", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private static void createCommandCooldownTable() {
+        try {
+            DatabaseUtils.connect();
+            Statement statement = DatabaseUtils.getConnection().createStatement();
+            String query = "CREATE TABLE IF NOT EXISTS `cooldowns` (\n" +
+                    "\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
+                    "\t`commandName`\tTEXT NOT NULL,\n" +
+                    "\t`channelName`\tTEXT NOT NULL,\n" +
+                    "\t`cooldown`\tINTEGER NOT NULL\n" +
+                    ");";
+            statement.execute(query);
+            query = "CREATE TABLE IF NOT EXISTS `cooldownUsers` (\n" +
+                    "\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
+                    "\t`channelName`\tTEXT NOT NULL,\n" +
+                    "\t`commandName`\tTEXT NOT NULL,\n" +
+                    "\t`userName`\tTEXT NOT NULL,\n" +
+                    "\t`lastTimeUse`\tTEXT NOT NULL\n" +
+                    ");";
+            statement.execute(query);
+            statement.close();
+            DatabaseUtils.disconnect();
+
+        } catch (SQLException e) {
+            log.error("Error while creating command cooldown table", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -211,6 +273,7 @@ public class ConfigurationUtils {
         obj.put("modules", modules);
 
         obj.put("admin", "putYourNicknameHere");
+        obj.put("loadFromCfg", true);
 
         // Write to file
         try (FileWriter file = new FileWriter("config.json")) {
@@ -232,7 +295,10 @@ public class ConfigurationUtils {
      */
     public static void loadChannels() {
         for(Channel channel : loadingChannels) {
-            channel.addChannel();
+            if (isLoadFromCfg)
+                channel.addChannel(); // Saves configuration settings to database
+            else
+                channel.loadChannel(); // Loads configuration from database
             channel.createUsersTable();
         }
         log.info("Channels has been loaded!");
@@ -245,6 +311,11 @@ public class ConfigurationUtils {
         commandRegistry.put("help", new HelpCommandHandle());
         commandRegistry.put("currency", new CurrencyStatusHandler());
         commandRegistry.put("quote", new QuoteHandle());
+        commandRegistry.put("calc", new CalcCommandHandler());
+        commandRegistry.put("alias", new AliasHandler());
+        commandRegistry.put("roll", new SlotMachineCommandHandler());
+        commandRegistry.put("encrypt", new EncryptCommandHandler());
+        commandRegistry.put("cooldown", new CooldownCommandHandle());
     }
 
     public static Channel getChannelByName(String channelName) {

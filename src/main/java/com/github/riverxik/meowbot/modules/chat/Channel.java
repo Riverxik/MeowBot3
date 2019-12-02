@@ -62,6 +62,37 @@ public class Channel {
         }
     }
 
+    /** Loads current channel information from database. */
+    public void loadChannel() {
+        boolean modEnabled = false;
+        boolean curEnabled = false;
+        boolean customComEnabled = false;
+        boolean betsEnabled = false;
+        try {
+            DatabaseUtils.connect();
+            Statement statement = DatabaseUtils.getConnection().createStatement();
+            String query = "SELECT `moderationEnabled`, `currencyEnabled`, `customCommandsEnabled`, `betsEnabled` " +
+                    "FROM `channels` WHERE `channelName` = '"+name+"' ";
+            ResultSet resultSet = statement.executeQuery(query);
+            if (resultSet.next()) {
+                modEnabled = Boolean.valueOf(resultSet.getString("moderationEnabled"));
+                curEnabled = Boolean.valueOf(resultSet.getString("currencyEnabled"));
+                customComEnabled = Boolean.valueOf(resultSet.getString("customCommandsEnabled"));
+                betsEnabled = Boolean.valueOf(resultSet.getString("betsEnabled"));
+            }
+            settings.setModerationEnabled(modEnabled);
+            settings.setCurrencyEnabled(curEnabled);
+            settings.setCustomCommandsEnabled(customComEnabled);
+            settings.setBetsEnabled(betsEnabled);
+
+            resultSet.close();
+            statement.close();
+            DatabaseUtils.disconnect();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     /** Creates a table for new channel in database */
     public void createUsersTable() {
         executeQuery("CREATE TABLE IF NOT EXISTS `"+name+"` (\n" +
@@ -100,18 +131,18 @@ public class Channel {
         }
     }
 
-    public long getChannelId() {
+    public String getChannelId() {
         try {
             UserList resultList = TwitchBotHelper.getTwitchClient().getHelix().getUsers(null, null, Collections.singletonList(name)).execute();
             return resultList.getUsers().get(0).getId();
         } catch (Exception e) {
-            return -1;
+            return "-1";
         }
     }
 
 
     public void updateSubscribers() {
-        long channelId = getChannelId();
+        String channelId = getChannelId();
         // TODO: if subscribers count more than 20 it will return not all of them
         List<Subscription> list = TwitchBotHelper.getTwitchClient().getHelix().getSubscriptions(
                 this.getSettings().getAccessToken(),
@@ -124,18 +155,20 @@ public class Channel {
             String userName = sub.getUserName();
             ChannelUser user = getChannelUserByName(userName);
             user.setSub(true);
-            user.setRightLevel(CommandRights.VIP_SUB);
+            if (user.getRightLevel().index() < CommandRights.VIP_SUB.index())
+                user.setRightLevel(CommandRights.VIP_SUB);
         }
     }
 
     private int calculateNewCurrency(ChannelUser user, int oldCurrency) throws SQLException {
         int newCurrency = oldCurrency;
+        int incForActivity = user.getMessages() / 10;
         if(user.isSub() || user.isVip()) {
             int multiplier = CurrencyManager.getChannelSubMultiplier(name);
-            newCurrency += multiplier;
+            newCurrency += multiplier + incForActivity;
         } else {
             int increment = CurrencyManager.getChannelCurrencyInc(name);
-            newCurrency += increment;
+            newCurrency += increment + incForActivity;
         }
         return newCurrency;
     }

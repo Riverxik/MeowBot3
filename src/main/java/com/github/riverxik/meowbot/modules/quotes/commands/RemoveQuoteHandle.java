@@ -6,7 +6,7 @@ import com.github.twitch4j.chat.TwitchChat;
 
 public class RemoveQuoteHandle extends AbstractCommand{
     @Override
-    public void execute(String channel, String sender, Object[] args, TwitchChat chat) {
+    public boolean execute(String channel, String sender, Object[] args, TwitchChat chat) {
         if (args.length > 0 && args[0] instanceof Integer) {
             QuotesManager.removeQuote(channel, (int) args[0]);
             chat.sendMessage(channel,
@@ -14,5 +14,6 @@ public class RemoveQuoteHandle extends AbstractCommand{
         } else {
             chat.sendMessage(channel, String.format("%s, Use: !quote remove [quoteId]", sender));
         }
+        return false;
     }
 }
