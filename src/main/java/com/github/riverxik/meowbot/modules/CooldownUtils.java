@@ -50,7 +50,7 @@ public final class CooldownUtils {
                 deltaTime = starTime - Long.valueOf(resultSet.getString("lastTimeUse"));
             } else {
                 deltaTime = cooldownTime;
-                createCooldownForUser(channelName, commandName, userName, starTime);
+                createCooldownForUser(channelName, commandName, userName, starTime-cooldownTime);
             }
 
             resultSet.close();
