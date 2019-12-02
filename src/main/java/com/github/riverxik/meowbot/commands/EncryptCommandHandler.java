@@ -5,15 +5,17 @@ import com.github.twitch4j.chat.TwitchChat;
 public class EncryptCommandHandler extends AbstractCommand {
     // !encrypt <String>, <numOfIterate>
     @Override
-    public void execute(String channel, String sender, Object[] args, TwitchChat chat) {
+    public boolean execute(String channel, String sender, Object[] args, TwitchChat chat) {
         if (args.length > 1 && args[0] instanceof String && args[1] instanceof Integer) {
             String text = String.valueOf(args[0]);
             int count = (int) args[1];
             String answer = deEncrypt(text, count);
             chat.sendMessage(channel, String.format("%s, Your encrypted message: %s", sender, answer));
+            return true;
         } else {
             chat.sendMessage(channel, String.format("%s, Use: !encrypt \"Text\" 3", sender));
         }
+        return false;
     }
 
     private static String deEncrypt(String text, int count) {

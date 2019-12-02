@@ -5,7 +5,7 @@ import com.github.twitch4j.chat.TwitchChat;
 
 public class CommandErrorHandler extends AbstractCommand{
     @Override
-    public void execute(String channel, String sender, Object[] args, TwitchChat chat) {
+    public boolean execute(String channel, String sender, Object[] args, TwitchChat chat) {
         try {
             if (ConfigurationUtils.debug) {
                 chat.sendMessage(channel, String.format("Error: %s", args[0].toString()));
@@ -17,5 +17,6 @@ public class CommandErrorHandler extends AbstractCommand{
         } catch (ArrayIndexOutOfBoundsException e) {
             chat.sendMessage(channel, "You can't use this command without parameters!");
         }
+        return false;
     }
 }

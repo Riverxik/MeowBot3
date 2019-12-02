@@ -49,11 +49,12 @@ public class PublicMessages {
             //Проверка на алиас
             baseCommand = AliasManagerUtils.findCommandByAlias(channel, baseCommand);
             // Проверка команды на кулдаун
-            long estimateTime = CooldownUtils.isCommandAvailable(channel, baseCommand);
+            long estimateTime = CooldownUtils.isCommandAvailable(channel, baseCommand, sender);
             if (estimateTime == 0) {
                 // Выполнение
-                processCommand(channel, sender, baseCommand, args, chat);
-                CooldownUtils.cooldownCommand(channel, baseCommand); // Устанавливаем новый кулдаун
+                // return true if command should has a cooldown
+                if (processCommand(channel, sender, baseCommand, args, chat))
+                    CooldownUtils.cooldownCommand(channel, baseCommand, sender); // Устанавливаем новый кулдаун
             } else {
                 chat.sendMessage(channel,
                         String.format("%s, Command %s is on cooldown: %d seconds left",
@@ -65,12 +66,13 @@ public class PublicMessages {
             event.getTwitchChat().sendMessage(event.getChannel().getName(), event.getUser().getName() + " meow <3");
     }
 
-    private void processCommand(String channel, String sender, String baseCommand, Object[] args, TwitchChat chat) {
+    private boolean processCommand(String channel, String sender, String baseCommand, Object[] args, TwitchChat chat) {
         if (ConfigurationUtils.commandRegistry.containsKey(baseCommand)) {
-            ConfigurationUtils.commandRegistry.get(baseCommand).execute(channel, sender, args, chat);
+            return ConfigurationUtils.commandRegistry.get(baseCommand).execute(channel, sender, args, chat);
         } else {
             log.info("Unknown command: " + baseCommand);
         }
+        return false;
     }
 
     private static Object[] parseCommand(String message) {

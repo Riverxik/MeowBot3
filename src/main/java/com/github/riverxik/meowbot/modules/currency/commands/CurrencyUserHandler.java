@@ -6,7 +6,7 @@ import com.github.twitch4j.chat.TwitchChat;
 
 public class CurrencyUserHandler extends AbstractCommand{
     @Override
-    public void execute(String channel, String sender, Object[] args, TwitchChat chat) {
+    public boolean execute(String channel, String sender, Object[] args, TwitchChat chat) {
         if (args.length == 0) {
             int amount = CurrencyManager.getUserCurrency(channel, sender);
             String currencyName = CurrencyManager.getChannelCurrencyName(channel);
@@ -17,5 +17,6 @@ public class CurrencyUserHandler extends AbstractCommand{
             String currencyName = CurrencyManager.getChannelCurrencyName(channel);
             chat.sendMessage(channel, String.format("%s, %s [%s]: %d", sender, currencyName, user, amount));
         }
+        return true;
     }
 }

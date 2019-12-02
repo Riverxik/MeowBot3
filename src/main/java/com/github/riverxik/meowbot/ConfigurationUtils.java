@@ -219,7 +219,14 @@ public class ConfigurationUtils {
                     "\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
                     "\t`commandName`\tTEXT NOT NULL,\n" +
                     "\t`channelName`\tTEXT NOT NULL,\n" +
-                    "\t`cooldown`\tINTEGER NOT NULL,\n" +
+                    "\t`cooldown`\tINTEGER NOT NULL\n" +
+                    ");";
+            statement.execute(query);
+            query = "CREATE TABLE IF NOT EXISTS `cooldownUsers` (\n" +
+                    "\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
+                    "\t`channelName`\tTEXT NOT NULL,\n" +
+                    "\t`commandName`\tTEXT NOT NULL,\n" +
+                    "\t`userName`\tTEXT NOT NULL,\n" +
                     "\t`lastTimeUse`\tTEXT NOT NULL\n" +
                     ");";
             statement.execute(query);

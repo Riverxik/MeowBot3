@@ -6,7 +6,7 @@ import com.github.twitch4j.chat.TwitchChat;
 public class CooldownCommandHandle extends AbstractCommand {
     // !cooldown <commandName> <cooldown>
     @Override
-    public void execute(String channel, String sender, Object[] args, TwitchChat chat) {
+    public boolean execute(String channel, String sender, Object[] args, TwitchChat chat) {
         if (args.length > 1 && args[0] instanceof String && args[1] instanceof Integer) {
             if (hasRight(channel, sender, CommandRights.OWNER)) {
                 String commandName = args[0].toString();
@@ -21,5 +21,6 @@ public class CooldownCommandHandle extends AbstractCommand {
         } else {
             chat.sendMessage(channel, String.format("%s, Use: !cooldown <commandName> <intCooldownSec>", sender));
         }
+        return false;
     }
 }

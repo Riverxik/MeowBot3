@@ -8,7 +8,7 @@ import com.github.twitch4j.chat.TwitchChat;
 
 public class CurrencySubMultiplierHandler extends AbstractCommand{
     @Override
-    public void execute(String channel, String sender, Object[] args, TwitchChat chat) {
+    public boolean execute(String channel, String sender, Object[] args, TwitchChat chat) {
         if (hasRight(channel, sender, CommandRights.OWNER)) {
             if (args.length == 0) {
                 int currentSubMultiplier = ConfigurationUtils.getChannelByName(channel)
@@ -27,6 +27,8 @@ public class CurrencySubMultiplierHandler extends AbstractCommand{
             }
         } else {
             chat.sendMessage(channel, String.format("%s, you haven't enough rights!", sender));
+            return true;
         }
+        return false;
     }
 }

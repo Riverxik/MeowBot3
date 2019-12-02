@@ -6,7 +6,7 @@ import com.github.twitch4j.chat.TwitchChat;
 public class RemoveAliasCommandHandler extends AbstractCommand {
 
     @Override
-    public void execute(String channel, String sender, Object[] args, TwitchChat chat) {
+    public boolean execute(String channel, String sender, Object[] args, TwitchChat chat) {
         if (args.length > 0 && args[0] instanceof String) {
             String aliasName = args[0].toString();
             if(AliasManagerUtils.removeAliasFromDatabase(channel, aliasName))
@@ -16,5 +16,6 @@ public class RemoveAliasCommandHandler extends AbstractCommand {
         } else {
             chat.sendMessage(channel, String.format("%s, Use: !alias remove <aliasName>", sender));
         }
+        return false;
     }
 }

@@ -13,7 +13,7 @@ public class AddAliasCommandHandler extends AbstractCommand {
      * */
 
     @Override
-    public void execute(String channel, String sender, Object[] args, TwitchChat chat) {
+    public boolean execute(String channel, String sender, Object[] args, TwitchChat chat) {
         if (args.length > 1 && args[0] instanceof String && args[1] instanceof String) {
             String aliasName = String.valueOf(args[0]);
             String commandName = String.valueOf(args[1]);
@@ -25,6 +25,7 @@ public class AddAliasCommandHandler extends AbstractCommand {
                     AliasManagerUtils.addNewAliasToDatabase(channel, aliasName, commandName);
                     chat.sendMessage(channel,
                             String.format("%s, Alias [%s]->[%s] has been added!", sender, aliasName, commandName));
+                    return true;
                 } else {
                     chat.sendMessage(channel, String.format("%s, Alias [%s] already exists!", sender, aliasName));
                 }
@@ -34,5 +35,6 @@ public class AddAliasCommandHandler extends AbstractCommand {
         } else {
             chat.sendMessage(channel, String.format("%s, Use !alias add <aliasName> <commandName>", sender));
         }
+        return false;
     }
 }

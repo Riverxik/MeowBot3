@@ -7,7 +7,7 @@ import com.github.twitch4j.chat.TwitchChat;
 public class SlotMachineCommandHandler extends AbstractCommand{
 
     @Override
-    public void execute(String channel, String sender, Object[] args, TwitchChat chat) {
+    public boolean execute(String channel, String sender, Object[] args, TwitchChat chat) {
         // !roll <money>
         if (args.length > 0 && args[0] instanceof Integer) {
             int bet = (int)args[0];
@@ -30,6 +30,7 @@ public class SlotMachineCommandHandler extends AbstractCommand{
                                 String.format("%s spinning the roll: %s. You lose: %d! Now you have: %d",
                                         sender, rollString, bet, availableMaxBet-bet));
                     }
+                    return true;
                 } else {
                     chat.sendMessage(channel,
                             String.format("%s, Not enough currency! You have: %d", sender, availableMaxBet));
@@ -40,5 +41,6 @@ public class SlotMachineCommandHandler extends AbstractCommand{
         } else {
             chat.sendMessage(channel, String.format("%s, Use: !roll <bet>; F.e: !roll 5", sender));
         }
+        return false;
     }
 }
