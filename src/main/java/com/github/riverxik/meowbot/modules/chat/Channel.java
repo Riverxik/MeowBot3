@@ -149,19 +149,17 @@ public class Channel {
         String channelId = getChannelId();
         List<Subscription> list = new ArrayList<>();
         TwitchHelix helix = TwitchBotHelper.getTwitchClient().getHelix();
-        HystrixCommand<SubscriptionList> cmd = helix.getSubscriptions(
-                this.getSettings().getAccessToken(),
-                channelId,
-                null,                   // after
-                null,                   // before
-                100                     // limit
-        );
+        String cursor = null;
 
         while (true) {
-            SubscriptionList tmpSubscriptionList = cmd.execute();
+            SubscriptionList tmpSubscriptionList = helix.getSubscriptions(this.getSettings().getAccessToken(),
+                    channelId,
+                    cursor,
+                    null,
+                    100).execute();
             List<Subscription> tmpList = tmpSubscriptionList.getSubscriptions();
-            tmpSubscriptionList.setPagination(tmpSubscriptionList.getPagination());
             list.addAll(tmpList);
+            cursor = tmpSubscriptionList.getPagination().getCursor();
             if (tmpList.size() < 100)
                 break;
         }
@@ -225,5 +223,9 @@ public class Channel {
             return new ChannelUser(userName, true, true, true, true);
         else
             return new ChannelUser("User not found", false, false, false, false);
+    }
+
+    public ChannelUser getChannelUserById(int id) {
+        return channelUsers.get(id);
     }
 }
