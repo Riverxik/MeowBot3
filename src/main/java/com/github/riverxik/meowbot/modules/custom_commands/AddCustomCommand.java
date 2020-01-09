@@ -1,5 +1,6 @@
 package com.github.riverxik.meowbot.modules.custom_commands;
 
+import com.github.riverxik.meowbot.ConfigurationUtils;
 import com.github.riverxik.meowbot.commands.AbstractCommand;
 import com.github.twitch4j.chat.TwitchChat;
 
@@ -18,6 +19,8 @@ public class AddCustomCommand extends AbstractCommand{
             String cmdText = args[1].toString();
             if (!CustomCommandUtils.isCommandExists(channel, cmdName)) {
                 if(CustomCommandUtils.createNewCommand(channel, cmdName, cmdText)) {
+                    if (!ConfigurationUtils.customCommandRegistry.containsKey(cmdName))
+                        ConfigurationUtils.customCommandRegistry.put(cmdName, new CustomCommandHandler());
                     chat.sendMessage(channel,
                             String.format("%s, Command [%s] has been successfully added!", sender, cmdName));
                     return true;
