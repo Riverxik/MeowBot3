@@ -5,8 +5,12 @@ import com.github.riverxik.meowbot.commands.CommandRights;
 import com.github.riverxik.meowbot.database.DatabaseUtils;
 import com.github.riverxik.meowbot.modules.TwitchBotHelper;
 import com.github.riverxik.meowbot.modules.currency.CurrencyManager;
+import com.github.twitch4j.helix.TwitchHelix;
+import com.github.twitch4j.helix.domain.HelixPagination;
 import com.github.twitch4j.helix.domain.Subscription;
+import com.github.twitch4j.helix.domain.SubscriptionList;
 import com.github.twitch4j.helix.domain.UserList;
+import com.netflix.hystrix.HystrixCommand;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -143,14 +147,25 @@ public class Channel {
 
     public void updateSubscribers() {
         String channelId = getChannelId();
-        // TODO: if subscribers count more than 20 it will return not all of them
-        List<Subscription> list = TwitchBotHelper.getTwitchClient().getHelix().getSubscriptions(
+        List<Subscription> list = new ArrayList<>();
+        TwitchHelix helix = TwitchBotHelper.getTwitchClient().getHelix();
+        HystrixCommand<SubscriptionList> cmd = helix.getSubscriptions(
                 this.getSettings().getAccessToken(),
                 channelId,
-                null,
-                null,
-                100
-        ).execute().getSubscriptions();
+                null,                   // after
+                null,                   // before
+                100                     // limit
+        );
+
+        while (true) {
+            SubscriptionList tmpSubscriptionList = cmd.execute();
+            List<Subscription> tmpList = tmpSubscriptionList.getSubscriptions();
+            tmpSubscriptionList.setPagination(tmpSubscriptionList.getPagination());
+            list.addAll(tmpList);
+            if (tmpList.size() < 100)
+                break;
+        }
+
         for (Subscription sub : list) {
             String userName = sub.getUserName();
             ChannelUser user = getChannelUserByName(userName);
