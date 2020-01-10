@@ -32,12 +32,16 @@
   
   	<logger name="com.github.riverxik.meowbot.Bot" level="INFO"/>
   	<logger name="com.github.riverxik.meowbot.ConfigurationUtils" level="INFO" />
-  	<logger name="com.github.riverxik.meowbot.modules.TwitchBotHelper" level="INFO" />
 	<logger name="com.github.riverxik.meowbot.events.PublicMessages" level="INFO" />
-	<logger name="com.github.riverxik.meowbot.modules.currency.CurrencyManager" level="INFO" />
-	<logger name="com.github.riverxik.meowbot.modules.quotes.QuotesManager" level="INFO" />
 	<logger name="com.github.riverxik.meowbot.modules.alias.AliasManagerUtils" level="INFO" />
+	<logger name="com.github.riverxik.meowbot.modules.chat.Channel" level="INFO" />
+	<logger name="com.github.riverxik.meowbot.modules.CooldownUtils" level="INFO" />
+	<logger name="com.github.riverxik.meowbot.modules.currency.CurrencyManager" level="INFO" />
 	<logger name="com.github.riverxik.meowbot.modules.custom_commands.CustomCommandUtils" level="INFO" />
+	<logger name="com.github.riverxik.meowbot.modules.duel.DuelUtils" level="INFO" />
+	<logger name="com.github.riverxik.meowbot.modules.SubOfTheDayHandler" level="INFO" />
+	<logger name="com.github.riverxik.meowbot.modules.TwitchBotHelper" level="INFO" />
+	<logger name="com.github.riverxik.meowbot.modules.quotes.QuotesManager" level="INFO" />
 
 	<root level="INFO">
 		<appender-ref ref="FILE-AUDIT" />

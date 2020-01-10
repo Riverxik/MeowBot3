@@ -1,6 +1,8 @@
 package com.github.riverxik.meowbot.modules;
 
 import com.github.riverxik.meowbot.database.DatabaseUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,6 +10,8 @@ import java.sql.Statement;
 import java.util.GregorianCalendar;
 
 public final class CooldownUtils {
+
+    private static final Logger log = LoggerFactory.getLogger(CooldownUtils.class);
 
     public static void setCooldown(String channelName, String commandName, int cooldown) {
         try {
@@ -23,6 +27,7 @@ public final class CooldownUtils {
             DatabaseUtils.disconnect();
 
         } catch (SQLException e) {
+            log.error("Error setting cooldown", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -58,6 +63,7 @@ public final class CooldownUtils {
             DatabaseUtils.disconnect();
 
         } catch (SQLException e) {
+            log.error("Error checking command available status", e.getMessage());
             e.printStackTrace();
         }
         return deltaTime > cooldownTime ? 0 : cooldownTime-deltaTime;
@@ -77,6 +83,7 @@ public final class CooldownUtils {
             DatabaseUtils.disconnect();
 
         } catch (SQLException e) {
+            log.error("Error updating cooldown for users", e.getMessage());
             setCooldown(channelName, commandName, 0);
             e.printStackTrace();
         }
@@ -91,6 +98,7 @@ public final class CooldownUtils {
 
             statement.close();
         } catch (SQLException e) {
+            log.error("Error creating cooldown for user", e.getMessage());
             e.printStackTrace();
         }
     }

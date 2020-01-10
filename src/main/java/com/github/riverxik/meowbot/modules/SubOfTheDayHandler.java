@@ -5,6 +5,8 @@ import com.github.riverxik.meowbot.commands.AbstractCommand;
 import com.github.riverxik.meowbot.database.DatabaseUtils;
 import com.github.twitch4j.chat.TwitchChat;
 import com.github.twitch4j.helix.domain.Subscription;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,6 +14,8 @@ import java.sql.Statement;
 import java.util.List;
 
 public class SubOfTheDayHandler extends AbstractCommand{
+
+    private static final Logger log = LoggerFactory.getLogger(SubOfTheDayHandler.class);
 
     /**
      * Syntax of command: !sod [<string>]
@@ -70,6 +74,7 @@ public class SubOfTheDayHandler extends AbstractCommand{
             statement.close();
             DatabaseUtils.disconnect();
         } catch (SQLException e) {
+            log.error("Error getting number of user wins", e.getMessage());
             e.printStackTrace();
         }
         return result;
@@ -98,6 +103,7 @@ public class SubOfTheDayHandler extends AbstractCommand{
             statement.close();
             DatabaseUtils.disconnect();
         } catch (SQLException e) {
+            log.error("Error setting result of sub of the day", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -118,6 +124,7 @@ public class SubOfTheDayHandler extends AbstractCommand{
             statement.close();
             DatabaseUtils.disconnect();
         } catch (SQLException e) {
+            log.error("Error getting result of sub of the day", e.getMessage());
             e.printStackTrace();
         }
         return winner;

@@ -6,11 +6,11 @@ import com.github.riverxik.meowbot.database.DatabaseUtils;
 import com.github.riverxik.meowbot.modules.TwitchBotHelper;
 import com.github.riverxik.meowbot.modules.currency.CurrencyManager;
 import com.github.twitch4j.helix.TwitchHelix;
-import com.github.twitch4j.helix.domain.HelixPagination;
 import com.github.twitch4j.helix.domain.Subscription;
 import com.github.twitch4j.helix.domain.SubscriptionList;
 import com.github.twitch4j.helix.domain.UserList;
-import com.netflix.hystrix.HystrixCommand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class Channel {
+    private static final Logger log = LoggerFactory.getLogger(Channel.class);
     private String name = null;
     private ChannelSettings settings = null;
     private List<ChannelUser> channelUsers = new ArrayList<>();
@@ -62,6 +63,7 @@ public class Channel {
             statement.close();
             DatabaseUtils.disconnect();
         } catch (SQLException e) {
+            log.error("Error while adding new channel information", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -93,6 +95,7 @@ public class Channel {
             statement.close();
             DatabaseUtils.disconnect();
         } catch (SQLException e) {
+            log.error("Error while loading current channel information", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -131,6 +134,7 @@ public class Channel {
             statement.close();
             DatabaseUtils.disconnect();
         } catch (SQLException e) {
+            log.error("Error while updating all users", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -140,6 +144,7 @@ public class Channel {
             UserList resultList = TwitchBotHelper.getTwitchClient().getHelix().getUsers(null, null, Collections.singletonList(name)).execute();
             return resultList.getUsers().get(0).getId();
         } catch (Exception e) {
+            log.error("Error with getting channel id", e.getMessage());
             return "-1";
         }
     }

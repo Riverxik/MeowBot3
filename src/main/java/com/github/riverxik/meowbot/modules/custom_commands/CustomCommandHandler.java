@@ -52,7 +52,7 @@ public class CustomCommandHandler extends AbstractCommand{
                     else
                         builder.append("PogChamp").append(" ");
                 } break;
-                default: builder.append(split[i]).append(" ");
+                default: builder.append(split[i]).append(" "); break;
             }
         }
         return builder.toString();

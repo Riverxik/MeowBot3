@@ -7,6 +7,7 @@ import com.github.twitch4j.common.events.channel.ChannelGoOfflineEvent;
 
 public class ChannelGoesOffline {
 
+    @Deprecated
     public ChannelGoesOffline(EventManager eventManager) {
         eventManager.onEvent(ChannelGoOfflineEvent.class).subscribe(this::onChannelOffline);
     }

@@ -5,6 +5,8 @@ import com.github.riverxik.meowbot.database.DatabaseUtils;
 import com.github.riverxik.meowbot.modules.chat.Channel;
 import com.github.riverxik.meowbot.modules.currency.CurrencyManager;
 import com.github.twitch4j.chat.TwitchChat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,6 +14,7 @@ import java.sql.Statement;
 
 public class DuelUtils {
 
+    private static final Logger log = LoggerFactory.getLogger(DuelUtils.class);
     private static final int DEFAULT_PRICE = 10;
 
     public static boolean throwDuelToUser(String channel, String sender, String username,
@@ -39,6 +42,7 @@ public class DuelUtils {
                         return true;
                     } else {
                         chat.sendMessage(channel, String.format("%s, Duel won't initiate because of error", sender));
+                        log.error("Error with initializing duel. Something is broken");
                     }
                 } else {
                     chat.sendMessage(channel,
@@ -119,6 +123,7 @@ public class DuelUtils {
             statement.close();
             DatabaseUtils.disconnect();
         } catch (SQLException e) {
+            log.error("Error selecting user duel invites", e.getMessage());
             e.printStackTrace();
         }
         return amount != 0;
@@ -135,6 +140,7 @@ public class DuelUtils {
             DatabaseUtils.disconnect();
             return true;
         } catch (SQLException e) {
+            log.error("Error creating new duel", e.getMessage());
             e.printStackTrace();
         }
         return false;
@@ -156,6 +162,7 @@ public class DuelUtils {
             DatabaseUtils.disconnect();
             return true;
         } catch (SQLException e) {
+            log.error("Error ending duel to state " + state, e.getMessage());
             e.printStackTrace();
         }
         return false;
@@ -177,6 +184,7 @@ public class DuelUtils {
             statement.close();
             DatabaseUtils.disconnect();
         } catch (SQLException e) {
+            log.error("Error getting duel amount", e.getMessage());
             e.printStackTrace();
         }
         return amount;
@@ -198,6 +206,7 @@ public class DuelUtils {
             statement.close();
             DatabaseUtils.disconnect();
         } catch (SQLException e) {
+            log.error("Error getting duel attacker", e.getMessage());
             e.printStackTrace();
         }
         return attacker;
@@ -219,6 +228,7 @@ public class DuelUtils {
             statement.close();
             DatabaseUtils.disconnect();
         } catch (SQLException e) {
+            log.error("Error getting duel defender", e.getMessage());
             e.printStackTrace();
         }
         return defender;
