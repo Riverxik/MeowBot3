@@ -1,5 +1,6 @@
 package com.github.riverxik.meowbot.modules.custom_commands;
 
+import com.github.riverxik.meowbot.ConfigurationUtils;
 import com.github.riverxik.meowbot.commands.AbstractCommand;
 import com.github.riverxik.meowbot.commands.CommandRights;
 import com.github.twitch4j.chat.TwitchChat;
@@ -31,6 +32,9 @@ public class CommandHandler extends AbstractCommand{
                     }
                     case "remove": {
                         return new RemoveCustomCommand().execute(channel, sender, subArgs, chat);
+                    }
+                    case "list": {
+                        return new ShowCommandList().execute(channel, sender, subArgs, chat);
                     }
                     default:
                         return CustomCommandUtils.showCommand(channel, sender, args[0].toString(), chat);
