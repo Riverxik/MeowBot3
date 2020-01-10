@@ -11,6 +11,7 @@ import com.github.riverxik.meowbot.commands.HelpCommandHandle;
 import com.github.riverxik.meowbot.commands.ShowUserRightsHandle;
 import com.github.riverxik.meowbot.database.DatabaseUtils;
 import com.github.riverxik.meowbot.modules.SlotMachineCommandHandler;
+import com.github.riverxik.meowbot.modules.SubOfTheDayHandler;
 import com.github.riverxik.meowbot.modules.alias.AliasHandler;
 import com.github.riverxik.meowbot.modules.chat.Channel;
 import com.github.riverxik.meowbot.modules.chat.ChannelSettings;
@@ -29,9 +30,9 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Represents bot's configuration.
@@ -171,6 +172,8 @@ public class ConfigurationUtils {
         log.info("Command cooldown table has been loaded!");
         createCustomCommandsTable();
         log.info("Custom commands table has been loaded!");
+        createSubOfTheDayTable();
+        log.info("Sub of the day table has been loaded!");
         // Остальные таблицы тут
     }
 
@@ -265,6 +268,29 @@ public class ConfigurationUtils {
         }
     }
 
+    private static void createSubOfTheDayTable() {
+        try {
+            DatabaseUtils.connect();
+            Statement statement = DatabaseUtils.getConnection().createStatement();
+            String query = "CREATE TABLE IF NOT EXISTS `subOfTheDay` (\n" +
+                    "\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
+                    "\t`channelName`\tTEXT NOT NULL,\n" +
+                    "\t`username`\tTEXT NOT NULL,\n" +
+                    "\t`date`\tTEXT NOT NULL\n" +
+                    ");";
+            statement.execute(query);
+            statement.close();
+            DatabaseUtils.disconnect();
+        } catch (SQLException e) {
+            log.error("Error while creating sub of the day table", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public static String getCurrentDateString() {
+        return new SimpleDateFormat("dd.MM.yyyy").format(Calendar.getInstance().getTime());
+    }
+
     //@SuppressWarnings("unchecked")
     public static boolean createConfigurationFile() {
         JSONObject obj = new JSONObject();
@@ -343,6 +369,7 @@ public class ConfigurationUtils {
         commandRegistry.put("encrypt", new EncryptCommandHandler());
         commandRegistry.put("cooldown", new CooldownCommandHandle());
         commandRegistry.put("cmd", new CommandHandler());
+        commandRegistry.put("sod", new SubOfTheDayHandler());
         fillCustomCommandRegister();
     }
 

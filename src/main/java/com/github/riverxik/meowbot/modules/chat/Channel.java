@@ -146,6 +146,18 @@ public class Channel {
 
 
     public void updateSubscribers() {
+        List<Subscription> list = getSubscribers();
+
+        for (Subscription sub : list) {
+            String userName = sub.getUserName();
+            ChannelUser user = getChannelUserByName(userName);
+            user.setSub(true);
+            if (user.getRightLevel().index() < CommandRights.VIP_SUB.index())
+                user.setRightLevel(CommandRights.VIP_SUB);
+        }
+    }
+
+    public List<Subscription> getSubscribers() {
         String channelId = getChannelId();
         List<Subscription> list = new ArrayList<>();
         TwitchHelix helix = TwitchBotHelper.getTwitchClient().getHelix();
@@ -163,14 +175,7 @@ public class Channel {
             if (tmpList.size() < 100)
                 break;
         }
-
-        for (Subscription sub : list) {
-            String userName = sub.getUserName();
-            ChannelUser user = getChannelUserByName(userName);
-            user.setSub(true);
-            if (user.getRightLevel().index() < CommandRights.VIP_SUB.index())
-                user.setRightLevel(CommandRights.VIP_SUB);
-        }
+        return list;
     }
 
     private int calculateNewCurrency(ChannelUser user, int oldCurrency) throws SQLException {
