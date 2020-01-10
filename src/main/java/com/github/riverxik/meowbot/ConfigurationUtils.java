@@ -19,6 +19,7 @@ import com.github.riverxik.meowbot.modules.currency.commands.CurrencyStatusHandl
 import com.github.riverxik.meowbot.modules.custom_commands.CommandHandler;
 import com.github.riverxik.meowbot.modules.custom_commands.CustomCommandHandler;
 import com.github.riverxik.meowbot.modules.custom_commands.CustomCommandUtils;
+import com.github.riverxik.meowbot.modules.duel.DuelCommandHandler;
 import com.github.riverxik.meowbot.modules.quotes.commands.QuoteHandle;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -30,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -174,6 +174,8 @@ public class ConfigurationUtils {
         log.info("Custom commands table has been loaded!");
         createSubOfTheDayTable();
         log.info("Sub of the day table has been loaded!");
+        createDuelTable();
+        log.info("Duel table has been loaded!");
         // Остальные таблицы тут
     }
 
@@ -287,6 +289,27 @@ public class ConfigurationUtils {
         }
     }
 
+    private static void createDuelTable() {
+        try {
+            DatabaseUtils.connect();
+            Statement statement = DatabaseUtils.getConnection().createStatement();
+            String query = "CREATE TABLE IF NOT EXISTS `duels` (\n" +
+                    "\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
+                    "\t`channelName`\tTEXT NOT NULL,\n" +
+                    "\t`userAttack`\tTEXT NOT NULL,\n" +
+                    "\t`userDefence`\tTEXT NOT NULL,\n" +
+                    "\t`amount`\tINTEGER NOT NULL,\n" +
+                    "\t`state`\tTEXT NOT NULL\n" +
+                    ");";
+            statement.execute(query);
+            statement.close();
+            DatabaseUtils.disconnect();
+        } catch (SQLException e) {
+            log.error("Error while creating duels table", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     public static String getCurrentDateString() {
         return new SimpleDateFormat("dd.MM.yyyy").format(Calendar.getInstance().getTime());
     }
@@ -370,6 +393,7 @@ public class ConfigurationUtils {
         commandRegistry.put("cooldown", new CooldownCommandHandle());
         commandRegistry.put("cmd", new CommandHandler());
         commandRegistry.put("sod", new SubOfTheDayHandler());
+        commandRegistry.put("duel", new DuelCommandHandler());
         fillCustomCommandRegister();
     }
 
