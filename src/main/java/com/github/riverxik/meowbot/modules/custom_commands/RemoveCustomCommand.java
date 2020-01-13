@@ -1,5 +1,6 @@
 package com.github.riverxik.meowbot.modules.custom_commands;
 
+import com.github.riverxik.meowbot.ConfigurationUtils;
 import com.github.riverxik.meowbot.commands.AbstractCommand;
 import com.github.twitch4j.chat.TwitchChat;
 
@@ -17,6 +18,7 @@ public class RemoveCustomCommand extends AbstractCommand{
             String cmdName = args[0].toString();
             if (CustomCommandUtils.isCommandExists(channel, cmdName)) {
                 if (CustomCommandUtils.removeCommand(channel, cmdName)) {
+                    ConfigurationUtils.customCommandRegistry.remove(cmdName);
                     chat.sendMessage(channel,
                             String.format("%s, Command [%s] has been removed!", sender, cmdName));
                     return true;

@@ -12,19 +12,21 @@ public class AliasHandler extends AbstractCommand{
     public boolean execute(String channel, String sender, Object[] args, TwitchChat chat) {
         if (args.length > 0) {
             if (args[0] instanceof String) {
+                Object[] args2 = Arrays.copyOfRange(args, 1, args.length);
                 switch (args[0].toString()) {
                     case "add": {
                         if (hasRight(channel, sender, CommandRights.MODERATOR)) {
-                            Object[] args2 = Arrays.copyOfRange(args, 1, args.length);
                             return new AddAliasCommandHandler().execute(channel, sender, args2, chat);
                         }
                     } break;
                     case "remove": {
                         if (hasRight(channel, sender, CommandRights.OWNER)) {
-                            Object[] args2 = Arrays.copyOfRange(args, 1, args.length);
                             return new RemoveAliasCommandHandler().execute(channel, sender, args2, chat);
                         }
                     } break;
+                    case "list": {
+                        return new ShowAllAliasForCommandHandler().execute(channel, sender, args2, chat);
+                    }
                     default: break;
                 }
             }

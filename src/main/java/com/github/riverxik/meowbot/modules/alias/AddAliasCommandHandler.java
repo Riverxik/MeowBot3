@@ -18,7 +18,8 @@ public class AddAliasCommandHandler extends AbstractCommand {
             String aliasName = String.valueOf(args[0]);
             String commandName = String.valueOf(args[1]);
             // Проверка на существование такой команды
-            if (ConfigurationUtils.commandRegistry.containsKey(commandName)) {
+            if (ConfigurationUtils.commandRegistry.containsKey(commandName) ||
+                    ConfigurationUtils.customCommandRegistry.containsKey(commandName)) {
                 // Проверка на существование такого алиаса
                 if (!AliasManagerUtils.isAliasExists(channel, aliasName)) {
                     // Добавляем в базу данных

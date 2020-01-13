@@ -60,8 +60,12 @@ public class CustomCommandHandler extends AbstractCommand{
 
     private String getRandomUser(String channel) {
         int maxUsers = ConfigurationUtils.getChannelByName(channel).getUsersCount();
-        int happyNumber = (int) (Math.random() * maxUsers);
-        return ConfigurationUtils.getChannelByName(channel).getChannelUserById(happyNumber).getName();
+        if (maxUsers == 0) {
+            return "Twitch-bot";
+        } else {
+            int happyNumber = (int) (Math.random() * maxUsers);
+            return ConfigurationUtils.getChannelByName(channel).getChannelUserById(happyNumber).getName();
+        }
     }
 
     private String getRandomNumber() {
