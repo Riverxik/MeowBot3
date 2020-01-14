@@ -10,7 +10,7 @@ public class Lexer {
     private int position = 0;
     private static final char COMMAND_SYMBOL = '!';
     private static final String AVAILABLE_SYMBOLS = "+-*/^'(),?~><;=";
-    private static final String AVAILABLE_SYMBOLS_IN_WORDS = "'%";
+    private static final String AVAILABLE_SYMBOLS_IN_WORDS = "'%_";
     private List<Token> tokenList = new ArrayList<>();
     public Lexer(String inputString) {
         this.inputString = inputString+" "+'\0';
