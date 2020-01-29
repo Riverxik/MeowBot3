@@ -1,8 +1,10 @@
 package com.github.riverxik.meowbot.modules;
 
+import com.github.philippheuer.events4j.EventManager;
 import com.github.riverxik.meowbot.ConfigurationUtils;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.riverxik.meowbot.events.ChangeGameOrTitle;
+import com.github.riverxik.meowbot.events.ChannelLiveEvents;
 import com.github.riverxik.meowbot.events.PublicMessages;
 import com.github.riverxik.meowbot.events.SubscribersOnly;
 import com.github.riverxik.meowbot.modules.chat.Channel;
@@ -46,11 +48,14 @@ public final class TwitchBotHelper {
     /** Registers all events */
     public static void registerFeatures() {
         log.info("Component registration...");
-        new PublicMessages(twitchClient.getEventManager());
-        new SubscribersOnly(twitchClient.getEventManager());
-        new ChangeGameOrTitle(twitchClient.getEventManager());
+        EventManager eventManager = twitchClient.getEventManager();
+        new PublicMessages(eventManager);
+        new SubscribersOnly(eventManager);
+        new ChangeGameOrTitle(eventManager);
         // TODO: Maybe i should put all this events together to one class.
         // add events
+        // Experimental:
+        new ChannelLiveEvents(eventManager);
     }
 
     /** Connects to all twitch channels */
@@ -59,6 +64,8 @@ public final class TwitchBotHelper {
         for(Channel channel : ConfigurationUtils.loadingChannels) {
             String channelName = channel.getName();
             twitchClient.getChat().joinChannel(channelName);
+            if (ConfigurationUtils.isStreamLiveEnable() || ConfigurationUtils.isStreamOfflineEnable())
+                twitchClient.getClientHelper().enableStreamEventListener(channelName);
         }
         log.info("Successfully connected to all the channels!");
     }

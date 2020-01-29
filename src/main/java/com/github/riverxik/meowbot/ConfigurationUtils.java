@@ -11,10 +11,15 @@ import com.github.riverxik.meowbot.commands.HelpCommandHandle;
 import com.github.riverxik.meowbot.commands.ShowUserRightsHandle;
 import com.github.riverxik.meowbot.database.DatabaseUtils;
 import com.github.riverxik.meowbot.modules.SlotMachineCommandHandler;
+import com.github.riverxik.meowbot.modules.SubOfTheDayHandler;
 import com.github.riverxik.meowbot.modules.alias.AliasHandler;
 import com.github.riverxik.meowbot.modules.chat.Channel;
 import com.github.riverxik.meowbot.modules.chat.ChannelSettings;
 import com.github.riverxik.meowbot.modules.currency.commands.CurrencyStatusHandler;
+import com.github.riverxik.meowbot.modules.custom_commands.CommandHandler;
+import com.github.riverxik.meowbot.modules.custom_commands.CustomCommandHandler;
+import com.github.riverxik.meowbot.modules.custom_commands.CustomCommandUtils;
+import com.github.riverxik.meowbot.modules.duel.DuelCommandHandler;
 import com.github.riverxik.meowbot.modules.quotes.commands.QuoteHandle;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -26,9 +31,8 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Represents bot's configuration.
@@ -60,6 +64,7 @@ public class ConfigurationUtils {
     public static List<Channel> loadingChannels = new ArrayList<>();
 
     public static HashMap<String, AbstractCommand> commandRegistry = new HashMap<>();
+    public static HashMap<String, AbstractCommand> customCommandRegistry = new HashMap<>();
 
     private static boolean moderationEnable = false; // TODO: use this for enabling/disabling events for all channels
     private static boolean customCommandsEnable = false;
@@ -165,6 +170,12 @@ public class ConfigurationUtils {
         log.info("Aliases table has been loaded!");
         createCommandCooldownTable();
         log.info("Command cooldown table has been loaded!");
+        createCustomCommandsTable();
+        log.info("Custom commands table has been loaded!");
+        createSubOfTheDayTable();
+        log.info("Sub of the day table has been loaded!");
+        createDuelTable();
+        log.info("Duel table has been loaded!");
         // Остальные таблицы тут
     }
 
@@ -237,6 +248,70 @@ public class ConfigurationUtils {
             log.error("Error while creating command cooldown table", e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    private static void createCustomCommandsTable() {
+        try {
+            DatabaseUtils.connect();
+            Statement statement = DatabaseUtils.getConnection().createStatement();
+            String query = "CREATE TABLE IF NOT EXISTS `customCommands` (\n" +
+                    "\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
+                    "\t`channelName`\tTEXT NOT NULL,\n" +
+                    "\t`commandName`\tTEXT NOT NULL,\n" +
+                    "\t`commandText`\tTEXT NOT NULL\n" +
+                    ");";
+            statement.execute(query);
+            statement.close();
+            DatabaseUtils.disconnect();
+
+        } catch (SQLException e) {
+            log.error("Error while creating custom commands table", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private static void createSubOfTheDayTable() {
+        try {
+            DatabaseUtils.connect();
+            Statement statement = DatabaseUtils.getConnection().createStatement();
+            String query = "CREATE TABLE IF NOT EXISTS `subOfTheDay` (\n" +
+                    "\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
+                    "\t`channelName`\tTEXT NOT NULL,\n" +
+                    "\t`username`\tTEXT NOT NULL,\n" +
+                    "\t`date`\tTEXT NOT NULL\n" +
+                    ");";
+            statement.execute(query);
+            statement.close();
+            DatabaseUtils.disconnect();
+        } catch (SQLException e) {
+            log.error("Error while creating sub of the day table", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private static void createDuelTable() {
+        try {
+            DatabaseUtils.connect();
+            Statement statement = DatabaseUtils.getConnection().createStatement();
+            String query = "CREATE TABLE IF NOT EXISTS `duels` (\n" +
+                    "\t`id`\tINTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,\n" +
+                    "\t`channelName`\tTEXT NOT NULL,\n" +
+                    "\t`userAttack`\tTEXT NOT NULL,\n" +
+                    "\t`userDefence`\tTEXT NOT NULL,\n" +
+                    "\t`amount`\tINTEGER NOT NULL,\n" +
+                    "\t`state`\tTEXT NOT NULL\n" +
+                    ");";
+            statement.execute(query);
+            statement.close();
+            DatabaseUtils.disconnect();
+        } catch (SQLException e) {
+            log.error("Error while creating duels table", e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public static String getCurrentDateString() {
+        return new SimpleDateFormat("dd.MM.yyyy").format(Calendar.getInstance().getTime());
     }
 
     //@SuppressWarnings("unchecked")
@@ -316,6 +391,17 @@ public class ConfigurationUtils {
         commandRegistry.put("roll", new SlotMachineCommandHandler());
         commandRegistry.put("encrypt", new EncryptCommandHandler());
         commandRegistry.put("cooldown", new CooldownCommandHandle());
+        commandRegistry.put("cmd", new CommandHandler());
+        commandRegistry.put("sod", new SubOfTheDayHandler());
+        commandRegistry.put("duel", new DuelCommandHandler());
+        fillCustomCommandRegister();
+    }
+
+    private static void fillCustomCommandRegister() {
+        List<String> commands = CustomCommandUtils.getAllCustomCommands();
+        for (String cmd : commands) {
+            customCommandRegistry.put(cmd, new CustomCommandHandler());
+        }
     }
 
     public static Channel getChannelByName(String channelName) {

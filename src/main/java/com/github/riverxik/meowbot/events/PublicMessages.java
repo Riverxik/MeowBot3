@@ -12,6 +12,7 @@ import com.github.twitch4j.chat.events.channel.ChannelMessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -69,6 +70,10 @@ public class PublicMessages {
     private boolean processCommand(String channel, String sender, String baseCommand, Object[] args, TwitchChat chat) {
         if (ConfigurationUtils.commandRegistry.containsKey(baseCommand)) {
             return ConfigurationUtils.commandRegistry.get(baseCommand).execute(channel, sender, args, chat);
+        } else if (ConfigurationUtils.customCommandRegistry.containsKey(baseCommand)) {
+            ArrayList<Object> tmp = new ArrayList<>(Arrays.asList(args));
+            tmp.add(0, baseCommand);
+            return ConfigurationUtils.customCommandRegistry.get(baseCommand).execute(channel, sender, tmp.toArray(), chat);
         } else {
             log.info("Unknown command: " + baseCommand);
         }

@@ -1,9 +1,6 @@
 # Java bot for [Twitch](https://twitch.tv) - MeowBot :3
 ## Description
-  New version of my java bot for Twitch (supports new twitch api). 
-  My last version of this bot was support only api v.3 which is deprecated on twitch and wouldn't work soon.
-  So, i had to change the api of the new version of bot and here it is.
-  Now i can add more some features which wasn't available on latest api.
+  Chat-bot for twitch which includes a lot of custom features.
   
 |Master|Develop|Code Quality
 |---|---|---|
@@ -48,7 +45,9 @@
 - [x] Supports any number of channels.
 - [x] Currency system.
 - [x] Quote system.
-- [ ] Custom commands for any channel (For any wanted group: viewers, mods, subscribers).
+- [x] Duel system.
+- [x] Custom commands for any channel (For any wanted group: viewers, mods, subscribers).
+- [x] Aliases for any commands.
 - [ ] Bet system: play bets, win prize, make your channel chat more active! :>
 - [ ] Chat notifications: when stream goes live, sub/resub event, cheers, raids.
 - [ ] Statistic for your stream.

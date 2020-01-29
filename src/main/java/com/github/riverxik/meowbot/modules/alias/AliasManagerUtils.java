@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class AliasManagerUtils {
 
@@ -97,5 +98,28 @@ public class AliasManagerUtils {
             e.printStackTrace();
             return aliasName;
         }
+    }
+
+    public static ArrayList<String> getAllAliasForCommand(String channelName, String commandName) {
+        ArrayList<String> aliases = new ArrayList<>();
+        try {
+            DatabaseUtils.connect();
+            String query = "SELECT `name` FROM `aliases` " +
+                    "WHERE `channel` = '"+channelName+"' AND `command` = '"+commandName+"'";
+            Statement statement = DatabaseUtils.getConnection().createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            while (resultSet.next()) {
+                aliases.add(resultSet.getString("name"));
+            }
+
+            resultSet.close();
+            statement.close();
+            DatabaseUtils.disconnect();
+        } catch (SQLException e) {
+            log.error("Error while getting alias list: ", e.getMessage());
+            e.printStackTrace();
+        }
+        return aliases;
     }
 }

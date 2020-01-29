@@ -5,8 +5,12 @@ import com.github.riverxik.meowbot.commands.CommandRights;
 import com.github.riverxik.meowbot.database.DatabaseUtils;
 import com.github.riverxik.meowbot.modules.TwitchBotHelper;
 import com.github.riverxik.meowbot.modules.currency.CurrencyManager;
+import com.github.twitch4j.helix.TwitchHelix;
 import com.github.twitch4j.helix.domain.Subscription;
+import com.github.twitch4j.helix.domain.SubscriptionList;
 import com.github.twitch4j.helix.domain.UserList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class Channel {
+    private static final Logger log = LoggerFactory.getLogger(Channel.class);
     private String name = null;
     private ChannelSettings settings = null;
     private List<ChannelUser> channelUsers = new ArrayList<>();
@@ -58,6 +63,7 @@ public class Channel {
             statement.close();
             DatabaseUtils.disconnect();
         } catch (SQLException e) {
+            log.error("Error while adding new channel information", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -89,6 +95,7 @@ public class Channel {
             statement.close();
             DatabaseUtils.disconnect();
         } catch (SQLException e) {
+            log.error("Error while loading current channel information", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -127,6 +134,7 @@ public class Channel {
             statement.close();
             DatabaseUtils.disconnect();
         } catch (SQLException e) {
+            log.error("Error while updating all users", e.getMessage());
             e.printStackTrace();
         }
     }
@@ -136,21 +144,15 @@ public class Channel {
             UserList resultList = TwitchBotHelper.getTwitchClient().getHelix().getUsers(null, null, Collections.singletonList(name)).execute();
             return resultList.getUsers().get(0).getId();
         } catch (Exception e) {
+            log.error("Error with getting channel id", e.getMessage());
             return "-1";
         }
     }
 
 
     public void updateSubscribers() {
-        String channelId = getChannelId();
-        // TODO: if subscribers count more than 20 it will return not all of them
-        List<Subscription> list = TwitchBotHelper.getTwitchClient().getHelix().getSubscriptions(
-                this.getSettings().getAccessToken(),
-                channelId,
-                null,
-                null,
-                100
-        ).execute().getSubscriptions();
+        List<Subscription> list = getSubscribers();
+
         for (Subscription sub : list) {
             String userName = sub.getUserName();
             ChannelUser user = getChannelUserByName(userName);
@@ -158,6 +160,27 @@ public class Channel {
             if (user.getRightLevel().index() < CommandRights.VIP_SUB.index())
                 user.setRightLevel(CommandRights.VIP_SUB);
         }
+    }
+
+    public List<Subscription> getSubscribers() {
+        String channelId = getChannelId();
+        List<Subscription> list = new ArrayList<>();
+        TwitchHelix helix = TwitchBotHelper.getTwitchClient().getHelix();
+        String cursor = null;
+
+        while (true) {
+            SubscriptionList tmpSubscriptionList = helix.getSubscriptions(this.getSettings().getAccessToken(),
+                    channelId,
+                    cursor,
+                    null,
+                    100).execute();
+            List<Subscription> tmpList = tmpSubscriptionList.getSubscriptions();
+            list.addAll(tmpList);
+            cursor = tmpSubscriptionList.getPagination().getCursor();
+            if (tmpList.size() < 100)
+                break;
+        }
+        return list;
     }
 
     private int calculateNewCurrency(ChannelUser user, int oldCurrency) throws SQLException {
@@ -210,5 +233,9 @@ public class Channel {
             return new ChannelUser(userName, true, true, true, true);
         else
             return new ChannelUser("User not found", false, false, false, false);
+    }
+
+    public ChannelUser getChannelUserById(int id) {
+        return channelUsers.get(id);
     }
 }
